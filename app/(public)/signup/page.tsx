@@ -1,4 +1,11 @@
-import { RegisterForm } from "@/components/auth/RegisterForm";
+import { Metadata } from "next";
+import { RegisterForm } from "@/components/auth/register-form";
+
+export const metadata: Metadata = {
+  title: "Create an Account",
+  description:
+    "Join Farmgreene today. Choose your role as a Farmer, Equipment Owner, or Market Agent.",
+};
 import { Logo } from "@/components/layout/Logo";
 
 export default function RegisterPage() {

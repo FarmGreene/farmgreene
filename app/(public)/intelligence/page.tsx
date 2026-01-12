@@ -1,4 +1,11 @@
+import { Metadata } from "next";
 import MarketHero from "@/components/market/MarketHero";
+
+export const metadata: Metadata = {
+  title: "Market Intelligence",
+  description:
+    "Access real-time agricultural market data, crop pricing trends, and AI-driven insights to maximize your farm's profitability.",
+};
 import MarketProblem from "@/components/market/MarketProblem";
 import DataCoverage from "@/components/market/DataCoverage";
 import AIAnalysis from "@/components/market/AIAnalysis";

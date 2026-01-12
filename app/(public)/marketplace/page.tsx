@@ -1,4 +1,11 @@
+import { Metadata } from "next";
 import MarketplaceHero from "@/components/marketplace/MarketplaceHero";
+
+export const metadata: Metadata = {
+  title: "Equipment Marketplace",
+  description:
+    "Rent tractors, harvesters, and farm equipment from local owners. List your idle machinery to earn extra income.",
+};
 import EquipmentCategories from "@/components/marketplace/EquipmentCategories";
 import FeaturedListings from "@/components/marketplace/FeaturedListings";
 import RentalProcess from "@/components/marketplace/RentalProcess";

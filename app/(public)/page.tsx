@@ -1,4 +1,11 @@
+import { Metadata } from "next";
 import Hero from "@/components/landing/hero";
+
+export const metadata: Metadata = {
+  title: "Farmgreene | Agricultural Equipment Rental & Market Intelligence",
+  description:
+    "Join the leading agricultural network. Rent equipment, share resources, and access real-time market pricing for better farming decisions.",
+};
 import UserSegmentation from "@/components/landing/UserSegmentation";
 import ValueProposition from "@/components/landing/ValueProposition";
 import KeyFeatures from "@/components/landing/KeyFeatures";

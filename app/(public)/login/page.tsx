@@ -1,4 +1,11 @@
+import { Metadata } from "next";
 import { LoginForm } from "@/components/auth/login-form";
+
+export const metadata: Metadata = {
+  title: "Login",
+  description:
+    "Sign in to Farmgreene to access your dashboard and manage equipment or rentals.",
+};
 import { Logo } from "@/components/layout/Logo";
 
 export default function LoginPage() {
