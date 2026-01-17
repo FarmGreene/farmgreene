@@ -3,7 +3,7 @@ export default function TrustSection() {
     <section className="py-20 border-y bg-slate-50/50">
       <div className="w-[1440px] max-w-full mx-auto px-6 lg:px-14 text-center">
         <p className="text-sm font-semibold text-muted-foreground tracking-widest uppercase mb-8">
-          Trusted by Osun State's Agricultural Leaders
+          Trusted by Nigeria Agricultural Leaders
         </p>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center opacity-60 grayscale hover:grayscale-0 transition-all duration-500">

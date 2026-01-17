@@ -82,7 +82,7 @@ export function Footer() {
                   href="/agents"
                   className="hover:text-green-600 transition-colors"
                 >
-                  Agent Portal
+                  Become an Agent
                 </Link>
               </li>
             </ul>

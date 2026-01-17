@@ -24,26 +24,27 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="container flex h-16 items-center justify-between max-w-[1440px] mx-auto px-6 lg:px-14">
-        {/* Logo */}
-        <Logo />
+        <div className="flex items-center gap-12">
+          <Logo />
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                "transition-colors hover:text-foreground/80 py-1 border-b-2",
-                pathname === link.href
-                  ? "text-green-600 border-green-600"
-                  : "text-foreground/60 border-transparent"
-              )}
-            >
-              {link.name}
-            </Link>
-          ))}
-        </nav>
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "transition-colors hover:text-foreground/80 py-1 border-b-2",
+                  pathname === link.href
+                    ? "text-green-600 border-green-600"
+                    : "text-foreground/60 border-transparent"
+                )}
+              >
+                {link.name}
+              </Link>
+            ))}
+          </nav>
+        </div>
 
         {/* Desktop Buttons */}
         <div className="hidden md:flex items-center space-x-4">

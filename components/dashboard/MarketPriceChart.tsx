@@ -1,7 +1,7 @@
 "use client";
 
 import { TrendingUp } from "lucide-react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 
 import {
   Card,
@@ -31,11 +31,11 @@ const chartData = [
 const chartConfig = {
   cocoa: {
     label: "Cocoa",
-    color: "hsl(var(--chart-1))",
+    color: "#16a34a",
   },
   cassava: {
     label: "Cassava",
-    color: "hsl(var(--chart-2))",
+    color: "#000000",
   },
 } satisfies ChartConfig;
 
@@ -50,7 +50,7 @@ export function MarketPriceChart() {
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <AreaChart
+          <LineChart
             accessibilityLayer
             data={chartData}
             margin={{
@@ -70,23 +70,21 @@ export function MarketPriceChart() {
               cursor={false}
               content={<ChartTooltipContent indicator="dot" />}
             />
-            <Area
+            <Line
               dataKey="cocoa"
               type="natural"
-              fill="var(--color-cocoa)"
-              fillOpacity={0.4}
               stroke="var(--color-cocoa)"
-              stackId="a"
+              strokeWidth={2}
+              dot={false}
             />
-            <Area
+            <Line
               dataKey="cassava"
               type="natural"
-              fill="var(--color-cassava)"
-              fillOpacity={0.4}
               stroke="var(--color-cassava)"
-              stackId="a"
+              strokeWidth={2}
+              dot={false}
             />
-          </AreaChart>
+          </LineChart>
         </ChartContainer>
       </CardContent>
       <CardFooter>

@@ -1,77 +1,168 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { SidebarItem } from "@/components/dashboard/SidebarItem";
 import {
   LayoutDashboard,
-  ShoppingBag,
+  BrainCircuit,
+  Store,
+  FileText,
+  Users,
+  Bell,
   Settings,
-  LogOut,
+  Briefcase,
+  ChevronLeft,
+  ChevronRight,
   TrendingUp,
+  Tractor,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { useRegisterStore } from "@/lib/store/useRegisterStore";
+import { Logo } from "@/components/layout/Logo";
 
-interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface DashboardSidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export function DashboardSidebar({ className }: SidebarProps) {
-  // Mock pathname for now since we are in a server component mostly, but sidebar uses client logic often.
-  // Actually, we can make this client component or just use Links.
-  // For 'active' state, we need client.
+export function DashboardSidebar({ className }: DashboardSidebarProps) {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const { role } = useRegisterStore(); // Get user role dynamically
 
   return (
-    <div className={cn("pb-12", className)}>
-      <div className="space-y-4 py-4">
-        <div className="px-3 py-2">
-          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-            Overview
-          </h2>
-          <div className="space-y-1">
-            <Link href="/dashboard">
-              <Button variant="ghost" className="w-full justify-start">
-                <LayoutDashboard className="mr-2 h-4 w-4" />
-                Dashboard
-              </Button>
-            </Link>
-            <Link href="/dashboard/rentals">
-              <Button variant="ghost" className="w-full justify-start">
-                <ShoppingBag className="mr-2 h-4 w-4" />
-                My Rentals
-              </Button>
-            </Link>
-            <Link href="/agent">
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-orange-600 hover:text-orange-700 hover:bg-orange-50"
-              >
-                <TrendingUp className="mr-2 h-4 w-4" />
-                Agent: Market Prices
-              </Button>
-            </Link>
+    <div
+      className={cn(
+        "relative flex flex-col h-full bg-background border-r transition-all duration-300 ease-in-out z-50",
+        isCollapsed ? "w-[60px]" : "w-[240px]",
+        className
+      )}
+    >
+      {/* Sidebar Header / Logo */}
+      <div
+        className={cn(
+          "flex items-center h-16 border-b px-4",
+          isCollapsed ? "justify-center" : "justify-between"
+        )}
+      >
+        {!isCollapsed && <Logo textSize="text-xl" />}
+        {isCollapsed && (
+          <Tractor
+            size={20}
+            className={cn("text-green-600 fill-green-100")}
+            strokeWidth={2.5}
+          />
+        )}{" "}
+        {/* Simple logo placeholder */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className={cn(
+            "h-6 w-6 hidden md:flex",
+            isCollapsed
+              ? "absolute -right-3 top-6 bg-background border shadow-sm rounded-full"
+              : ""
+          )}
+          onClick={() => setIsCollapsed(!isCollapsed)}
+        >
+          {isCollapsed ? (
+            <ChevronRight className="h-3 w-3" />
+          ) : (
+            <ChevronLeft className="h-4 w-4" />
+          )}
+        </Button>
+      </div>
+
+      {/* Navigation Items */}
+      <div className="flex-1 overflow-y-auto py-4">
+        <nav className="space-y-1 px-2">
+          {/* Main Workflows */}
+          <SidebarItem
+            icon={LayoutDashboard}
+            label="Overview"
+            href="/dashboard"
+            isCollapsed={isCollapsed}
+          />
+          <SidebarItem
+            icon={BrainCircuit}
+            label="Intelligence"
+            href="/dashboard/intelligence"
+            isCollapsed={isCollapsed}
+          />
+          <SidebarItem
+            icon={Store}
+            label="Marketplace"
+            href="/dashboard/marketplace"
+            isCollapsed={isCollapsed}
+          />
+          <SidebarItem
+            icon={FileText}
+            label="Reports"
+            href="/dashboard/reports"
+            isCollapsed={isCollapsed}
+          />
+          <SidebarItem
+            icon={Users}
+            label="Workspace"
+            href="/dashboard/workspace"
+            isCollapsed={isCollapsed}
+          />
+
+          <Separator className="my-2" />
+
+          {/* Agent Tools (Conditional) */}
+          {role === "AGENT" && (
+            <>
+              <SidebarItem
+                icon={Briefcase}
+                label="Agent Tools"
+                href="/dashboard/agent"
+                isCollapsed={isCollapsed}
+                badge="New"
+              />
+              <SidebarItem
+                icon={TrendingUp}
+                label="Submit Prices"
+                href="/dashboard/agent/submit"
+                isCollapsed={isCollapsed}
+              />
+              <Separator className="my-2" />
+            </>
+          )}
+
+          {/* System / Utility */}
+          <div className={cn("mt-auto", isCollapsed ? "" : "pt-4")}>
+            <SidebarItem
+              icon={Bell}
+              label="Notifications"
+              href="/dashboard/notifications"
+              isCollapsed={isCollapsed}
+              badge={3}
+            />
+            <SidebarItem
+              icon={Settings}
+              label="Settings"
+              href="/dashboard/settings"
+              isCollapsed={isCollapsed}
+            />
           </div>
-        </div>
-        <div className="px-3 py-2">
-          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-            Settings
-          </h2>
-          <div className="space-y-1">
-            <Link href="/settings">
-              <Button variant="ghost" className="w-full justify-start">
-                <Settings className="mr-2 h-4 w-4" />
-                Settings
-              </Button>
-            </Link>
-            <Link href="/logout">
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                Log Out
-              </Button>
-            </Link>
+        </nav>
+      </div>
+
+      {/* User Profile / Footer (Optional - Collapsed state handling needed) */}
+      <div className="p-4 border-t">
+        {!isCollapsed && (
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-full bg-slate-200"></div>
+            <div className="flex flex-col">
+              <span className="text-sm font-medium">Demo User</span>
+              <span className="text-xs text-muted-foreground truncate max-w-[120px]">
+                {role || "User"}
+              </span>
+            </div>
           </div>
-        </div>
+        )}
+        {isCollapsed && (
+          <div className="h-8 w-8 mx-auto rounded-full bg-slate-200"></div>
+        )}
       </div>
     </div>
   );

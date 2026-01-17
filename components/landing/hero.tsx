@@ -8,10 +8,10 @@ const Hero = () => {
         <div className="flex flex-col items-center gap-4 text-center">
           <Link
             href="/about"
-            className="rounded-2xl bg-muted px-4 py-1.5 text-sm font-medium"
+            className="rounded-2xl bg-muted px-4 py-1.5 text-sm font-medium border-green-600 border"
             target="_blank"
           >
-            Empowering Osun State Farmers
+            Empowering Nigerian Farmers
           </Link>
           <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-foreground">
             Shared Machinery & <br className="hidden sm:inline" /> Real-Time
@@ -19,8 +19,8 @@ const Hero = () => {
           </h1>
           <p className="max-w-2xl text-lg leading-normal text-muted-foreground sm:text-xl sm:leading-8">
             Access affordable equipment, track commodity prices, and join
-            cooperative funding pools. AgroShare Osun (OSH) bridges the gap
-            between subsistence and success.
+            cooperative funding pools. Farmgreene bridges the gap between
+            subsistence and success.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
             <Link href="/login" className="w-full sm:w-auto">
