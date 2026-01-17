@@ -23,19 +23,18 @@ const Hero = () => {
             subsistence and success.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-            <Link href="/login" className="w-full sm:w-auto">
+            {/* <Link href="/login" className="w-full sm:w-auto">
               <Button
                 size="lg"
                 className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white rounded-full px-8 h-12"
               >
                 Get Started
               </Button>
-            </Link>
+            </Link> */}
             <Link href="#features" className="w-full sm:w-auto">
               <Button
                 size="lg"
-                variant="outline"
-                className="w-full sm:w-auto rounded-full px-8 h-12"
+                className="w-full sm:w-auto rounded-full px-8 h-12 bg-green-600 hover:bg-green-700"
               >
                 Learn More
               </Button>

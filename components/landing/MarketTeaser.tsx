@@ -52,14 +52,12 @@ export default function MarketTeaser() {
               ))}
             </ul>
 
-            <Link href="/login">
-              <Button
-                size="lg"
-                className="bg-green-600 hover:bg-green-700 text-white rounded-full"
-              >
-                View Market Insights <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
+            <Button
+              size="lg"
+              className="bg-green-600 hover:bg-green-700 text-white rounded-full cursor-default"
+            >
+              Coming Soon
+            </Button>
           </div>
         </div>
       </div>

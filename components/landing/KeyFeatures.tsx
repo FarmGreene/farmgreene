@@ -51,8 +51,8 @@ export default function KeyFeatures() {
             Everything You Need to Scale
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Powerful features built specifically for the unique needs of Osun
-            State's agriculture.
+            Powerful features built specifically for the unique needs of
+            Nigerian agriculture.
           </p>
         </div>
 
