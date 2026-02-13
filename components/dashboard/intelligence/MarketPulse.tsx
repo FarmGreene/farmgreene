@@ -1,89 +1,73 @@
 "use client";
 
 import React from "react";
-import {
-  TrendingUp,
-  TrendingDown,
-  Activity,
-  Sparkles,
-  ChevronRight,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
-
-const PULSE_ITEMS = [
-  {
-    label: "Commodities Rising",
-    count: 5,
-    icon: TrendingUp,
-    color: "text-emerald-500",
-    bg: "bg-emerald-500/10",
-    border: "group-hover:border-emerald-500/30",
-    detail: "Maize leading +6.4%",
-  },
-  {
-    label: "Commodities Falling",
-    count: 3,
-    icon: TrendingDown,
-    color: "text-red-500",
-    bg: "bg-red-500/10",
-    border: "group-hover:border-red-500/30",
-    detail: "Rice down -5.1%",
-  },
-  {
-    label: "High Volatility",
-    count: 2,
-    icon: Activity,
-    color: "text-amber-500",
-    bg: "bg-amber-500/10",
-    border: "group-hover:border-amber-500/30",
-    detail: "Yam active in Makurdi",
-  },
-  {
-    label: "AI Opportunities",
-    count: 4,
-    icon: Sparkles,
-    color: "text-blue-500",
-    bg: "bg-blue-500/10",
-    border: "group-hover:border-blue-500/30",
-    detail: "Arbitrage in Soybeans",
-  },
-];
+import { Sparkles } from "lucide-react";
 
 export default function MarketPulse() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {PULSE_ITEMS.map((item, idx) => (
-        <div
-          key={idx}
-          className={cn(
-            "group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 transition-all duration-300 hover:shadow-md cursor-pointer",
-            item.border,
-          )}
-        >
-          <div className="flex items-start justify-between mb-2">
-            <div className={cn("p-2 rounded-lg", item.bg, item.color)}>
-              <item.icon className="w-4 h-4" />
-            </div>
-            <span className="text-xs font-medium text-slate-400 flex items-center gap-1 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors">
-              View <ChevronRight className="w-3 h-3" />
+    <div className="w-full">
+      <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8 overflow-x-auto pb-2 scrollbar-none">
+        {/* Pulse Item 1: Rising */}
+        <div className="flex items-center gap-3 min-w-max group cursor-pointer">
+          <div className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-xs font-semibold text-slate-700 dark:text-slate-200 group-hover:text-emerald-600 transition-colors">
+              5 Commodities Rising
+            </span>
+            <span className="text-[10px] text-slate-400">
+              Maize leading (+6.4%)
             </span>
           </div>
+        </div>
 
-          <div className="space-y-1">
-            <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-slate-900 dark:text-white">
-                {item.count}
-              </span>
-              <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                {item.label}
-              </span>
-            </div>
-            <p className="text-[10px] font-medium text-slate-400 dark:text-slate-500 tracking-wide uppercase">
-              {item.detail}
-            </p>
+        <div className="hidden md:block h-8 w-px bg-slate-100 dark:bg-slate-800" />
+
+        {/* Pulse Item 2: Falling */}
+        <div className="flex items-center gap-3 min-w-max group cursor-pointer">
+          <div className="h-2 w-2 rounded-full bg-rose-500/50" />
+          <div className="flex flex-col">
+            <span className="text-xs font-semibold text-slate-700 dark:text-slate-200 group-hover:text-rose-600 transition-colors">
+              3 Commodities Falling
+            </span>
+            <span className="text-[10px] text-slate-400">
+              Rice down (-5.1%)
+            </span>
           </div>
         </div>
-      ))}
+
+        <div className="hidden md:block h-8 w-px bg-slate-100 dark:bg-slate-800" />
+
+        {/* Pulse Item 3: Volatility */}
+        <div className="flex items-center gap-3 min-w-max group cursor-pointer">
+          <div className="h-2 w-2 rounded-full bg-amber-500/50" />
+          <div className="flex flex-col">
+            <span className="text-xs font-semibold text-slate-700 dark:text-slate-200 group-hover:text-amber-600 transition-colors">
+              High Volatility
+            </span>
+            <span className="text-[10px] text-slate-400">
+              Yam active in Makurdi
+            </span>
+          </div>
+        </div>
+
+        <div className="hidden md:block h-8 w-px bg-slate-100 dark:bg-slate-800" />
+
+        {/* Pulse Item 4: AI Insight */}
+        <div className="flex items-center gap-3 min-w-max group cursor-pointer">
+          <Sparkles className="w-3.5 h-3.5 text-blue-500" />
+          <div className="flex flex-col">
+            <span className="text-xs font-semibold text-slate-700 dark:text-slate-200 group-hover:text-blue-600 transition-colors">
+              AI Insight
+            </span>
+            <span className="text-[10px] text-slate-400">
+              Arbitrage opp in Soybeans
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

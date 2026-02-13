@@ -1,51 +1,59 @@
 "use client";
 
 import React from "react";
-import { Filter, Calendar, MapPin, Layers } from "lucide-react";
+import { Filter, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 export default function IntelligenceHeader() {
   return (
-    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 py-2">
-      <div className="space-y-1">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-          Market Intelligence
-        </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 max-w-2xl">
-          Track price movements, identify market signals, and uncover
-          opportunities across agricultural commodities.
-        </p>
-      </div>
+    <div className="flex flex-col gap-6 pb-2">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
+            Market Intelligence
+          </h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
+            Real-time market signals and commodity insights.
+          </p>
+        </div>
 
-      <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-8 text-xs font-medium bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400"
-        >
-          <MapPin className="w-3.5 h-3.5 mr-1.5 text-slate-400" />
-          All Regions
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-8 text-xs font-medium bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400"
-        >
-          <Calendar className="w-3.5 h-3.5 mr-1.5 text-slate-400" />
-          This Week
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-8 text-xs font-medium bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400"
-        >
-          <Layers className="w-3.5 h-3.5 mr-1.5 text-slate-400" />
-          All Categories
-        </Button>
-        <Button variant="ghost" size="icon" className="h-8 w-8">
-          <Filter className="w-4 h-4 text-emerald-600" />
-        </Button>
+        <div className="flex items-center gap-3">
+          {/* Minimalist Time Filter */}
+          <div className="flex items-center p-1 bg-slate-100 dark:bg-slate-900 rounded-lg">
+            <button className="px-3 py-1.5 text-xs font-medium text-slate-900 dark:text-white bg-white dark:bg-slate-800 rounded shadow-sm transition-all hover:text-slate-900">
+              7D
+            </button>
+            <button className="px-3 py-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+              30D
+            </button>
+            <button className="px-3 py-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+              3M
+            </button>
+          </div>
+
+          <Separator orientation="vertical" className="h-6 mx-1" />
+
+          {/* Minimalist Options */}
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 border-slate-200 dark:border-slate-800 text-xs font-medium"
+          >
+            <MapPin className="w-3.5 h-3.5 mr-2 text-slate-500" />
+            All Regions
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 border-slate-200 dark:border-slate-800 text-xs font-medium"
+          >
+            <Filter className="w-3.5 h-3.5 mr-2 text-slate-500" />
+            Filter
+          </Button>
+        </div>
       </div>
+      <Separator className="bg-slate-100 dark:bg-slate-800/50" />
     </div>
   );
 }

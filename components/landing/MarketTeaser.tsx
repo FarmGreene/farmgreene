@@ -3,18 +3,28 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { MarketPriceChart } from "@/components/dashboard/MarketPriceChart";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function MarketTeaser() {
   return (
-    <section className="py-20 bg-slate-900 text-slate-50 overflow-hidden">
-      <div className="w-[1440px] max-w-full mx-auto px-6 lg:px-14">
+    <section className="relative py-20 bg-slate-900 text-slate-50 overflow-hidden">
+      <div className="absolute inset-0 z-0 opacity-20">
+        <Image
+          src="/images/market-bg.png"
+          alt="Agricultural Commodities Background"
+          fill
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-slate-900/80" />
+      </div>
+      <div className="relative z-10 w-[1440px] max-w-full mx-auto px-6 lg:px-14">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <div className="order-2 lg:order-1">
             <div className="relative">
               {/* Decorative glow */}
-              <div className="absolute -inset-1 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl blur opacity-25"></div>
+              <div className="absolute -inset-1 bg-linear-to-r from-green-500 to-emerald-600 rounded-2xl blur opacity-25"></div>
               <div className="relative bg-slate-950 rounded-xl border border-slate-800 p-4">
                 {/* Reusing the chart component, wrapped to fit context */}
                 <MarketPriceChart />
