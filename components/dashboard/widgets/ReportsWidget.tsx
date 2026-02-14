@@ -398,7 +398,7 @@ export default function ReportsWidget() {
   });
 
   return (
-    <Card className="col-span-1 md:col-span-2 lg:col-span-4 border-none shadow-md bg-white dark:bg-slate-900 flex flex-col h-full overflow-hidden">
+    <Card className="col-span-1 md:col-span-2 lg:col-span-4 border-none shadow-md bg-white dark:bg-slate-900 flex flex-col h-fit overflow-hidden">
       <CardHeader className="flex flex-col md:flex-row md:items-center justify-between pb-2 border-b space-y-4 md:space-y-0">
         <div>
           <CardTitle className="text-lg font-bold flex items-center gap-2">

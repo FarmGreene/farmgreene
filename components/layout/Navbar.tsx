@@ -48,23 +48,23 @@ export function Navbar() {
 
         {/* Desktop Buttons */}
         <div className="hidden md:flex items-center space-x-4">
-          <Link href="/login">
+          {/* <Link href="/login">
             <Button variant="ghost" size="sm">
               Log in
             </Button>
-          </Link>
-          <Link href="/signup">
-            <Button
-              size="sm"
-              className="bg-green-600 hover:bg-green-700 text-white"
-            >
-              Get Started
-            </Button>
-          </Link>
+          </Link> */}
+          {/* <Link href="/signup"> */}
+          <Button
+            size="sm"
+            className="bg-green-600 hover:bg-green-700 text-white"
+          >
+            Coming soon
+          </Button>
+          {/* </Link> */}
         </div>
 
         {/* Mobile Menu Trigger */}
-        <div className="md:hidden">
+        {/* <div className="md:hidden">
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
@@ -74,12 +74,10 @@ export function Navbar() {
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] sm:w-[400px]">
               <div className="flex flex-col gap-8 mt-10">
-                {/* Mobile Logo */}
                 <div className="px-4">
                   <Logo textSize="text-2xl" />
                 </div>
 
-                {/* Mobile Links */}
                 <nav className="flex flex-col gap-4 px-4">
                   {navLinks.map((link) => (
                     <Link
@@ -98,7 +96,6 @@ export function Navbar() {
                   ))}
                 </nav>
 
-                {/* Mobile Buttons */}
                 <div className="flex flex-col gap-4 mt-4 px-4">
                   <Link href="/login" onClick={() => setIsOpen(false)}>
                     <Button variant="outline" className="w-full h-11 text-base">
@@ -114,7 +111,7 @@ export function Navbar() {
               </div>
             </SheetContent>
           </Sheet>
-        </div>
+        </div> */}
       </div>
     </header>
   );
