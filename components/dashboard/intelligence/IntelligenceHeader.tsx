@@ -4,19 +4,16 @@ import React from "react";
 import { Filter, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import PageHeader from "@/components/PageHeader";
 
 export default function IntelligenceHeader() {
   return (
     <div className="flex flex-col gap-6 pb-2">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
-            Market Intelligence
-          </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
-            Real-time market signals and commodity insights.
-          </p>
-        </div>
+        <PageHeader
+          title="Market Intelligence"
+          description="Real-time market signals and commodity insights."
+        />
 
         <div className="flex items-center gap-3">
           {/* Minimalist Time Filter */}

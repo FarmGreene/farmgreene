@@ -14,7 +14,7 @@ import { ChevronRight } from "lucide-react"; // Removing this if truly unused, b
 
 export default function IntelligencePage() {
   return (
-    <div className="flex flex-col gap-8 max-w-[1600px] w-full px-4 sm:px-6 pb-20">
+    <div className="flex flex-col gap-8 max-w-[1600px] w-full pb-20">
       {/* 1. Header & Pulse */}
       <div className="space-y-6">
         <IntelligenceHeader />

@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { ModeToggle } from "./ModeToggle";
 import { UserRole } from "@/types/marketplace";
 import { Search } from "lucide-react";
+import PageHeader from "@/components/PageHeader";
 
 interface MarketplaceHeaderProps {
   role: UserRole;
@@ -17,14 +18,14 @@ export function MarketplaceHeader({
 }: MarketplaceHeaderProps) {
   return (
     <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-      <div className="space-y-1">
-        <h1 className="text-3xl font-bold tracking-tight">Marketplace</h1>
-        <p className="text-muted-foreground h-6">
-          {role === "owner"
+      <PageHeader
+        title="Marketplace"
+        description={
+          role === "owner"
             ? "Manage your equipment and rental activity"
-            : "Find and rent equipment near you"}
-        </p>
-      </div>
+            : "Find and rent equipment near you"
+        }
+      />
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
         <div className="relative w-full sm:w-[300px]">

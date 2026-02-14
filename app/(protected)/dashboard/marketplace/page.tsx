@@ -18,7 +18,7 @@ export default function MarketplacePage() {
   const [role, setRole] = useState<UserRole>("owner");
 
   return (
-    <div className="flex-1 space-y-6 pt-6">
+    <div className="flex-1 space-y-6">
       <div className="flex flex-col space-y-8">
         {/* Header & Role Switcher */}
         <MarketplaceHeader role={role} onRoleChange={setRole} />

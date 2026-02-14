@@ -24,7 +24,7 @@ export default function AIInsightWidget() {
           <Sparkles className="w-3.5 h-3.5 text-emerald-500/50" />
         </div>
 
-        <div className="p-4 flex flex-col flex-1">
+        <div className="p-4 flex flex-col flex-1 overflow-y-auto min-h-0">
           {/* Primary Insight (The Headline) */}
           <div className="mb-3">
             <h3 className="text-md font-semibold leading-snug text-slate-900 dark:text-slate-100 italic font-serif">
