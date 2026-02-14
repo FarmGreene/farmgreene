@@ -33,13 +33,14 @@ export default function ValueProposition() {
             </div>
           </div>
 
-          <div className="relative h-[400px] lg:h-[500px] rounded-3xl overflow-hidden bg-slate-100 border">
-            {/* Placeholder for an illustration or image */}
-            <div className="absolute inset-0 bg-gradient-to-br from-green-50 to-slate-200 flex items-center justify-center text-muted-foreground">
-              <span className="text-sm uppercase tracking-widest font-semibold">
-                [Illustration: Connected Agriculture]
-              </span>
-            </div>
+          <div className="relative h-[400px] lg:h-[500px] rounded-3xl overflow-hidden bg-white/50 border shadow-lg group">
+            <div className="absolute inset-0 bg-linear-to-br from-green-50/50 to-blue-50/50" />
+            <Image
+              src="/images/value-prop-connect.png"
+              alt="Connected Agriculture Ecosystem"
+              fill
+              className="object-contain p-8 transition-transform duration-700 group-hover:scale-105"
+            />
           </div>
         </div>
       </div>

@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function TrustSection() {
   return (
     <section className="py-20 border-y bg-slate-50/50">
@@ -6,19 +8,17 @@ export default function TrustSection() {
           Trusted by Nigeria Agricultural Leaders
         </p>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-          {/* Placeholders for logos */}
-          <div className="h-12 flex items-center justify-center font-bold text-xl text-slate-400">
-            AGRO-ALLIED
-          </div>
-          <div className="h-12 flex items-center justify-center font-bold text-xl text-slate-400">
-            OSUN CO-OP
-          </div>
-          <div className="h-12 flex items-center justify-center font-bold text-xl text-slate-400">
-            FARM TECH
-          </div>
-          <div className="h-12 flex items-center justify-center font-bold text-xl text-slate-400">
-            GROWTH HUB
+        <div className="relative rounded-2xl overflow-hidden aspect-21/9 md:aspect-21/7 shadow-lg mb-12 group">
+          <Image
+            src="/images/trust-partners.png"
+            alt="Diverse Agricultural Professionals Partnering"
+            fill
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent flex items-end justify-center pb-8">
+            <p className="text-white text-lg md:text-xl font-medium max-w-2xl px-4 drop-shadow-md">
+              "Unified by a common goal: Food security for every Nigerian home."
+            </p>
           </div>
         </div>
 

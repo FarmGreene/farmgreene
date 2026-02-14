@@ -16,6 +16,7 @@ import {
   ChevronRight,
   TrendingUp,
   Tractor,
+  Activity,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -33,14 +34,14 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
       className={cn(
         "relative flex flex-col h-full bg-background border-r transition-all duration-300 ease-in-out z-50",
         isCollapsed ? "w-[60px]" : "w-[240px]",
-        className
+        className,
       )}
     >
       {/* Sidebar Header / Logo */}
       <div
         className={cn(
           "flex items-center h-16 border-b px-4",
-          isCollapsed ? "justify-center" : "justify-between"
+          isCollapsed ? "justify-center" : "justify-between",
         )}
       >
         {!isCollapsed && <Logo textSize="text-xl" />}
@@ -59,7 +60,7 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
             "h-6 w-6 hidden md:flex",
             isCollapsed
               ? "absolute -right-3 top-6 bg-background border shadow-sm rounded-full"
-              : ""
+              : "",
           )}
           onClick={() => setIsCollapsed(!isCollapsed)}
         >
@@ -100,9 +101,9 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
             isCollapsed={isCollapsed}
           />
           <SidebarItem
-            icon={Users}
-            label="Workspace"
-            href="/dashboard/workspace"
+            icon={Activity}
+            label="Watchlist & Alerts"
+            href="/dashboard/watchlist"
             isCollapsed={isCollapsed}
           />
 
@@ -130,6 +131,12 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
 
           {/* System / Utility */}
           <div className={cn("mt-auto", isCollapsed ? "" : "pt-4")}>
+            <SidebarItem
+              icon={Users}
+              label="Manage Workspace"
+              href="/dashboard/workspace"
+              isCollapsed={isCollapsed}
+            />
             <SidebarItem
               icon={Bell}
               label="Notifications"

@@ -53,13 +53,11 @@ export default function UserSegmentation() {
               <p className="text-muted-foreground mb-6 flex-1">
                 {segment.description}
               </p>
-              <Link
-                href="/register"
-                className={`group flex items-center font-medium ${segment.color}`}
+              <span
+                className={`flex items-center font-medium opacity-60 cursor-default`}
               >
-                Get Started{" "}
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Link>
+                Coming Soon
+              </span>
             </div>
           ))}
         </div>

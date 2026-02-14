@@ -6,6 +6,9 @@ import CommodityIndex from "@/components/dashboard/widgets/CommodityIndex";
 import ReportsWidget from "@/components/dashboard/widgets/ReportsWidget";
 import FieldAgentWidget from "@/components/dashboard/widgets/FieldAgentWidget";
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
+import NewsPulse from "@/components/dashboard/widgets/NewsPulse";
+import AIInsightWidget from "@/components/dashboard/widgets/AIInsightWidget";
+import TopMoversWidget from "@/components/dashboard/widgets/TopMoversWidget";
 
 export default function DashboardPage() {
   return (
@@ -38,17 +41,12 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mt-6">
         {/* Left Column: Widgets & Reports */}
         <div className="col-span-1 lg:col-span-3 flex flex-col gap-6">
+          {/* News Pulse (Full Width in this column) */}
           {/* 3 Small Widgets */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div className="bg-slate-100 dark:bg-slate-800 h-40 rounded-xl flex items-center justify-center text-muted-foreground border border-dashed">
-              Top Price Movers
-            </div>
-            <div className="bg-slate-100 dark:bg-slate-800 h-40 rounded-xl flex items-center justify-center text-muted-foreground border border-dashed">
-              AI Insight
-            </div>
-            <div className="bg-slate-100 dark:bg-slate-800 h-40 rounded-xl flex items-center justify-center text-muted-foreground border border-dashed">
-              News Pulse
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 h-[260px]">
+            <TopMoversWidget />
+            <AIInsightWidget />
+            <NewsPulse />
           </div>
 
           {/* Reports Widget */}

@@ -29,7 +29,13 @@ export function SidebarItem({
   badge,
 }: SidebarItemProps) {
   const pathname = usePathname();
-  const isActive = pathname === href || pathname.startsWith(`${href}/`);
+
+  // For the overview page ("/dashboard"), only match exactly
+  // For other routes, match exact or sub-routes
+  const isActive =
+    href === "/dashboard"
+      ? pathname === "/dashboard"
+      : pathname === href || pathname.startsWith(`${href}/`);
 
   const content = (
     <Link
@@ -39,7 +45,7 @@ export function SidebarItem({
         isActive
           ? "bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400"
           : "text-muted-foreground hover:bg-slate-50 hover:text-foreground dark:hover:bg-slate-800",
-        isCollapsed ? "justify-center px-2" : ""
+        isCollapsed ? "justify-center px-2" : "",
       )}
     >
       <Icon
@@ -47,7 +53,7 @@ export function SidebarItem({
           "h-4 w-4 shrink-0 transition-colors",
           isActive
             ? "text-green-600 dark:text-green-400"
-            : "text-muted-foreground group-hover:text-foreground"
+            : "text-muted-foreground group-hover:text-foreground",
         )}
       />
       {!isCollapsed && <span className="flex-1 truncate">{label}</span>}

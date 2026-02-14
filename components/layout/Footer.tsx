@@ -13,7 +13,7 @@ export function Footer() {
           <div className="space-y-6">
             <Logo />
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
-              Empowering Osun State farmers with shared machinery, community
+              Empowering Nigerian farmers with shared machinery, community
               funding, and real-time market intelligence.
             </p>
             <div className="flex space-x-4">

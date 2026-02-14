@@ -12,30 +12,29 @@ export default function CTASection() {
 
       <div className="w-[1440px] max-w-full mx-auto px-6 lg:px-14 relative z-10 text-center">
         <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl mb-6">
-          Ready to unlock smarter farming?
+          We're sowing the seeds for something great
         </h2>
         <p className="text-green-100 text-xl max-w-2xl mx-auto mb-10">
-          Join hundreds of farmers and owners maximizing their potential with
-          Farmgreene.
+          Farmgreene is currently under development. We&apos;re working hard to
+          scale Nigeria&apos;s agricultural success through shared machinery and
+          market intelligence.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link href="/register">
-            <Button
-              size="lg"
-              className="bg-white text-green-900 hover:bg-green-50 w-full sm:w-auto text-base h-12 px-8 rounded-full font-semibold"
-            >
-              Get Started Now
-            </Button>
-          </Link>
-          <Link href="/register?role=owner">
+          <Button
+            size="lg"
+            className="bg-white text-green-900 hover:bg-green-50 w-full sm:w-auto text-base h-12 px-8 rounded-full font-semibold cursor-default"
+          >
+            Coming Soon
+          </Button>
+          {/* <Link href="#features">
             <Button
               size="lg"
               variant="outline"
-              className="border-green-400 text-black hover:bg-green-800 hover:text-white w-full sm:w-auto text-base h-12 px-8 rounded-full"
+              className="border-green-400 text-white hover:bg-green-800 w-full sm:w-auto text-base h-12 px-8 rounded-full"
             >
-              List Your Equipment
+              Explore Features
             </Button>
-          </Link>
+          </Link> */}
         </div>
       </div>
     </section>
