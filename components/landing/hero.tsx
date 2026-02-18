@@ -16,8 +16,9 @@ const Hero = () => {
               </span>
             </h1>
             <p className="max-w-xl text-lg text-slate-600 dark:text-slate-300 sm:text-xl leading-relaxed">
-              Access affordable equipment, track commodity prices, and join
-              cooperative funding pools. Farmgreene bridges the gap.
+              Access affordable equipment, track commodity prices, and become a
+              field agent to contribute to the vision. Farmgreene bridges the
+              gap.
             </p>
             <div className="flex flex-wrap items-center gap-6">
               <Link href="/signup">
@@ -25,7 +26,7 @@ const Hero = () => {
                   size="lg"
                   className="rounded-full px-8 h-14 bg-brand-600 hover:bg-brand-700 text-white text-lg font-semibold shadow-xl shadow-brand-600/20"
                 >
-                  Join Now
+                  Become an Agent
                 </Button>
               </Link>
               <Link

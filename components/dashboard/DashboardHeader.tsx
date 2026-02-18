@@ -19,10 +19,25 @@ import { SidebarSwitcher } from "@/components/layout/SidebarSwitcher";
 import { UserProfilePopover } from "@/components/dashboard/header/UserProfilePopover";
 import { QuickAlertCreateDialog } from "@/components/dashboard/header/QuickAlertCreateDialog";
 import Link from "next/link";
+import { FieldAgentOnboardingModal } from "@/components/onboarding/field-agent/FieldAgentOnboardingModal";
+import { useAuthStore } from "@/lib/store/useAuthStore";
 
 export function DashboardHeader() {
   const pathname = usePathname();
   const segments = pathname.split("/").filter((item) => item !== "");
+  const [showOnboarding, setShowOnboarding] = React.useState(false);
+  const user = useAuthStore((state) => state.user);
+
+  // Auto-show onboarding modal for agents who haven't completed it
+  React.useEffect(() => {
+    if (!user) return;
+
+    // Check if user is an agent and hasn't been verified
+    const isAgent = user.roles.includes("AGENT");
+    if (isAgent && user.isAgentVerified === false) {
+      setShowOnboarding(true);
+    }
+  }, [user]);
 
   // Generate breadcrumbs from path segments
   const breadcrumbItems = segments.map((segment, index) => {
@@ -107,6 +122,7 @@ export function DashboardHeader() {
           <Button
             size="sm"
             className="gap-2 bg-green-600 hover:bg-green-700 text-white"
+            onClick={() => setShowOnboarding(true)}
           >
             Become an agent
           </Button>
@@ -117,6 +133,11 @@ export function DashboardHeader() {
           <UserProfilePopover />
         </div>
       </div>
+
+      <FieldAgentOnboardingModal
+        open={showOnboarding}
+        onOpenChange={setShowOnboarding}
+      />
     </header>
   );
 }

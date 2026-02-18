@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
+import { QueryProvider } from "@/components/providers/QueryProvider";
+import { AuthProvider } from "@/components/providers/AuthProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -40,7 +42,7 @@ export const metadata: Metadata = {
     siteName: "Farmgreene",
     images: [
       {
-        url: "/og-image.jpg", // We should probably add a placeholder OG image later
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Farmgreene Platform",
@@ -71,7 +73,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${outfit.variable} antialiased font-sans`}
       >
-        {children}
+        <QueryProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );

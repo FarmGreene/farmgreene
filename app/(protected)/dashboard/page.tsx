@@ -1,5 +1,5 @@
+"use client";
 import React from "react";
-import { DashboardGrid } from "@/components/dashboard/DashboardGrid";
 import MarketSnapshot from "@/components/dashboard/widgets/MarketSnapshot";
 import IndexWidget from "@/components/dashboard/widgets/IndexWidget";
 import CommodityIndex from "@/components/dashboard/widgets/CommodityIndex";

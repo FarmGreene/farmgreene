@@ -8,10 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useRegisterStore } from "@/lib/store/useRegisterStore";
 import SelectRole from "./select-role";
+import { useRegister } from "@/lib/hooks/useAuth";
 
 const registerSchema = z.object({
   fullName: z
@@ -29,9 +28,8 @@ const registerSchema = z.object({
 type RegisterValues = z.infer<typeof registerSchema>;
 
 export function RegisterForm() {
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
   const { step, role, setStep } = useRegisterStore();
+  const { mutate: registerUser, isPending } = useRegister();
 
   const {
     register,
@@ -47,21 +45,24 @@ export function RegisterForm() {
   });
 
   // Sync role from store to form when it changes
-  // This ensures the form submission has the correct role
-  // We can also set it when advancing step, but this is safer
   if (role) {
     setValue("role", role);
   }
 
   async function onSubmit(data: RegisterValues) {
-    setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      // For demo, route to role-specific dashboard (mocked)
-      console.log("Registered with:", data);
-      router.push("/dashboard");
-    }, 1000);
+    // Split fullName into firstName and lastName
+    const nameParts = data.fullName.trim().split(/\s+/);
+    const firstName = nameParts[0] || "";
+    const lastName = nameParts.slice(1).join(" ") || "";
+
+    // Transform data for backend API
+    registerUser({
+      email: data.email,
+      password: data.password,
+      firstName,
+      lastName,
+      roles: [data.role as "FARMER" | "OWNER" | "AGENT"], // Convert single role to array
+    });
   }
 
   return (
@@ -90,7 +91,7 @@ export function RegisterForm() {
                   placeholder="John Doe"
                   autoCapitalize="words"
                   autoComplete="name"
-                  disabled={isLoading}
+                  disabled={isPending}
                   {...register("fullName")}
                   className="h-11"
                 />
@@ -110,7 +111,7 @@ export function RegisterForm() {
                   autoCapitalize="none"
                   autoComplete="email"
                   autoCorrect="off"
-                  disabled={isLoading}
+                  disabled={isPending}
                   {...register("email")}
                   className="h-11"
                 />
@@ -125,7 +126,7 @@ export function RegisterForm() {
                   id="password"
                   type="password"
                   autoComplete="new-password"
-                  disabled={isLoading}
+                  disabled={isPending}
                   {...register("password")}
                   className="h-11"
                 />
@@ -144,9 +145,9 @@ export function RegisterForm() {
               <Button
                 className="w-full h-11 bg-green-600 hover:bg-green-700 text-white font-semibold text-base"
                 type="submit"
-                disabled={isLoading}
+                disabled={isPending}
               >
-                {isLoading ? (
+                {isPending ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
                   "Create Account"
@@ -157,7 +158,7 @@ export function RegisterForm() {
                 variant="ghost"
                 className="w-full"
                 onClick={() => setStep(1)}
-                disabled={isLoading}
+                disabled={isPending}
               >
                 Back to Role Selection
               </Button>

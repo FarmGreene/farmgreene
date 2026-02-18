@@ -37,7 +37,7 @@ export function Navbar() {
                   "transition-colors hover:text-foreground/80 py-1 border-b-2",
                   pathname === link.href
                     ? "text-green-600 border-green-600"
-                    : "text-foreground/60 border-transparent"
+                    : "text-foreground/60 border-transparent",
                 )}
               >
                 {link.name}
@@ -48,19 +48,19 @@ export function Navbar() {
 
         {/* Desktop Buttons */}
         <div className="hidden md:flex items-center space-x-4">
-          {/* <Link href="/login">
+          <Link href="/login">
             <Button variant="ghost" size="sm">
               Log in
             </Button>
-          </Link> */}
-          {/* <Link href="/signup"> */}
-          <Button
-            size="sm"
-            className="bg-green-600 hover:bg-green-700 text-white"
-          >
-            Coming soon
-          </Button>
-          {/* </Link> */}
+          </Link>
+          <Link href="/signup">
+            <Button
+              size="sm"
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              Sign up
+            </Button>
+          </Link>
         </div>
 
         {/* Mobile Menu Trigger */}
