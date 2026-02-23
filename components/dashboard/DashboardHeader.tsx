@@ -34,7 +34,7 @@ export function DashboardHeader() {
 
     // Check if user is an agent and hasn't been verified
     const isAgent = user.roles.includes("AGENT");
-    if (isAgent && user.isAgentVerified === false) {
+    if (isAgent && user.agentStatus !== "active") {
       setShowOnboarding(true);
     }
   }, [user]);
@@ -113,13 +113,14 @@ export function DashboardHeader() {
         </div>
 
         {/* Separator */}
-        <div className="h-6 w-[1px] bg-slate-200 dark:bg-slate-700 hidden sm:block" />
+        <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block" />
 
         {/* Actions */}
         <div className="flex items-center gap-2">
           {/* Quick Alert Dialog */}
           <QuickAlertCreateDialog />
           <Button
+            id="agent-onboarding-trigger"
             size="sm"
             className="gap-2 bg-green-600 hover:bg-green-700 text-white"
             onClick={() => setShowOnboarding(true)}

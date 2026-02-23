@@ -9,8 +9,10 @@ import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 import NewsPulse from "@/components/dashboard/widgets/NewsPulse";
 import AIInsightWidget from "@/components/dashboard/widgets/AIInsightWidget";
 import TopMoversWidget from "@/components/dashboard/widgets/TopMoversWidget";
+import { useHasRole } from "@/lib/store/useRoleHooks";
 
 export default function DashboardPage() {
+  const isAgent = useHasRole("AGENT");
   return (
     <div className="space-y-6">
       {/* Row 1: Snapshot (2 cols) + Indices (1 col each) */}
@@ -55,7 +57,7 @@ export default function DashboardPage() {
 
         {/* Right Column: Commodity Index (Scrollable) */}
         <div className="col-span-1 lg:col-span-2 flex flex-col space-y-6">
-          <FieldAgentWidget />
+          {isAgent && <FieldAgentWidget />}
           <CommodityIndex />
         </div>
       </div>

@@ -88,59 +88,64 @@ export function StepMarketCoverage() {
       </div>
 
       <div className="space-y-4">
-        <FormField
-          control={control}
-          name="state"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Primary State</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select State" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {NIGERIAN_STATES.map((state) => (
-                    <SelectItem key={state} value={state}>
-                      {state}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="flex items-start gap-4">
+          <FormField
+            control={control}
+            name="state"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormLabel>Primary State</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select State" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {NIGERIAN_STATES.map((state) => (
+                      <SelectItem key={state} value={state}>
+                        {state}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={control}
-          name="lga"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Local Government Area (LGA)</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-                disabled={!selectedState}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select LGA" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {MOCK_LGAS.map((lga) => (
-                    <SelectItem key={lga} value={lga}>
-                      {lga}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={control}
+            name="lga"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormLabel>Local Government Area (LGA)</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  disabled={!selectedState}
+                >
+                  <FormControl>
+                    <SelectTrigger className="w-fullV">
+                      <SelectValue placeholder="Select LGA" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {MOCK_LGAS.map((lga) => (
+                      <SelectItem key={lga} value={lga}>
+                        {lga}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <FormField
           control={control}

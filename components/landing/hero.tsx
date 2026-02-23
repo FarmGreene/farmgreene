@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import WaitlistInput from "@/components/landing/WaitlistInput";
 
 const Hero = () => {
   return (
@@ -51,21 +52,21 @@ const Hero = () => {
                 View Market Live
               </Link>
             </div>
-
-            <div className="pt-8 flex items-center gap-8">
+            {/* TODO: Bring this to live when we have partners */}
+            {/* <div className="pt-8 flex items-center gap-8">
               <p className="text-sm font-medium text-slate-500">
                 Trusted by
                 <br />
                 leading co-ops
               </p>
               <div className="flex gap-4 opacity-50 grayscale">
-                {/* Simple circles/icons to represent logos as in reference */}
                 <div className="h-8 w-8 rounded-full bg-slate-300"></div>
                 <div className="h-8 w-8 rounded-full bg-slate-300"></div>
                 <div className="h-8 w-8 rounded-full bg-slate-300"></div>
                 <div className="h-8 w-8 rounded-full bg-slate-300"></div>
               </div>
-            </div>
+            </div> */}
+            <WaitlistInput />
           </div>
 
           <div className="order-1 lg:order-2 relative h-[600px] w-full hidden lg:block">

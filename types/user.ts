@@ -6,7 +6,8 @@ export interface User {
   firstName: string;
   lastName: string;
   roles: UserRole[];
-  isAgentVerified?: boolean;
+  password?: string;
+  agentStatus?: "pending" | "active" | "suspended" | "rejected" | "banned";
 }
 
 export enum Permission {

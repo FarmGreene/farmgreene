@@ -13,7 +13,6 @@ import HowItWorks from "@/components/landing/HowItWorks";
 import MarketTeaser from "@/components/landing/MarketTeaser";
 import TrustSection from "@/components/landing/TrustSection";
 import CTASection from "@/components/landing/CTASection";
-import { Logo } from "@/components/layout/Logo";
 
 export default function LandingPage() {
   return (

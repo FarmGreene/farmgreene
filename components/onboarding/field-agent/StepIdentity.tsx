@@ -89,12 +89,12 @@ export function StepIdentity() {
         <h4 className="text-sm font-medium text-gray-900 mb-4">
           Optional Verification Docs
         </h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="flex flex-col sm:flex-row items-start gap-4">
           <FormField
             control={control}
             name="nin"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="flex-1">
                 <FormLabel>
                   National ID (NIN){" "}
                   <span className="text-xs text-gray-400 font-normal">
@@ -112,7 +112,7 @@ export function StepIdentity() {
             control={control}
             name="bvn"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="flex-1">
                 <FormLabel>
                   BVN{" "}
                   <span className="text-xs text-gray-400 font-normal">
@@ -122,7 +122,7 @@ export function StepIdentity() {
                 <FormControl>
                   <Input placeholder="11-digit BVN" {...field} />
                 </FormControl>
-                <FormDescription className="text-xs">
+                <FormDescription className="text-[11px]">
                   Only required if you want to receive payments.
                 </FormDescription>
                 <FormMessage />
