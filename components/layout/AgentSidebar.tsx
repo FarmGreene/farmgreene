@@ -14,13 +14,13 @@ import {
   ChevronLeft,
   ChevronRight,
   Tractor,
+  type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Logo } from "@/components/layout/Logo";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
@@ -32,21 +32,21 @@ interface AgentSidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function AgentSidebar({ className }: AgentSidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const pathname = usePathname();
+  const pathname = usePathname(); // needed for PrimaryActionItem active state
 
   return (
     <div
       className={cn(
         "relative flex flex-col h-full bg-background border-r transition-all duration-300 ease-in-out z-50",
         isCollapsed ? "w-[60px]" : "w-[240px]",
-        className
+        className,
       )}
     >
       {/* Sidebar Header / Logo */}
       <div
         className={cn(
           "flex items-center h-16 border-b px-4",
-          isCollapsed ? "justify-center" : "justify-between"
+          isCollapsed ? "justify-center" : "justify-between",
         )}
       >
         {!isCollapsed && <Logo textSize="text-xl" />}
@@ -64,7 +64,7 @@ export function AgentSidebar({ className }: AgentSidebarProps) {
             "h-6 w-6 hidden md:flex",
             isCollapsed
               ? "absolute -right-3 top-6 bg-background border shadow-sm rounded-full"
-              : ""
+              : "",
           )}
           onClick={() => setIsCollapsed(!isCollapsed)}
         >
@@ -83,7 +83,7 @@ export function AgentSidebar({ className }: AgentSidebarProps) {
           <SidebarItem
             icon={Home}
             label="Overview"
-            href="/agent/overview"
+            href="/agent"
             isCollapsed={isCollapsed}
           />
           <SidebarItem
@@ -92,17 +92,14 @@ export function AgentSidebar({ className }: AgentSidebarProps) {
             href="/agent/assignments"
             isCollapsed={isCollapsed}
           />
+          <SidebarItem
+            icon={Tag}
+            label="Update Prices"
+            href="/agent/update-prices"
+            isCollapsed={isCollapsed}
+          />
 
           {/* Primary Action - Custom Styling */}
-          <div className="py-2">
-            <PrimaryActionItem
-              icon={Tag}
-              label="Update Prices"
-              href="/agent/update-prices"
-              isCollapsed={isCollapsed}
-              isActive={pathname.startsWith("/agent/update-prices")}
-            />
-          </div>
 
           <Separator className="my-2" />
 
@@ -163,19 +160,21 @@ export function AgentSidebar({ className }: AgentSidebarProps) {
   );
 }
 
-// Internal component for the highlighted action
+// Internal component for the highlighted primary action
 function PrimaryActionItem({
   icon: Icon,
   label,
   href,
   isCollapsed,
   isActive,
+  className,
 }: {
-  icon: any;
+  icon: LucideIcon;
   label: string;
   href: string;
   isCollapsed: boolean;
   isActive: boolean;
+  className?: string;
 }) {
   const content = (
     <Link
@@ -185,13 +184,14 @@ function PrimaryActionItem({
         isActive
           ? "bg-green-600 text-white shadow-md hover:bg-green-700"
           : "bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-900/50",
-        isCollapsed ? "justify-center px-2" : ""
+        isCollapsed ? "justify-center px-2" : "",
+        className,
       )}
     >
       <Icon
         className={cn(
           "h-4 w-4 shrink-0 transition-colors",
-          isActive ? "text-white" : "text-green-700 dark:text-green-400"
+          isActive ? "text-white" : "text-green-700 dark:text-green-400",
         )}
       />
       {!isCollapsed && <span className="flex-1 truncate">{label}</span>}

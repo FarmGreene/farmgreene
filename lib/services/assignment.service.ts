@@ -1,0 +1,52 @@
+import { apiClient } from "@/lib/api/axios";
+
+export interface Assignment {
+  id: string;
+  commodity: {
+    id: string;
+    name: string;
+    category: string | null;
+    unit: string | null;
+  };
+  marketName: string | null;
+  region: string | null;
+  state: string | null;
+  dueDate: string;
+  frequency: "DAILY" | "WEEKLY";
+  status: "PENDING" | "SUBMITTED" | "MISSED";
+  submissionId: string | null;
+  note: string | null;
+  countdown: string;
+  createdAt: string;
+}
+
+export interface AssignmentsResponse {
+  data: Assignment[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
+export interface AssignmentQueryParams {
+  status?: string;
+  commodityId?: string;
+  fromDate?: string;
+  toDate?: string;
+  page?: number;
+  limit?: number;
+}
+
+export async function getAssignments(
+  params?: AssignmentQueryParams,
+): Promise<AssignmentsResponse> {
+  const res = await apiClient.get("/assignments", { params });
+  return res.data;
+}
+
+export async function getAssignmentById(id: string): Promise<Assignment> {
+  const res = await apiClient.get(`/assignments/${id}`);
+  return res.data;
+}

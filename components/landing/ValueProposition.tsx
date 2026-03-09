@@ -13,7 +13,7 @@ export default function ValueProposition() {
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 Farmgreene bridges the gap between access, ownership, and
-                intelligence—unlocking efficiency across the agricultural value
+                intelligence. Unlocking efficiency across the agricultural value
                 chain.
               </p>
             </div>
@@ -38,8 +38,10 @@ export default function ValueProposition() {
             <Image
               src="/images/value-prop-connect.png"
               alt="Connected Agriculture Ecosystem"
-              fill
+              // fill
               className="object-cover transition-transform duration-700 group-hover:scale-105 w-full h-full"
+              width={1000}
+              height={1000}
             />
           </div>
         </div>
