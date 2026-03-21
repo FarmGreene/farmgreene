@@ -30,6 +30,13 @@ export interface AssignmentsResponse {
   };
 }
 
+export interface AssignmentMetrics {
+  dueToday: number;
+  overdue: number;
+  completed: number;
+  upcoming: number;
+}
+
 export interface AssignmentQueryParams {
   status?: string;
   commodityId?: string;
@@ -48,5 +55,10 @@ export async function getAssignments(
 
 export async function getAssignmentById(id: string): Promise<Assignment> {
   const res = await apiClient.get(`/assignments/${id}`);
+  return res.data;
+}
+
+export async function getAssignmentMetrics(): Promise<AssignmentMetrics> {
+  const res = await apiClient.get("/assignments/metrics");
   return res.data;
 }

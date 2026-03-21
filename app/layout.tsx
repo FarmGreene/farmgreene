@@ -3,6 +3,7 @@ import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import { AuthProvider } from "@/components/providers/AuthProvider";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -73,9 +74,11 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${outfit.variable} antialiased font-sans`}
       >
-        <QueryProvider>
-          <AuthProvider>{children}</AuthProvider>
-        </QueryProvider>
+        <NuqsAdapter>
+          <QueryProvider>
+            <AuthProvider>{children}</AuthProvider>
+          </QueryProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );

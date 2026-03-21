@@ -1,12 +1,12 @@
 import { AgentMissionCard } from "@/components/dashboard/agent/AgentMissionCard";
 import { AgentQuickStats } from "@/components/dashboard/agent/AgentQuickStats";
+import { AgentUpcomingAssignments } from "@/components/dashboard/agent/AgentUpcomingAssignments";
 import { AgentNotifications } from "@/components/dashboard/agent/AgentNotifications";
 import { AgentPerformanceSnapshot } from "@/components/dashboard/agent/AgentPerformanceSnapshot";
-import { AgentTodaysTasks } from "@/components/dashboard/agent/AgentTodaysTasks";
 
 export default function AgentOverviewPage() {
   return (
-    <div className="flex-1 space-y-6  w-full pb-8 pt-4">
+    <div className="flex-1 space-y-6  w-full pb-6 pt-2">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Agent Overview</h2>
@@ -16,14 +16,10 @@ export default function AgentOverviewPage() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-8">
         {/* Section A: Mission Card */}
         <section>
-          <AgentMissionCard
-            status="not-started"
-            completedSubmissions={0}
-            totalSubmissions={5}
-          />
+          <AgentMissionCard />
         </section>
 
         {/* Section B: Quick Stats */}
@@ -31,9 +27,9 @@ export default function AgentOverviewPage() {
           <AgentQuickStats />
         </section>
 
-        {/* Section C: Today's Tasks */}
+        {/* Section C: Upcoming Assignments */}
         <section>
-          <AgentTodaysTasks />
+          <AgentUpcomingAssignments />
         </section>
 
         {/* Bottom Split: Notifications & Performance */}

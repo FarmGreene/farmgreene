@@ -25,6 +25,52 @@ export enum NigerianRegion {
   SOUTH_WEST = "SOUTH_WEST",
 }
 
+export enum NigerianState {
+  // North Central
+  BENUE = "BENUE",
+  FCT = "FCT",
+  KOGI = "KOGI",
+  KWARA = "KWARA",
+  NASARAWA = "NASARAWA",
+  NIGER = "NIGER",
+  PLATEAU = "PLATEAU",
+  // North East
+  ADAMAWA = "ADAMAWA",
+  BAUCHI = "BAUCHI",
+  BORNO = "BORNO",
+  GOMBE = "GOMBE",
+  TARABA = "TARABA",
+  YOBE = "YOBE",
+  // North West
+  JIGAWA = "JIGAWA",
+  KADUNA = "KADUNA",
+  KANO = "KANO",
+  KATSINA = "KATSINA",
+  KEBBI = "KEBBI",
+  SOKOTO = "SOKOTO",
+  ZAMFARA = "ZAMFARA",
+  // South East
+  ABIA = "ABIA",
+  ANAMBRA = "ANAMBRA",
+  EBONYI = "EBONYI",
+  ENUGU = "ENUGU",
+  IMO = "IMO",
+  // South South
+  AKWA_IBOM = "AKWA_IBOM",
+  BAYELSA = "BAYELSA",
+  CROSS_RIVER = "CROSS_RIVER",
+  DELTA = "DELTA",
+  EDO = "EDO",
+  RIVERS = "RIVERS",
+  // South West
+  EKITI = "EKITI",
+  LAGOS = "LAGOS",
+  OGUN = "OGUN",
+  ONDO = "ONDO",
+  OSUN = "OSUN",
+  OYO = "OYO",
+}
+
 // ─── Labels ───────────────────────────────────────────────────────────────────
 
 export const CATEGORY_LABELS: Record<CommodityCategory, string> = {
@@ -44,6 +90,87 @@ export const REGION_LABELS: Record<NigerianRegion, string> = {
   SOUTH_EAST: "South East",
   SOUTH_SOUTH: "South South",
   SOUTH_WEST: "South West",
+};
+
+export const STATE_LABELS: Record<NigerianState, string> = {
+  BENUE: "Benue",
+  FCT: "FCT (Abuja)",
+  KOGI: "Kogi",
+  KWARA: "Kwara",
+  NASARAWA: "Nasarawa",
+  NIGER: "Niger",
+  PLATEAU: "Plateau",
+  ADAMAWA: "Adamawa",
+  BAUCHI: "Bauchi",
+  BORNO: "Borno",
+  GOMBE: "Gombe",
+  TARABA: "Taraba",
+  YOBE: "Yobe",
+  JIGAWA: "Jigawa",
+  KADUNA: "Kaduna",
+  KANO: "Kano",
+  KATSINA: "Katsina",
+  KEBBI: "Kebbi",
+  SOKOTO: "Sokoto",
+  ZAMFARA: "Zamfara",
+  ABIA: "Abia",
+  ANAMBRA: "Anambra",
+  EBONYI: "Ebonyi",
+  ENUGU: "Enugu",
+  IMO: "Imo",
+  AKWA_IBOM: "Akwa Ibom",
+  BAYELSA: "Bayelsa",
+  CROSS_RIVER: "Cross River",
+  DELTA: "Delta",
+  EDO: "Edo",
+  RIVERS: "Rivers",
+  EKITI: "Ekiti",
+  LAGOS: "Lagos",
+  OGUN: "Ogun",
+  ONDO: "Ondo",
+  OSUN: "Osun",
+  OYO: "Oyo",
+};
+
+/** Maps each state to its geopolitical zone */
+export const STATE_REGION_MAP: Record<NigerianState, NigerianRegion> = {
+  [NigerianState.BENUE]: NigerianRegion.NORTH_CENTRAL,
+  [NigerianState.FCT]: NigerianRegion.NORTH_CENTRAL,
+  [NigerianState.KOGI]: NigerianRegion.NORTH_CENTRAL,
+  [NigerianState.KWARA]: NigerianRegion.NORTH_CENTRAL,
+  [NigerianState.NASARAWA]: NigerianRegion.NORTH_CENTRAL,
+  [NigerianState.NIGER]: NigerianRegion.NORTH_CENTRAL,
+  [NigerianState.PLATEAU]: NigerianRegion.NORTH_CENTRAL,
+  [NigerianState.ADAMAWA]: NigerianRegion.NORTH_EAST,
+  [NigerianState.BAUCHI]: NigerianRegion.NORTH_EAST,
+  [NigerianState.BORNO]: NigerianRegion.NORTH_EAST,
+  [NigerianState.GOMBE]: NigerianRegion.NORTH_EAST,
+  [NigerianState.TARABA]: NigerianRegion.NORTH_EAST,
+  [NigerianState.YOBE]: NigerianRegion.NORTH_EAST,
+  [NigerianState.JIGAWA]: NigerianRegion.NORTH_WEST,
+  [NigerianState.KADUNA]: NigerianRegion.NORTH_WEST,
+  [NigerianState.KANO]: NigerianRegion.NORTH_WEST,
+  [NigerianState.KATSINA]: NigerianRegion.NORTH_WEST,
+  [NigerianState.KEBBI]: NigerianRegion.NORTH_WEST,
+  [NigerianState.SOKOTO]: NigerianRegion.NORTH_WEST,
+  [NigerianState.ZAMFARA]: NigerianRegion.NORTH_WEST,
+  [NigerianState.ABIA]: NigerianRegion.SOUTH_EAST,
+  [NigerianState.ANAMBRA]: NigerianRegion.SOUTH_EAST,
+  [NigerianState.EBONYI]: NigerianRegion.SOUTH_EAST,
+  [NigerianState.ENUGU]: NigerianRegion.SOUTH_EAST,
+  [NigerianState.IMO]: NigerianRegion.SOUTH_EAST,
+  [NigerianState.AKWA_IBOM]: NigerianRegion.SOUTH_SOUTH,
+  [NigerianState.BAYELSA]: NigerianRegion.SOUTH_SOUTH,
+  [NigerianState.CROSS_RIVER]: NigerianRegion.SOUTH_SOUTH,
+  [NigerianState.DELTA]: NigerianRegion.SOUTH_SOUTH,
+  [NigerianState.EDO]: NigerianRegion.SOUTH_SOUTH,
+  [NigerianState.RIVERS]: NigerianRegion.SOUTH_SOUTH,
+  [NigerianState.EKITI]: NigerianRegion.SOUTH_WEST,
+  [NigerianState.LAGOS]: NigerianRegion.SOUTH_WEST,
+  [NigerianState.OGUN]: NigerianRegion.SOUTH_WEST,
+  [NigerianState.ONDO]: NigerianRegion.SOUTH_WEST,
+  [NigerianState.OSUN]: NigerianRegion.SOUTH_WEST,
+  [NigerianState.OYO]: NigerianRegion.SOUTH_WEST,
 };
 
 // ─── Commodity ────────────────────────────────────────────────────────────────
@@ -100,7 +227,7 @@ export interface CommodityPriceEntry {
   };
   price: number;
   region: NigerianRegion;
-  state: string;
+  state: NigerianState;
   market: string | null;
   date: string;
   status: PriceSubmissionStatus;
@@ -197,7 +324,7 @@ export type UpdateCommodityBody = Partial<CreateCommodityBody>;
 export interface SubmitPriceBody {
   price: number;
   region: NigerianRegion;
-  state: string;
+  state: NigerianState;
   market?: string;
   date: string;
 }

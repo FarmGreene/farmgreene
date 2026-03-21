@@ -76,7 +76,7 @@ export function AgentAssignmentCard({
       ? "border-l-4 border-l-amber-500"
       : "border-l-4 border-l-slate-200 dark:border-l-slate-700";
 
-  const submitUrl = `/agent/update-prices?commodityId=${assignment.commodity.id}&market=${encodeURIComponent(assignment.marketName ?? "")}&assignmentId=${assignment.id}`;
+  const submitUrl = `/agent/assignments/${assignment.commodity.id}?assignmentId=${assignment.id}&market=${encodeURIComponent(assignment.marketName ?? "")}`;
 
   return (
     <motion.div

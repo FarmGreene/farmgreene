@@ -8,6 +8,7 @@ import { Logo } from "@/components/layout/Logo";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/lib/store/useAuthStore";
 
 const navLinks = [
   { name: "About", href: "/about" },
@@ -20,6 +21,7 @@ const navLinks = [
 export function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const { isAuthenticated, user } = useAuthStore();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
@@ -48,19 +50,32 @@ export function Navbar() {
 
         {/* Desktop Buttons */}
         <div className="hidden md:flex items-center space-x-4">
-          <Link href="/login">
-            <Button variant="ghost" size="sm">
-              Log in
-            </Button>
-          </Link>
-          <Link href="/signup">
-            <Button
-              size="sm"
-              className="bg-green-600 hover:bg-green-700 text-white"
-            >
-              Sign up
-            </Button>
-          </Link>
+          {isAuthenticated ? (
+            <Link href={user?.roles.includes("AGENT") ? "/agent" : "/dashboard"}>
+              <Button
+                size="sm"
+                className="bg-green-600 hover:bg-green-700 text-white font-semibold"
+              >
+                Go to dashboard
+              </Button>
+            </Link>
+          ) : (
+            <>
+              <Link href="/login">
+                <Button variant="ghost" size="sm">
+                  Log in
+                </Button>
+              </Link>
+              <Link href="/signup">
+                <Button
+                  size="sm"
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                >
+                  Sign up
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu Trigger */}
@@ -97,17 +112,30 @@ export function Navbar() {
                 </nav>
 
                 <div className="flex flex-col gap-4 mt-4 px-4">
-                  <Link href="/login" onClick={() => setIsOpen(false)}>
-                    <Button variant="outline" className="w-full h-11 text-base">
-                      Log in
-                    </Button>
-                  </Link>
-                  <Link href="/signup" onClick={() => setIsOpen(false)}>
-                    <Button className="w-full h-11 text-base bg-green-600 hover:bg-green-700 text-white">
-                      Get Started
-                    </Button>
-                  </Link>
-                </div>
+                  {isAuthenticated ? (
+                    <Link
+                      href={user?.roles.includes("AGENT") ? "/agent" : "/dashboard"}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <Button className="w-full h-11 text-base bg-green-600 hover:bg-green-700 text-white">
+                        Go to dashboard
+                      </Button>
+                    </Link>
+                  ) : (
+                    <>
+                      <Link href="/login" onClick={() => setIsOpen(false)}>
+                        <Button variant="outline" className="w-full h-11 text-base">
+                          Log in
+                        </Button>
+                      </Link>
+                      <Link href="/signup" onClick={() => setIsOpen(false)}>
+                        <Button className="w-full h-11 text-base bg-green-600 hover:bg-green-700 text-white">
+                          Get Started
+                        </Button>
+                      </Link>
+                    </>
+                  )}
+                 </div>
               </div>
             </SheetContent>
           </Sheet>

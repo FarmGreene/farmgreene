@@ -1,4 +1,4 @@
-import apiClient from "@/lib/api/axios";
+import { apiClient } from "@/lib/api/axios";
 import type {
   Commodity,
   CommodityWithLatest,
@@ -17,59 +17,59 @@ import type {
 
 // ─── Public Endpoints ─────────────────────────────────────────────────────────
 
-/** GET /app/commodities — paginated list with filters */
+/** GET /commodities — paginated list with filters */
 export async function getCommodities(
   params?: CommodityQueryParams,
 ): Promise<PaginatedResponse<CommodityWithLatest>> {
-  const { data } = await apiClient.get("/app/commodities", { params });
+  const { data } = await apiClient.get("/commodities", { params });
   return data;
 }
 
-/** GET /app/commodities/detail?id= */
+/** GET /commodities/detail?id= */
 export async function getCommodityById(
   id: string,
 ): Promise<CommodityWithLatest> {
-  const { data } = await apiClient.get("/app/commodities/detail", {
+  const { data } = await apiClient.get("/commodities/detail", {
     params: { id },
   });
   return data;
 }
 
-/** GET /app/commodities/by-slug?slug= */
+/** GET /commodities/by-slug?slug= */
 export async function getCommodityBySlug(
   slug: string,
 ): Promise<CommodityWithLatest> {
-  const { data } = await apiClient.get("/app/commodities/by-slug", {
+  const { data } = await apiClient.get("/commodities/by-slug", {
     params: { slug },
   });
   return data;
 }
 
-/** GET /app/commodities/top-movers?limit= */
+/** GET /commodities/top-movers?limit= */
 export async function getTopMovers(limit = 10): Promise<TopMovers> {
-  const { data } = await apiClient.get("/app/commodities/top-movers", {
+  const { data } = await apiClient.get("/commodities/top-movers", {
     params: { limit },
   });
   return data;
 }
 
-/** GET /app/commodities/price-history?id=&days= */
+/** GET /commodities/price-history?id=&days= */
 export async function getCommodityPriceHistory(
   commodityId: string,
   days = 30,
 ): Promise<PriceHistory> {
-  const { data } = await apiClient.get("/app/commodities/price-history", {
+  const { data } = await apiClient.get("/commodities/price-history", {
     params: { id: commodityId, days },
   });
   return data;
 }
 
-/** GET /app/commodities/regional-prices?id=&date= */
+/** GET /commodities/regional-prices?id=&date= */
 export async function getRegionalPrices(
   commodityId: string,
   date?: string,
 ): Promise<RegionalPrices> {
-  const { data } = await apiClient.get("/app/commodities/regional-prices", {
+  const { data } = await apiClient.get("/commodities/regional-prices", {
     params: { id: commodityId, ...(date ? { date } : {}) },
   });
   return data;
@@ -77,12 +77,12 @@ export async function getRegionalPrices(
 
 // ─── Agent: Submit Price ──────────────────────────────────────────────────────
 
-/** POST /app/commodities/submit-price?id= */
+/** POST /commodities/submit-price?id= */
 export async function submitPrice(
   commodityId: string,
   body: SubmitPriceBody,
 ): Promise<CommodityPriceEntry> {
-  const { data } = await apiClient.post("/app/commodities/submit-price", body, {
+  const { data } = await apiClient.post("/commodities/submit-price", body, {
     params: { id: commodityId },
   });
   return data;

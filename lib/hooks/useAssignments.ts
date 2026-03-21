@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   getAssignments,
   getAssignmentById,
+  getAssignmentMetrics,
   type AssignmentQueryParams,
 } from "@/lib/services/assignment.service";
 
@@ -26,5 +27,13 @@ export function useAssignment(id: string) {
     queryFn: () => getAssignmentById(id),
     enabled: !!id,
     staleTime: 2 * 60 * 1000,
+  });
+}
+
+export function useAssignmentMetrics() {
+  return useQuery({
+    queryKey: [...assignmentKeys.all, "metrics"],
+    queryFn: getAssignmentMetrics,
+    staleTime: 5 * 60 * 1000, // 5 min cache is fine for metrics
   });
 }

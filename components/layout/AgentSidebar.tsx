@@ -92,19 +92,19 @@ export function AgentSidebar({ className }: AgentSidebarProps) {
             href="/agent/assignments"
             isCollapsed={isCollapsed}
           />
-          <SidebarItem
+          {/* <SidebarItem
             icon={Tag}
             label="Update Prices"
-            href="/agent/update-prices"
+            href="/agent/assignments"
             isCollapsed={isCollapsed}
-          />
+          /> */}
 
           {/* Primary Action - Custom Styling */}
 
-          <Separator className="my-2" />
+          {/* <Separator className="my-2" /> */}
 
           {/* Secondary */}
-          <SidebarItem
+          {/* <SidebarItem
             icon={Store}
             label="Markets"
             href="/agent/markets"
@@ -115,9 +115,9 @@ export function AgentSidebar({ className }: AgentSidebarProps) {
             label="Reports"
             href="/agent/reports"
             isCollapsed={isCollapsed}
-          />
+          /> */}
 
-          <Separator className="my-2" />
+          {/* <Separator className="my-2" /> */}
 
           {/* Tertiary */}
           <SidebarItem
