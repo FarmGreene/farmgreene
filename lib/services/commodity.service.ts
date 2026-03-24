@@ -13,7 +13,9 @@ import type {
   CreateCommodityBody,
   UpdateCommodityBody,
   SubmitPriceBody,
+  CommodityIndexItem,
 } from "@/types/commodity";
+
 
 // ─── Public Endpoints ─────────────────────────────────────────────────────────
 
@@ -45,7 +47,25 @@ export async function getCommodityBySlug(
   return data;
 }
 
+
+/** GET /commodities/index — Public index (no auth) */
+export async function getPublicCommodityIndex(params?: {
+  category?: string;
+}): Promise<PaginatedResponse<CommodityIndexItem>> {
+  const { data } = await apiClient.get("/commodities/index", { params });
+  return data;
+}
+
+/** GET /commodities/index/premium — Premium index (requires auth) */
+export async function getPremiumCommodityIndex(
+  params?: CommodityQueryParams,
+): Promise<PaginatedResponse<CommodityIndexItem>> {
+  const { data } = await apiClient.get("/commodities/index/premium", { params });
+  return data;
+}
+
 /** GET /commodities/top-movers?limit= */
+
 export async function getTopMovers(limit = 10): Promise<TopMovers> {
   const { data } = await apiClient.get("/commodities/top-movers", {
     params: { limit },

@@ -32,7 +32,10 @@ import { ColumnDef } from "@tanstack/react-table";
 import { AgentAssignmentCard } from "@/components/dashboard/agent/AgentAssignmentCard";
 import DataTable from "@/components/data-table";
 import Pagination from "@/components/pagination/pagination";
-import { useAssignments, useAssignmentMetrics } from "@/lib/hooks/useAssignments";
+import {
+  useAssignments,
+  useAssignmentMetrics,
+} from "@/lib/hooks/useAssignments";
 import type { Assignment } from "@/lib/services/assignment.service";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -120,6 +123,7 @@ export default function AssignmentsPage() {
       limit: parseAsInteger.withDefault(10),
       status: parseAsString.withDefault("ALL"),
       market: parseAsString.withDefault("all"),
+      category: parseAsString.withDefault("all"),
       frequency: parseAsString.withDefault("all"),
       search: parseAsString.withDefault(""),
     },
@@ -129,7 +133,7 @@ export default function AssignmentsPage() {
     },
   );
 
-  const { page, limit, status, market, frequency, search } = params;
+  const { page, limit, status, market, category, frequency, search } = params;
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const queryParams = useMemo(
@@ -137,8 +141,9 @@ export default function AssignmentsPage() {
       page,
       limit,
       status: status !== "ALL" ? status : undefined,
+      category: category !== "all" ? category : undefined,
     }),
-    [page, limit, status],
+    [page, limit, status, category],
   );
 
   const { data: metricsData } = useAssignmentMetrics();
@@ -171,6 +176,13 @@ export default function AssignmentsPage() {
   const handleFrequencyFilter = useCallback(
     (v: string) => {
       setParams({ frequency: v, page: 1 });
+    },
+    [setParams],
+  );
+  
+  const handleCategoryFilter = useCallback(
+    (v: string) => {
+      setParams({ category: v, page: 1 });
     },
     [setParams],
   );
@@ -231,11 +243,9 @@ export default function AssignmentsPage() {
           return (
             <div>
               <p className="font-medium text-sm">{assignment.commodity.name}</p>
-              {assignment.commodity.category && (
+              {assignment.commodity.unit && (
                 <p className="text-xs text-muted-foreground">
-                  {assignment.commodity.category
-                    .replaceAll("_", " ")
-                    .toLowerCase()}
+                  {assignment.commodity.unit.replaceAll("_", " ").toLowerCase()}
                 </p>
               )}
             </div>
@@ -511,6 +521,22 @@ export default function AssignmentsPage() {
                 <SelectItem value="WEEKLY">Weekly</SelectItem>
               </SelectContent>
             </Select>
+            <Select value={category} onValueChange={handleCategoryFilter}>
+              <SelectTrigger className="w-[170px]">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="GRAINS">Grains</SelectItem>
+                <SelectItem value="TUBERS">Tubers</SelectItem>
+                <SelectItem value="LEGUMES">Legumes</SelectItem>
+                <SelectItem value="CASH_CROPS">Cash Crops</SelectItem>
+                <SelectItem value="VEGETABLES">Vegetables</SelectItem>
+                <SelectItem value="LIVESTOCK">Livestock</SelectItem>
+                <SelectItem value="FRUITS">Fruits</SelectItem>
+                <SelectItem value="OTHERS">Others</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
@@ -558,6 +584,23 @@ export default function AssignmentsPage() {
                 <SelectItem value="all">All Frequencies</SelectItem>
                 <SelectItem value="DAILY">Daily</SelectItem>
                 <SelectItem value="WEEKLY">Weekly</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={category} onValueChange={handleCategoryFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="GRAINS">Grains</SelectItem>
+                <SelectItem value="TUBERS">Tubers</SelectItem>
+                <SelectItem value="LEGUMES">Legumes</SelectItem>
+                <SelectItem value="CASH_CROPS">Cash Crops</SelectItem>
+                <SelectItem value="VEGETABLES">Vegetables</SelectItem>
+                <SelectItem value="LIVESTOCK">Livestock</SelectItem>
+                <SelectItem value="FRUITS">Fruits</SelectItem>
+                <SelectItem value="OTHERS">Others</SelectItem>
               </SelectContent>
             </Select>
           </motion.div>

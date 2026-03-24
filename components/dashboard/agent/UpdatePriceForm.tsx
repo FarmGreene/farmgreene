@@ -47,9 +47,15 @@ const priceSchema = z.object({
   price: z
     .string()
     .min(1, "Price is required.")
-    .refine((v) => !isNaN(Number(v)) && Number(v) > 0, {
-      message: "Price must be a positive number.",
-    }),
+    .refine(
+      (v) => {
+        const numericValue = v.replace(/,/g, "");
+        return !isNaN(Number(numericValue)) && Number(numericValue) > 0;
+      },
+      {
+        message: "Price must be a positive number.",
+      },
+    ),
   region: z.nativeEnum(NigerianRegion, {
     message: "Please select a region.",
   }),
@@ -66,6 +72,18 @@ type PriceFormValues = z.infer<typeof priceSchema>;
 
 function todayISO() {
   return new Date().toISOString().slice(0, 10);
+}
+
+function formatNumber(value: string | number) {
+  if (!value && value !== 0) return "";
+  const stringValue = typeof value === "number" ? value.toString() : value;
+  const parts = stringValue.replace(/,/g, "").split(".");
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return parts.join(".");
+}
+
+function parseNumber(value: string) {
+  return value.replace(/,/g, "");
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -190,7 +208,7 @@ export function UpdatePriceForm({
 
   async function onSubmit(values: PriceFormValues) {
     await mutateAsync({
-      price: Number(values.price),
+      price: Number(parseNumber(values.price)),
       region: values.region,
       state: values.state,
       market: values.market || undefined,
@@ -250,9 +268,16 @@ export function UpdatePriceForm({
                       </span>
                       <Input
                         {...field}
-                        type="number"
-                        step="0.01"
-                        min="0"
+                        value={formatNumber(field.value)}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          // Only allow numbers, dots, and commas
+                          if (/^[0-9,.]*$/.test(val)) {
+                            field.onChange(parseNumber(val));
+                          }
+                        }}
+                        type="text"
+                        inputMode="decimal"
                         placeholder="0.00"
                         className={cn(
                           "pl-7 text-base font-semibold h-11 focus:ring-2 focus:ring-primary/30",

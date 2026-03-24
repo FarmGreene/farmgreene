@@ -39,6 +39,7 @@ export interface AssignmentMetrics {
 
 export interface AssignmentQueryParams {
   status?: string;
+  category?: string;
   commodityId?: string;
   fromDate?: string;
   toDate?: string;

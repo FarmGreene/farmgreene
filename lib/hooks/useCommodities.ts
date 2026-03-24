@@ -12,7 +12,10 @@ import {
   getCommodityPriceHistory,
   getRegionalPrices,
   submitPrice,
+  getPublicCommodityIndex,
+  getPremiumCommodityIndex,
 } from "@/lib/services/commodity.service";
+
 import type { CommodityQueryParams, SubmitPriceBody } from "@/types/commodity";
 
 // ─── Query Keys ───────────────────────────────────────────────────────────────
@@ -29,7 +32,10 @@ export const commodityKeys = {
     [...commodityKeys.all, "price-history", id, days] as const,
   regionalPrices: (id: string, date?: string) =>
     [...commodityKeys.all, "regional-prices", id, date] as const,
+  index: (params?: CommodityQueryParams, isPremium?: boolean) =>
+    [...commodityKeys.all, "index", isPremium, params] as const,
 };
+
 
 // ─── Read Hooks ───────────────────────────────────────────────────────────────
 
@@ -44,6 +50,25 @@ export function useCommodities(params?: CommodityQueryParams) {
     staleTime: 5 * 60 * 1000, // 5 min
   });
 }
+
+/**
+ * Get aggregated commodity index (commodities + history).
+ * Replaces N+1 calls in widgets and summary grids.
+ */
+export function useCommodityIndex(
+  params?: CommodityQueryParams,
+  isPremium = false,
+) {
+  return useQuery({
+    queryKey: commodityKeys.index(params, isPremium),
+    queryFn: () =>
+      isPremium
+        ? getPremiumCommodityIndex(params)
+        : getPublicCommodityIndex(params),
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
 
 /** Get detailed commodity + latest average by ID */
 export function useCommodity(id: string) {

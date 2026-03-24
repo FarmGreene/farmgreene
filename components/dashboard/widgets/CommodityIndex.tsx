@@ -6,8 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Lock, TrendingUp, TrendingDown, ArrowRight } from "lucide-react";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
-import { useCommodities, usePriceHistory } from "@/lib/hooks/useCommodities";
-import { CommodityWithLatest } from "@/types/commodity";
+import { useCommodities, usePriceHistory, useCommodityIndex } from "@/lib/hooks/useCommodities";
+import { CommodityWithLatest, CommodityIndexItem } from "@/types/commodity";
 import { Skeleton } from "@/components/ui/skeleton";
 
 // ─── Subcomponent: TinyChart ───────────────────────────────────────────────────
@@ -29,22 +29,20 @@ const TinyChart = ({ data, color }: { data: any[]; color: string }) => (
 );
 
 // ─── Subcomponent: CommodityRow ────────────────────────────────────────────────
-const CommodityRow = ({ commodity }: { commodity: CommodityWithLatest }) => {
-  const { data: historyRes, isLoading } = usePriceHistory(commodity.id, 7);
-
-  const price = commodity.latestAverage?.averagePrice || 0;
-  const change = commodity.latestAverage?.priceChange || 0;
+const CommodityRow = ({ commodity }: { commodity: CommodityIndexItem }) => {
+  const price = commodity.currentPrice || 0;
+  const change = commodity.sevenDayChange || 0;
   const isPositive = change >= 0;
   const color = isPositive ? "#10b981" : "#ef4444";
 
   // Map the daily average records to format required by Recharts
   const chartData = React.useMemo(() => {
-    if (!historyRes?.history || historyRes.history.length === 0) {
+    if (!commodity.history || commodity.history.length === 0) {
       // Fallback tiny flatline if no history exists yet
       return [{ v: price }, { v: price }];
     }
-    return historyRes.history.map((h) => ({ v: h.averagePrice }));
-  }, [historyRes, price]);
+    return commodity.history.map((h) => ({ v: h.averagePrice }));
+  }, [commodity.history, price]);
 
   return (
     <div className="flex items-center justify-between group">
@@ -60,11 +58,7 @@ const CommodityRow = ({ commodity }: { commodity: CommodityWithLatest }) => {
 
       {/* Sparkline (Hidden on very small screens) */}
       <div className="hidden sm:block opacity-50 group-hover:opacity-100 transition-opacity">
-        {isLoading ? (
-           <Skeleton className="h-6 w-24" />
-        ) : (
-          <TinyChart data={chartData} color={color} />
-        )}
+        <TinyChart data={chartData} color={color} />
       </div>
 
       {/* Price & Change */}
@@ -80,7 +74,7 @@ const CommodityRow = ({ commodity }: { commodity: CommodityWithLatest }) => {
           >
             {isPositive ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
             {Math.abs(change)}%
-            <span className="text-muted-foreground/50 ml-0.5">24h</span>
+            <span className="text-muted-foreground/50 ml-0.5">7d</span>
           </div>
         ) : (
           <div className="text-[10px] text-muted-foreground">No Change</div>
@@ -93,11 +87,12 @@ const CommodityRow = ({ commodity }: { commodity: CommodityWithLatest }) => {
 // ─── Main Widget ───────────────────────────────────────────────────────────────
 export default function CommodityIndex() {
   const visibleCount = 5;
-  const isPremium = false;
+  const isPremium = false; // This would come from user context in real app
 
-  const { data: commoditiesRes, isLoading } = useCommodities({
-    limit: visibleCount,
-  });
+  const { data: commoditiesRes, isLoading } = useCommodityIndex(
+    { limit: visibleCount },
+    isPremium
+  );
 
   const commodities = commoditiesRes?.data || [];
 

@@ -272,6 +272,12 @@ export interface CommodityWithLatest extends Commodity {
   latestAverage: CommodityDailyAverage | null;
 }
 
+export interface CommodityIndexItem extends CommodityWithLatest {
+  currentPrice: number;
+  sevenDayChange: number;
+  history: CommodityDailyAverage[];
+}
+
 export interface RegionalPrices {
   commodity: Pick<Commodity, "id" | "name" | "unit">;
   date: string | null;
