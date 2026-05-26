@@ -4,6 +4,7 @@ import { useAuthStore } from "@/lib/store/useAuthStore";
 import { LoginCredentials, RegisterData } from "@/types/auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 // Query keys
 export const authKeys = {
@@ -50,6 +51,7 @@ export function useRegister() {
     },
     onError: (error: Error) => {
       setError(error.message);
+      toast.error(error.message);
     },
   });
 }

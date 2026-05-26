@@ -48,10 +48,10 @@ export async function getCommodityBySlug(
 }
 
 
-/** GET /commodities/index — Public index (no auth) */
-export async function getPublicCommodityIndex(params?: {
-  category?: string;
-}): Promise<PaginatedResponse<CommodityIndexItem>> {
+/** GET /commodities/index — Public index (paginated) */
+export async function getPublicCommodityIndex(
+  params?: CommodityQueryParams,
+): Promise<PaginatedResponse<CommodityIndexItem>> {
   const { data } = await apiClient.get("/commodities/index", { params });
   return data;
 }

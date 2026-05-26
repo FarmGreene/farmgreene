@@ -36,7 +36,6 @@ export const commodityKeys = {
     [...commodityKeys.all, "index", isPremium, params] as const,
 };
 
-
 // ─── Read Hooks ───────────────────────────────────────────────────────────────
 
 /**
@@ -68,7 +67,6 @@ export function useCommodityIndex(
     staleTime: 5 * 60 * 1000,
   });
 }
-
 
 /** Get detailed commodity + latest average by ID */
 export function useCommodity(id: string) {

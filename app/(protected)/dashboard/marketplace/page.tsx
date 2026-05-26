@@ -1,21 +1,33 @@
 "use client";
 
 import React, { useState } from "react";
-import { UserRole } from "@/types/marketplace";
+import { UserRole, OwnerStats } from "@/types/marketplace";
 import { MarketplaceHeader } from "@/components/marketplace/dashboard/MarketplaceHeader";
 import { RoleSummaryStrip } from "@/components/marketplace/dashboard/RoleSummaryStrip";
+import { getOwnerStats } from "@/lib/services/marketplace.service";
 import { OwnerView } from "@/components/marketplace/dashboard/OwnerView";
 import { BrowserView } from "@/components/marketplace/dashboard/BrowserView";
-import {
-  MOCK_OWNER_STATS,
-  MOCK_MY_LISTINGS,
-  MOCK_RENTAL_REQUESTS,
-  MOCK_BROWSER_LISTINGS,
-} from "@/lib/mock-marketplace-data";
 import { Separator } from "@/components/ui/separator";
 
 export default function MarketplacePage() {
   const [role, setRole] = useState<UserRole>("owner");
+  const [stats, setStats] = useState<OwnerStats | undefined>(undefined);
+  const [statsLoading, setStatsLoading] = useState(true);
+
+  React.useEffect(() => {
+    if (role === "owner") {
+      setStatsLoading(true);
+      getOwnerStats()
+        .then((data) => {
+          setStats(data);
+          setStatsLoading(false);
+        })
+        .catch((err) => {
+          console.error("Failed to fetch owner stats", err);
+          setStatsLoading(false);
+        });
+    }
+  }, [role]);
 
   return (
     <div className="flex-1 space-y-6">
@@ -24,7 +36,7 @@ export default function MarketplacePage() {
         <MarketplaceHeader role={role} onRoleChange={setRole} />
 
         {/* Role-Aware Summary Strip */}
-        <RoleSummaryStrip role={role} stats={MOCK_OWNER_STATS} />
+        <RoleSummaryStrip role={role} stats={stats} isLoading={statsLoading} />
 
         <Separator className="my-4" />
 
@@ -32,11 +44,11 @@ export default function MarketplacePage() {
         <div className="min-h-[500px]">
           {role === "owner" ? (
             <OwnerView
-              listings={MOCK_MY_LISTINGS}
-              requests={MOCK_RENTAL_REQUESTS}
+              listings={[]}
+              requests={[]}
             />
           ) : (
-            <BrowserView listings={MOCK_BROWSER_LISTINGS} />
+            <BrowserView listings={[]} />
           )}
         </div>
       </div>

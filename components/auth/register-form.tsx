@@ -29,7 +29,7 @@ type RegisterValues = z.infer<typeof registerSchema>;
 
 export function RegisterForm() {
   const { step, role, setStep } = useRegisterStore();
-  const { mutate: registerUser, isPending } = useRegister();
+  const { mutate: registerUser, isPending, error } = useRegister();
 
   const {
     register,
