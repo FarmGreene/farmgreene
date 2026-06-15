@@ -30,12 +30,13 @@ export function SidebarItem({
 }: SidebarItemProps) {
   const pathname = usePathname();
 
-  // For the overview page ("/dashboard"), only match exactly
-  // For other routes, match exact or sub-routes
-  const isActive =
-    href === "/dashboard"
-      ? pathname === "/dashboard"
-      : pathname === href || pathname.startsWith(`${href}/`);
+  // Exact-match for root-level section pages (e.g. "/dashboard", "/agent")
+  // so that the Overview item doesn't stay active on every sub-route.
+  // A href is considered a root page when it has only one non-empty path segment.
+  const isRootPage = href.replace(/^\//, "").indexOf("/") === -1;
+  const isActive = isRootPage
+    ? pathname === href
+    : pathname === href || pathname.startsWith(`${href}/`);
 
   const content = (
     <Link

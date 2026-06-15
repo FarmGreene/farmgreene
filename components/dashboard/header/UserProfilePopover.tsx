@@ -10,6 +10,7 @@ import {
   Briefcase,
   ChevronRight,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import {
   DropdownMenu,
@@ -30,10 +31,14 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useLogout } from "@/lib/hooks/useAuth";
+import { useAuthStore } from "@/lib/store/useAuthStore";
 
 export function UserProfilePopover() {
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const router = useRouter();
+  const { mutateAsync: logout } = useLogout();
 
   // Mock User Data
   const user = {
@@ -43,11 +48,11 @@ export function UserProfilePopover() {
     workspace: "FarmGreene Ltd",
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     // Implement logout logic here
     console.log("Logging out...");
+    await logout();
     setShowLogoutDialog(false);
-    // Redirect or clear session
   };
 
   return (
@@ -143,7 +148,7 @@ export function UserProfilePopover() {
                 setShowLogoutDialog(true);
               }}
             >
-              <LogOut className="mr-2 h-4 w-4" />
+              <LogOut className="mr-2 h-4 w-4 text-red-600" />
               <span>Log out</span>
             </DropdownMenuItem>
           </div>
