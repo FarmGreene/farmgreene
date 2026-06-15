@@ -1,85 +1,48 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
+import { useNews } from "@/lib/hooks/useNews";
+import { formatDistanceToNow } from "date-fns";
 import {
   ChevronLeft,
   ChevronRight,
   ExternalLink,
   Bookmark,
+  AlertCircle,
+  Loader2,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
-const NEWS_DATA = [
-  {
-    id: 1,
-    title: "Revolutionizing Soil Health with AI-Powered Analytics",
-    body: "New precision farming tools are helping farmers optimize fertilizer use and improve crop yields by analyzing soil composition in real-time. This breakthrough promises to reduce costs and environmental impact.",
-    category: "AgriTech",
-    source: "Farm Future",
-    image: "/images/news/news-1.png",
-    time: "2h ago",
-  },
-  {
-    id: 2,
-    title: "Direct-to-Consumer: The Digital Marketplace Boom",
-    body: "Local producers are increasingly turning to dedicated digital platforms to sell their harvests directly to urban consumers, bypassing traditional middle-men and increasing profit margins.",
-    category: "Economy",
-    source: "Market Watch",
-    image: "/images/news/news-2.png",
-    time: "5h ago",
-  },
-  {
-    id: 3,
-    title: "Next-Gen Greenhouses Redefining Urban Farming",
-    body: "Vertical farming and automated greenhouse systems are making it possible to grow high-value crops in the heart of metropolitan areas, ensuring year-round supply of fresh produce.",
-    category: "Sustainability",
-    source: "Green Echo",
-    image: "/images/news/news-3.png",
-    time: "8h ago",
-  },
-  {
-    id: 4,
-    title: "Adapting to Change: Resilient Crop Varieties",
-    body: "Agricultural researchers have unveiled new drought-resistant maize and wheat varieties designed to thrive despite the increasing unpredictability of seasonal rainfall patterns.",
-    category: "Climate",
-    source: "Global Harvest",
-    image: "/images/news/news-4.png",
-    time: "12h ago",
-  },
-  {
-    id: 5,
-    title: "Organic Certification: A New Frontier for Smallholders",
-    body: "Government initiatives are simplifying the organic certification process, opening up lucrative premium markets for small-scale farmers who prioritize traditional, chemical-free methods.",
-    category: "Policy",
-    source: "Organic Daily",
-    image: "/images/news/news-5.png",
-    time: "1d ago",
-  },
-];
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function NewsPulse() {
+  const { data, isLoading, isError } = useNews();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
 
+  const articles = data?.articles?.slice(0, 5) || [];
+
   const nextSlide = useCallback(() => {
+    if (articles.length === 0) return;
     setDirection(1);
-    setCurrentIndex((prev) => (prev + 1) % NEWS_DATA.length);
-  }, []);
+    setCurrentIndex((prev) => (prev + 1) % articles.length);
+  }, [articles.length]);
 
   const prevSlide = useCallback(() => {
+    if (articles.length === 0) return;
     setDirection(-1);
-    setCurrentIndex((prev) => (prev - 1 + NEWS_DATA.length) % NEWS_DATA.length);
-  }, []);
+    setCurrentIndex((prev) => (prev - 1 + articles.length) % articles.length);
+  }, [articles.length]);
 
   useEffect(() => {
+    if (articles.length === 0) return;
     const timer = setInterval(() => {
       nextSlide();
     }, 8000);
     return () => clearInterval(timer);
-  }, [nextSlide]);
+  }, [nextSlide, articles.length]);
 
   const variants = {
     enter: (direction: number) => ({
@@ -98,13 +61,27 @@ export default function NewsPulse() {
     }),
   };
 
-  const currentNews = NEWS_DATA[currentIndex];
+  if (isLoading) {
+    return <Card className="w-full h-full rounded-xl bg-slate-900 border-none aspect-video sm:aspect-auto flex items-center justify-center"><Loader2 className="h-6 w-6 text-emerald-500 animate-spin" /></Card>;
+  }
+
+  if (isError || articles.length === 0) {
+    return (
+      <Card className="w-full h-full rounded-xl bg-slate-900 border-none p-4 flex flex-col items-center justify-center text-center">
+        <AlertCircle className="h-6 w-6 text-slate-500 mb-2" />
+        <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Insights Unavailable</p>
+      </Card>
+    );
+  }
+
+  const currentNews = articles[currentIndex];
+  const timeAgo = formatDistanceToNow(new Date(currentNews.publishedAt), { addSuffix: true });
 
   return (
     <Card className="relative w-full h-full overflow-hidden border-none rounded-xl group shadow-lg bg-slate-900">
       {/* Progress indicators (Top) */}
       <div className="absolute top-5 right-2 z-30 flex gap-0.5 p-1 w-[100px]">
-        {NEWS_DATA.map((_, idx) => (
+        {articles.map((_, idx) => (
           <div
             key={idx}
             className="h-[4px] flex-1 bg-white/20 rounded-full overflow-hidden"
@@ -144,7 +121,7 @@ export default function NewsPulse() {
             animate={{ scale: 1 }}
             transition={{ duration: 8, ease: "linear" }}
             className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${currentNews.image})` }}
+            style={{ backgroundImage: `url(${currentNews.image || "/assets/placeholder-agric.jpg"})` }}
           />
 
           {/* Gradient Overlays */}
@@ -160,10 +137,10 @@ export default function NewsPulse() {
                 className="flex items-center gap-2"
               >
                 <Badge className="bg-emerald-500 hover:bg-emerald-500 text-white border-none px-1.5 py-0 text-[8px] font-bold uppercase tracking-wider">
-                  {currentNews.category}
+                  {currentNews.source}
                 </Badge>
                 <span className="text-[9px] text-slate-300 font-medium">
-                  {currentNews.time}
+                  {timeAgo}
                 </span>
               </motion.div>
 
@@ -181,13 +158,15 @@ export default function NewsPulse() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.3 }}
               >
-                <Button
-                  variant="link"
-                  className="py-1 px-0! h-auto text-emerald-400 hover:text-emerald-300 flex items-center gap-1 text-[10px] font-bold no-underline group/btn"
-                >
-                  READ STORY
-                  <ExternalLink className="w-1.5 h-1.5 transition-transform group-hover/btn:translate-x-0.5 -mt-1" />
-                </Button>
+                <a href={currentNews.link} target="_blank" rel="noopener noreferrer">
+                  <Button
+                    variant="link"
+                    className="py-1 px-0! h-auto text-emerald-400 hover:text-emerald-300 flex items-center gap-1 text-[10px] font-bold no-underline group/btn"
+                  >
+                    READ STORY
+                    <ExternalLink className="w-1.5 h-1.5 transition-transform group-hover/btn:translate-x-0.5 -mt-1" />
+                  </Button>
+                </a>
               </motion.div>
             </div>
           </div>

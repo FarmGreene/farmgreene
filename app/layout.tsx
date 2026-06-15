@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
+import { Inter, Outfit, Caveat } from "next/font/google";
 import "./globals.css";
+import { QueryProvider } from "@/components/providers/QueryProvider";
+import { AuthProvider } from "@/components/providers/AuthProvider";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -10,6 +14,12 @@ const inter = Inter({
 const outfit = Outfit({
   variable: "--font-heading",
   subsets: ["latin"],
+});
+
+const caveat = Caveat({
+  variable: "--font-handwritten",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -40,7 +50,7 @@ export const metadata: Metadata = {
     siteName: "Farmgreene",
     images: [
       {
-        url: "/og-image.jpg", // We should probably add a placeholder OG image later
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Farmgreene Platform",
@@ -69,9 +79,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${outfit.variable} antialiased font-sans`}
+        className={`${inter.variable} ${outfit.variable} ${caveat.variable} antialiased font-sans`}
       >
-        {children}
+        <NuqsAdapter>
+          <QueryProvider>
+            <Toaster position="top-right" richColors />
+            <AuthProvider>{children}</AuthProvider>
+          </QueryProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );

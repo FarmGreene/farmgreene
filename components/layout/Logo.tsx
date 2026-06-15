@@ -21,8 +21,8 @@ export function Logo({
           size={iconSize}
           className={cn(
             variant === "white"
-              ? "text-green-400 fill-green-400/20"
-              : "text-green-600 fill-green-100"
+              ? "text-green-400 fill-transparent"
+              : "text-green-600 fill-green-100",
           )}
           strokeWidth={2.5}
         />
@@ -31,10 +31,10 @@ export function Logo({
         className={cn(
           "font-heading font-bold tracking-tight",
           textSize,
-          variant === "white" ? "text-white" : "text-foreground"
+          variant === "white" ? "text-white" : "text-foreground",
         )}
       >
-        Farmgreene
+        Farm<span className="text-green-600">greene</span>
       </span>
     </Link>
   );

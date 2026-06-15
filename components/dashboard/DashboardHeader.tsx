@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -19,17 +19,44 @@ import { SidebarSwitcher } from "@/components/layout/SidebarSwitcher";
 import { UserProfilePopover } from "@/components/dashboard/header/UserProfilePopover";
 import { QuickAlertCreateDialog } from "@/components/dashboard/header/QuickAlertCreateDialog";
 import Link from "next/link";
+import { FieldAgentOnboardingModal } from "@/components/onboarding/field-agent/FieldAgentOnboardingModal";
+import { useAuthStore } from "@/lib/store/useAuthStore";
 
 export function DashboardHeader() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const slugParam = searchParams.get("slug");
   const segments = pathname.split("/").filter((item) => item !== "");
+  const [showOnboarding, setShowOnboarding] = React.useState(false);
+  const user = useAuthStore((state) => state.user);
+  const isAgent = user?.roles.includes("AGENT") ?? false;
+  const isOnAgentDashboard = pathname.startsWith("/agent");
+
+  // Auto-show onboarding modal for agents who haven't completed it
+  React.useEffect(() => {
+    if (!user) return;
+
+    // Check if user is an agent and hasn't been verified
+    const isAgent = user.roles.includes("AGENT");
+    if (isAgent && user.agentStatus !== "active") {
+      setShowOnboarding(true);
+    }
+  }, [user]);
 
   // Generate breadcrumbs from path segments
   const breadcrumbItems = segments.map((segment, index) => {
     const href = `/${segments.slice(0, index + 1).join("/")}`;
     const isLast = index === segments.length - 1;
     // Enhanced Title Formatting: Alert -> Alerts, etc. if needed, or just Capitalize
-    const title = segment.charAt(0).toUpperCase() + segment.slice(1);
+    let title = segment.charAt(0).toUpperCase() + segment.slice(1);
+
+    // If we are looking at a commodity ID segment, try to replace it with the human-readable slug
+    if (index > 0 && segments[index - 1] === "commodity" && slugParam) {
+      title = slugParam
+        .split("-")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+    }
 
     return (
       <React.Fragment key={href}>
@@ -98,18 +125,33 @@ export function DashboardHeader() {
         </div>
 
         {/* Separator */}
-        <div className="h-6 w-[1px] bg-slate-200 dark:bg-slate-700 hidden sm:block" />
+        <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block" />
 
         {/* Actions */}
         <div className="flex items-center gap-2">
           {/* Quick Alert Dialog */}
           <QuickAlertCreateDialog />
-          <Button
-            size="sm"
-            className="gap-2 bg-green-600 hover:bg-green-700 text-white"
-          >
-            Become an agent
-          </Button>
+          {!isAgent && (
+            <Button
+              id="agent-onboarding-trigger"
+              size="sm"
+              className="gap-2 bg-green-600 hover:bg-green-700 text-white"
+              onClick={() => setShowOnboarding(true)}
+            >
+              Become an agent
+            </Button>
+          )}
+          {isAgent && isOnAgentDashboard && (
+            <Button
+              id="agent-return-to-dashboard"
+              size="sm"
+              // variant="outline"
+              className="gap-2"
+              asChild
+            >
+              <Link href="/dashboard">Return to Dashboard</Link>
+            </Button>
+          )}
         </div>
 
         {/* User Profile */}
@@ -117,6 +159,11 @@ export function DashboardHeader() {
           <UserProfilePopover />
         </div>
       </div>
+
+      <FieldAgentOnboardingModal
+        open={showOnboarding}
+        onOpenChange={setShowOnboarding}
+      />
     </header>
   );
 }

@@ -235,3 +235,110 @@ export const TrendDownIllustration = ({
     <circle cx="200" cy="90" r="4" fill="#ef4444" />
   </svg>
 );
+
+export const EmptyIllustration = ({ className }: { className?: string }) => (
+  <svg
+    viewBox="0 0 400 300"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+  >
+    <defs>
+      <linearGradient id="empty-sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#f0fdf4" stopOpacity="0.8" />
+        <stop offset="100%" stopColor="#dcfce7" stopOpacity="0.5" />
+      </linearGradient>
+      <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
+        <feOffset dx="0" dy="4" result="offsetblur" />
+        <feComponentTransfer>
+          <feFuncA type="linear" slope="0.1" />
+        </feComponentTransfer>
+        <feMerge>
+          <feMergeNode />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </defs>
+
+    {/* Background Circle */}
+    <circle cx="200" cy="140" r="100" fill="url(#empty-sky)" />
+
+    {/* Stylized Empty Land / Field */}
+    <g transform="translate(140, 180)">
+      <path
+        d="M0 20 Q 60 0, 120 20 L 120 40 Q 60 60, 0 40 Z"
+        fill="#bbf7d0"
+        opacity="0.6"
+      />
+      <path
+        d="M10 25 Q 60 10, 110 25"
+        stroke="#86efac"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeDasharray="4 4"
+      />
+    </g>
+
+    {/* The Ledger / Data UI Element */}
+    <g transform="translate(160, 80)" filter="url(#shadow)">
+      <rect x="0" y="0" width="80" height="100" rx="8" fill="white" />
+      <rect x="10" y="15" width="60" height="6" rx="3" fill="#f1f5f9" />
+      <rect x="10" y="30" width="40" height="6" rx="3" fill="#f1f5f9" />
+      <rect x="10" y="45" width="50" height="6" rx="3" fill="#f1f5f9" />
+
+      {/* Search Glass looking at 'nothing' */}
+      <g transform="translate(45, 65) rotate(-15)">
+        <circle
+          cx="15"
+          cy="15"
+          r="12"
+          stroke="#10b981"
+          strokeWidth="3"
+          fill="white"
+        />
+        <line
+          x1="25"
+          y1="25"
+          x2="35"
+          y2="35"
+          stroke="#10b981"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+      </g>
+
+      {/* Tiny Sprout (Hope for data) */}
+      <path
+        d="M15 85 C 15 75, 25 75, 25 85"
+        stroke="#22c55e"
+        strokeWidth="2"
+        fill="none"
+      />
+      <path
+        d="M15 85 C 10 75, 5 80, 5 85"
+        stroke="#22c55e"
+        strokeWidth="2"
+        fill="none"
+      />
+    </g>
+
+    {/* Floating Dust / Spores */}
+    <circle cx="280" cy="100" r="3" fill="#10b981" opacity="0.4">
+      <animate
+        attributeName="cy"
+        values="100;90;100"
+        dur="4s"
+        repeatCount="indefinite"
+      />
+    </circle>
+    <circle cx="110" cy="160" r="2" fill="#10b981" opacity="0.3">
+      <animate
+        attributeName="cy"
+        values="160;170;160"
+        dur="3s"
+        repeatCount="indefinite"
+      />
+    </circle>
+  </svg>
+);

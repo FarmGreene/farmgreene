@@ -11,6 +11,7 @@ import MissionVision from "@/components/about/MissionVision";
 import WhoWeServe from "@/components/about/WhoWeServe";
 import Differentiators from "@/components/about/Differentiators";
 import Approach from "@/components/about/Approach";
+import TeamSection from "@/components/about/TeamSection";
 import FutureRoadmap from "@/components/about/FutureRoadmap";
 import AboutCTA from "@/components/about/AboutCTA";
 
@@ -23,6 +24,7 @@ export default function AboutPage() {
       <WhoWeServe />
       <Differentiators />
       <Approach />
+      <TeamSection />
       <FutureRoadmap />
       <AboutCTA />
     </div>

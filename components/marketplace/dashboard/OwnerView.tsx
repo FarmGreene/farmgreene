@@ -1,8 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { EquipmentListing, RentalRequest } from "@/types/marketplace";
 import { ListingCard } from "./ListingCard";
+import { ListingCardSkeleton } from "./ListingCardSkeleton";
+import { CreateListingModal } from "../listing-wizard/CreateListingModal";
+import { getMyDrafts, getMyListings } from "@/lib/services/marketplace.service";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -12,6 +15,7 @@ import {
   User,
   CreditCard,
   ChevronRight,
+  AlertCircle,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -22,10 +26,62 @@ interface OwnerViewProps {
 }
 
 export function OwnerView({ listings, requests }: OwnerViewProps) {
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [drafts, setDrafts] = useState<EquipmentListing[]>([]);
+  const [activeListings, setActiveListings] = useState<EquipmentListing[]>(listings);
+  const [isLoading, setIsLoading] = useState(false);
+  const [resumeId, setResumeId] = useState<string | undefined>();
+
+  useEffect(() => {
+    getMyDrafts().then(setDrafts).catch(() => {});
+    setIsLoading(true);
+    getMyListings().then(data => {
+      // Filter out drafts since they are shown separately
+      setActiveListings(data.filter(l => l.status !== "draft"));
+    }).finally(() => setIsLoading(false));
+  }, []);
+
+  const handleCreateNew = () => {
+    setResumeId(undefined);
+    setIsCreateModalOpen(true);
+  };
+
+  const handleResume = (id: string) => {
+    setResumeId(id);
+    setIsCreateModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsCreateModalOpen(false);
+    getMyDrafts().then(setDrafts).catch(() => {});
+  };
+
   return (
     <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
+      <CreateListingModal
+        isOpen={isCreateModalOpen}
+        onClose={handleModalClose}
+        resumeListingId={resumeId}
+        onSuccess={() => {}}
+      />
+
       {/* Listings Section (Main Area) */}
       <section className="xl:col-span-8 space-y-6">
+        {drafts.length > 0 && (
+          <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="h-5 w-5 text-amber-600" />
+              <div>
+                <p className="text-sm font-semibold text-amber-900">Resume your listing</p>
+                <p className="text-xs text-amber-700">You have {drafts.length} draft{drafts.length > 1 ? 's' : ''} saved.</p>
+              </div>
+            </div>
+            <Button size="sm" variant="outline" className="border-amber-200" onClick={() => handleResume(drafts[0].id)}>
+              Resume
+            </Button>
+          </div>
+        )}
+
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <h2 className="text-2xl font-bold tracking-tight">
@@ -35,15 +91,21 @@ export function OwnerView({ listings, requests }: OwnerViewProps) {
               Manage and track your equipment performance.
             </p>
           </div>
-          <Button className="bg-emerald-600 hover:bg-emerald-700 shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]">
+          <Button onClick={handleCreateNew} className="bg-emerald-600 hover:bg-emerald-700 shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]">
             <PlusCircle className="mr-2 h-4 w-4" />
             Add New Listing
           </Button>
         </div>
 
-        {listings.length > 0 ? (
+        {isLoading ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {listings.map((listing) => (
+            {[1, 2, 3].map((i) => (
+              <ListingCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : activeListings.length > 0 ? (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {activeListings.map((listing) => (
               <ListingCard key={listing.id} listing={listing} variant="owner" />
             ))}
           </div>

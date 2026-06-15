@@ -1,5 +1,6 @@
 import { SidebarSwitcher } from "@/components/layout/SidebarSwitcher";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { AgentVerificationBanner } from "@/components/dashboard/AgentVerificationBanner";
 
 export default function ProtectedLayout({
   children,
@@ -11,6 +12,7 @@ export default function ProtectedLayout({
       <SidebarSwitcher className="hidden md:flex" />
       <div className="flex flex-col flex-1 overflow-hidden">
         <DashboardHeader />
+        <AgentVerificationBanner />
         <main className="flex-1 overflow-y-auto p-6 md:p-8">{children}</main>
       </div>
     </div>

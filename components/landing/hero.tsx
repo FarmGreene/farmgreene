@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import WaitlistInput from "@/components/landing/WaitlistInput";
 
 const Hero = () => {
   return (
@@ -16,8 +17,9 @@ const Hero = () => {
               </span>
             </h1>
             <p className="max-w-xl text-lg text-slate-600 dark:text-slate-300 sm:text-xl leading-relaxed">
-              Access affordable equipment, track commodity prices, and join
-              cooperative funding pools. Farmgreene bridges the gap.
+              Access affordable equipment, track commodity prices, and become a
+              field agent to contribute to the vision. Farmgreene bridges the
+              gap.
             </p>
             <div className="flex flex-wrap items-center gap-6">
               <Link href="/signup">
@@ -25,7 +27,7 @@ const Hero = () => {
                   size="lg"
                   className="rounded-full px-8 h-14 bg-brand-600 hover:bg-brand-700 text-white text-lg font-semibold shadow-xl shadow-brand-600/20"
                 >
-                  Join Now
+                  Become an Agent
                 </Button>
               </Link>
               <Link
@@ -50,21 +52,21 @@ const Hero = () => {
                 View Market Live
               </Link>
             </div>
-
-            <div className="pt-8 flex items-center gap-8">
+            {/* TODO: Bring this to live when we have partners */}
+            {/* <div className="pt-8 flex items-center gap-8">
               <p className="text-sm font-medium text-slate-500">
                 Trusted by
                 <br />
                 leading co-ops
               </p>
               <div className="flex gap-4 opacity-50 grayscale">
-                {/* Simple circles/icons to represent logos as in reference */}
                 <div className="h-8 w-8 rounded-full bg-slate-300"></div>
                 <div className="h-8 w-8 rounded-full bg-slate-300"></div>
                 <div className="h-8 w-8 rounded-full bg-slate-300"></div>
                 <div className="h-8 w-8 rounded-full bg-slate-300"></div>
               </div>
-            </div>
+            </div> */}
+            <WaitlistInput />
           </div>
 
           <div className="order-1 lg:order-2 relative h-[600px] w-full hidden lg:block">

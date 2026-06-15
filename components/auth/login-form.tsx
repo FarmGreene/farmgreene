@@ -8,8 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useLogin } from "@/lib/hooks/useAuth";
+import { useAuthStore } from "@/lib/store/useAuthStore";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -21,8 +21,8 @@ const loginSchema = z.object({
 type LoginValues = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
+  const { mutate: login, isPending } = useLogin();
+  const { error, clearError } = useAuthStore();
 
   const {
     register,
@@ -33,17 +33,12 @@ export function LoginForm() {
   });
 
   async function onSubmit(data: LoginValues) {
-    setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      // For demo purposes, route to dashboard
-      router.push("/dashboard");
-    }, 1000);
+    clearError();
+    login(data);
   }
 
   return (
-    <div className="mx-auto w-full max-w-[400px] space-y-6">
+    <div className="mx-auto w-full max-w-[400px] space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-500">
       <div className="space-y-2 text-center">
         <h1 className="text-3xl font-bold tracking-tight">Welcome Back</h1>
         <p className="text-muted-foreground">
@@ -53,6 +48,12 @@ export function LoginForm() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        {error && (
+          <div className="rounded-md bg-red-50 p-3 text-sm text-red-800">
+            {error}
+          </div>
+        )}
+
         <div className="space-y-2">
           <Label htmlFor="email">Email address</Label>
           <Input
@@ -62,7 +63,7 @@ export function LoginForm() {
             autoCapitalize="none"
             autoComplete="email"
             autoCorrect="off"
-            disabled={isLoading}
+            disabled={isPending}
             {...register("email")}
             className="h-11"
           />
@@ -85,7 +86,7 @@ export function LoginForm() {
             id="password"
             type="password"
             autoComplete="current-password"
-            disabled={isLoading}
+            disabled={isPending}
             {...register("password")}
             className="h-11"
           />
@@ -95,11 +96,11 @@ export function LoginForm() {
         </div>
 
         <Button
-          className="w-full h-11 bg-green-600 hover:bg-green-700 text-white font-semibold"
+          className="w-full h-11 font-semibold"
           type="submit"
-          disabled={isLoading}
+          disabled={isPending}
         >
-          {isLoading ? (
+          {isPending ? (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           ) : (
             "Sign In"
@@ -110,7 +111,7 @@ export function LoginForm() {
       <div className="text-center text-sm text-muted-foreground">
         New to Farmgreene?{" "}
         <Link
-          href="/register"
+          href="/signup"
           className="underline underline-offset-4 hover:text-primary font-medium text-foreground"
         >
           Create an account
