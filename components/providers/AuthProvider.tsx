@@ -1,10 +1,10 @@
-"use client";
-
-import { useCurrentUser } from "@/lib/hooks/useAuth";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Suspense } from "react";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  // Automatically load user if we have a token
-  useCurrentUser();
-
-  return <>{children}</>;
+  return (
+    <Suspense fallback={<Skeleton className="w-full h-full" />}>
+      {children}
+    </Suspense>
+  );
 }

@@ -22,7 +22,7 @@ import Link from "next/link";
 import { FieldAgentOnboardingModal } from "@/components/onboarding/field-agent/FieldAgentOnboardingModal";
 import { useAuthStore } from "@/lib/store/useAuthStore";
 
-export function DashboardHeader() {
+function DashboardHeaderContent() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const slugParam = searchParams.get("slug");
@@ -165,5 +165,17 @@ export function DashboardHeader() {
         onOpenChange={setShowOnboarding}
       />
     </header>
+  );
+}
+
+export function DashboardHeader() {
+  return (
+    <React.Suspense
+      fallback={
+        <header className="sticky top-0 z-30 flex h-16 w-full items-center gap-4 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 px-4 md:px-6 backdrop-blur-md justify-between transition-all" />
+      }
+    >
+      <DashboardHeaderContent />
+    </React.Suspense>
   );
 }
