@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { Tractor } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { AgentMissionCard } from "@/components/dashboard/agent/AgentMissionCard";
 import { AgentQuickStats } from "@/components/dashboard/agent/AgentQuickStats";
 import { AgentUpcomingAssignments } from "@/components/dashboard/agent/AgentUpcomingAssignments";
@@ -14,6 +17,12 @@ export default function AgentOverviewPage() {
             Your daily command center for field operations and assignments.
           </p>
         </div>
+        <Button asChild className="gap-2 shrink-0">
+          <Link href="/agent/onboard">
+            <Tractor className="h-4 w-4" />
+            Onboard Equipment
+          </Link>
+        </Button>
       </div>
 
       <div className="flex flex-col gap-8">

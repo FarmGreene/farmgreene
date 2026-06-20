@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import {
   FormField,
@@ -9,7 +10,6 @@ import {
   FormMessage,
   FormDescription,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -17,65 +17,89 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { FieldAgentFormData } from "./FieldAgentOnboardingModal";
-import { MapPin } from "lucide-react";
+import { MapPin, X } from "lucide-react";
+import {
+  NIGERIAN_STATES,
+  getLgasForState,
+} from "@/lib/data/nigeria-states-lgas";
 
-// Mock Data for States and LGAs
-const NIGERIAN_STATES = [
-  "Abia",
-  "Adamawa",
-  "Akwa Ibom",
-  "Anambra",
-  "Bauchi",
-  "Bayelsa",
-  "Benue",
-  "Borno",
-  "Cross River",
-  "Delta",
-  "Ebonyi",
-  "Edo",
-  "Ekiti",
-  "Enugu",
-  "FCT - Abuja",
-  "Gombe",
-  "Imo",
-  "Jigawa",
-  "Kaduna",
-  "Kano",
-  "Katsina",
-  "Kebbi",
-  "Kogi",
-  "Kwara",
-  "Lagos",
-  "Nasarawa",
-  "Niger",
-  "Ogun",
-  "Ondo",
-  "Osun",
-  "Oyo",
-  "Plateau",
-  "Rivers",
-  "Sokoto",
-  "Taraba",
-  "Yobe",
-  "Zamfara",
-];
+// ─── Markets tag input ──────────────────────────────────────────────────────
 
-// Simplified LGA mock - in production this would depend on selected state
-const MOCK_LGAS = [
-  "Zaria",
-  "Kaduna North",
-  "Kaduna South",
-  "Chikun",
-  "Sabon Gari",
-  "Giwa",
-  "Birnin Gwari",
-];
+function MarketsTagInput({
+  value,
+  onChange,
+}: {
+  value: string[];
+  onChange: (value: string[]) => void;
+}) {
+  const [text, setText] = useState("");
+  const markets = value ?? [];
+
+  const addMarket = (raw: string) => {
+    const parts = raw
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    if (parts.length === 0) return;
+    const merged = [...markets];
+    for (const part of parts) {
+      if (!merged.some((m) => m.toLowerCase() === part.toLowerCase())) {
+        merged.push(part);
+      }
+    }
+    onChange(merged);
+    setText("");
+  };
+
+  const removeMarket = (market: string) =>
+    onChange(markets.filter((m) => m !== market));
+
+  return (
+    <div className="border-input dark:bg-input/30 flex min-h-9 w-full flex-wrap items-center gap-1.5 rounded-md border bg-transparent px-2 py-1.5 text-sm shadow-xs transition-[color,box-shadow] focus-within:border-green-600/80 focus-within:ring-[3px] focus-within:ring-green-600/30">
+      {markets.map((market) => (
+        <span
+          key={market}
+          className="inline-flex items-center gap-1 rounded-md bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/40 dark:text-green-300"
+        >
+          {market}
+          <button
+            type="button"
+            onClick={() => removeMarket(market)}
+            className="text-green-700/70 transition-colors hover:text-green-900 dark:hover:text-green-100"
+            aria-label={`Remove ${market}`}
+          >
+            <X className="h-3 w-3" />
+          </button>
+        </span>
+      ))}
+      <input
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === ",") {
+            e.preventDefault();
+            addMarket(text);
+          } else if (e.key === "Backspace" && !text && markets.length) {
+            removeMarket(markets[markets.length - 1]);
+          }
+        }}
+        onBlur={() => {
+          if (text.trim()) addMarket(text);
+        }}
+        placeholder={markets.length ? "Add another…" : "Type a market, then press Enter"}
+        className="placeholder:text-muted-foreground min-w-[140px] flex-1 bg-transparent py-0.5 outline-none"
+      />
+    </div>
+  );
+}
+
+// ─── Step ────────────────────────────────────────────────────────────────────
 
 export function StepMarketCoverage() {
   const { control, watch, setValue } = useFormContext<FieldAgentFormData>();
   const selectedState = watch("state");
+  const lgas = getLgasForState(selectedState);
 
   return (
     <div className="space-y-6">
@@ -96,15 +120,19 @@ export function StepMarketCoverage() {
               <FormItem className="flex-1">
                 <FormLabel>Primary State</FormLabel>
                 <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value}
+                  onValueChange={(val) => {
+                    field.onChange(val);
+                    // Reset the dependent LGA whenever the state changes.
+                    setValue("lga", "", { shouldValidate: false });
+                  }}
                 >
                   <FormControl>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select State" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent>
+                  <SelectContent className="max-h-72">
                     {NIGERIAN_STATES.map((state) => (
                       <SelectItem key={state} value={state}>
                         {state}
@@ -124,17 +152,21 @@ export function StepMarketCoverage() {
               <FormItem className="flex-1">
                 <FormLabel>Local Government Area (LGA)</FormLabel>
                 <Select
+                  value={field.value}
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
                   disabled={!selectedState}
                 >
                   <FormControl>
-                    <SelectTrigger className="w-fullV">
-                      <SelectValue placeholder="Select LGA" />
+                    <SelectTrigger className="w-full">
+                      <SelectValue
+                        placeholder={
+                          selectedState ? "Select LGA" : "Select a state first"
+                        }
+                      />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent>
-                    {MOCK_LGAS.map((lga) => (
+                  <SelectContent className="max-h-72">
+                    {lgas.map((lga) => (
                       <SelectItem key={lga} value={lga}>
                         {lga}
                       </SelectItem>
@@ -152,51 +184,18 @@ export function StepMarketCoverage() {
           name="markets"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Specific Market(s)</FormLabel>
-              {/* Simplified for prototype - comma separated or simple input */}
+              <FormLabel>Market(s) you cover</FormLabel>
               <FormControl>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
-                  <Input
-                    placeholder="e.g. Sabon Gari Market, Central Market"
-                    className="pl-9"
-                    value={field.value?.join(", ") || ""}
-                    onChange={(e) =>
-                      field.onChange(
-                        e.target.value
-                          .split(",")
-                          .map((s) => s.trim())
-                          .filter(Boolean),
-                      )
-                    }
-                  />
-                </div>
-              </FormControl>
-              <FormDescription>
-                Enter the names of markets you cover, separated by commas.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={control}
-          name="hasMultipleMarkets"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
+                <MarketsTagInput
+                  value={field.value ?? []}
+                  onChange={field.onChange}
                 />
               </FormControl>
-              <div className="space-y-1 leading-none">
-                <FormLabel>I cover multiple markets</FormLabel>
-                <FormDescription>
-                  Check this if you plan to report from more than one location.
-                </FormDescription>
-              </div>
+              <FormDescription>
+                Add each market by name — press Enter after each one. Add as many
+                as you cover.
+              </FormDescription>
+              <FormMessage />
             </FormItem>
           )}
         />

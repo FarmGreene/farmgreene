@@ -18,7 +18,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Camera } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Info } from "lucide-react";
+import { PhotoCaptureField } from "./PhotoCaptureField";
 
 export function StepExperience() {
   const { control } = useFormContext<FieldAgentFormData>();
@@ -107,20 +114,32 @@ export function StepExperience() {
         />
 
         <div className="pt-2">
-          <FormLabel className="mb-2 block">
+          <FormLabel className="mb-2 flex items-center gap-1.5">
             Proof of Activity (Optional)
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    aria-label="Why add proof of activity?"
+                  >
+                    <Info className="h-3.5 w-3.5" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-[260px] text-xs leading-relaxed">
+                  A quick photo at your shop, stall, or the market confirms you
+                  actually work on the ground. Agents who add it are verified and
+                  approved noticeably faster.
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </FormLabel>
-          <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-lg border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer">
-            <div className="h-12 w-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-2">
-              <Camera className="h-6 w-6 text-gray-400" />
-            </div>
-            <p className="text-sm font-medium text-gray-700">
-              Upload Photo of Shop/Stall
-            </p>
-            <p className="text-xs text-gray-400 mt-1">
-              Increases trust in your data
-            </p>
-          </div>
+          <PhotoCaptureField
+            name="proofPhoto"
+            label="Upload Photo of Shop/Stall"
+            sublabel="Increases trust in your data (max 5MB)"
+          />
         </div>
       </div>
     </div>

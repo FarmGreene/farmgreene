@@ -92,6 +92,12 @@ export function AgentSidebar({ className }: AgentSidebarProps) {
             href="/agent/assignments"
             isCollapsed={isCollapsed}
           />
+          <SidebarItem
+            icon={Tractor}
+            label="Onboard Equipment"
+            href="/agent/onboard"
+            isCollapsed={isCollapsed}
+          />
           {/* <SidebarItem
             icon={Tag}
             label="Update Prices"

@@ -10,7 +10,16 @@ import {
   FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { NumericInput } from "@/components/ui/numeric-input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { FieldAgentFormData } from "./FieldAgentOnboardingModal";
+import { NIGERIAN_BANKS } from "@/lib/data/nigerian-banks";
 
 export function StepPayment() {
   const { control } = useFormContext<FieldAgentFormData>();
@@ -37,12 +46,20 @@ export function StepPayment() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Bank Name</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="e.g. GTBank, Zenith Bank, OPay"
-                  {...field}
-                />
-              </FormControl>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select your bank" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent className="max-h-72">
+                  {NIGERIAN_BANKS.map((bank) => (
+                    <SelectItem key={bank} value={bank}>
+                      {bank}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
@@ -55,7 +72,14 @@ export function StepPayment() {
             <FormItem>
               <FormLabel>Account Number</FormLabel>
               <FormControl>
-                <Input placeholder="10-digit account number" {...field} />
+                <NumericInput
+                  name={field.name}
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  maxLength={10}
+                  placeholder="10-digit account number"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

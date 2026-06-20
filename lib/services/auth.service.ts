@@ -50,6 +50,25 @@ class AuthService {
     }
   }
 
+  /** Upload an onboarding photo (selfie or proof-of-activity) for the agent. */
+  async uploadAgentPhoto(
+    file: File,
+    type: "profile" | "proof",
+  ): Promise<unknown> {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await apiClient.post(
+        `/agent/profile/photo?type=${type}`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } },
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
+  }
+
   async refreshToken(refreshToken: string): Promise<{ accessToken: string }> {
     try {
       const response = await apiClient.post<{ accessToken: string }>(

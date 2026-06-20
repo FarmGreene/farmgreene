@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { StepIdentity } from "./StepIdentity";
 import { StepMarketCoverage } from "./StepMarketCoverage";
-import { StepCommodityCoverage } from "./StepCommodityCoverage";
 import { StepExperience } from "./StepExperience";
 import { StepPayment } from "./StepPayment";
 import { StepTerms } from "./StepTerms";
@@ -27,9 +26,7 @@ import { useAuthStore } from "@/lib/store/useAuthStore";
 // Define the schema for the entire wizard
 export const fieldAgentSchema = z.object({
   // Step 1: Identity
-  fullName: z.string().min(2, "Full name is required"),
   phoneNumber: z.string().min(10, "Valid phone number is required"),
-  email: z.string().email("Valid email is required"),
   profilePhoto: z.any().optional(), // File object
   nin: z.string().optional(),
   bvn: z.string().optional(),
@@ -38,18 +35,13 @@ export const fieldAgentSchema = z.object({
   state: z.string().min(1, "State is required"),
   lga: z.string().min(1, "LGA is required"),
   markets: z.array(z.string()).min(1, "At least one market is required"),
-  hasMultipleMarkets: z.boolean(),
 
-  // Step 3: Commodity Coverage
-  commodities: z.array(z.string()).min(1, "Select at least one commodity"),
-  reportingFrequency: z.enum(["DAILY", "WEEKLY", "3X_WEEKLY"]),
-
-  // Step 4: Experience
+  // Step 3: Experience
   role: z.string().min(1, "Role is required"),
   experienceYears: z.string().min(1, "Experience duration is required"),
   proofPhoto: z.any().optional(),
 
-  // Step 5: Payment (Optional)
+  // Step 4: Payment (Optional)
   bankName: z.string().optional(),
   accountNumber: z.string().optional(),
   accountName: z.string().optional(),
@@ -70,10 +62,9 @@ interface FieldAgentOnboardingModalProps {
 const STEPS = [
   { id: 1, title: "Identity", component: StepIdentity },
   { id: 2, title: "Market Coverage", component: StepMarketCoverage },
-  { id: 3, title: "Commodities", component: StepCommodityCoverage },
-  { id: 4, title: "Experience", component: StepExperience },
-  { id: 5, title: "Payment", component: StepPayment },
-  { id: 6, title: "Review & Submit", component: StepTerms },
+  { id: 3, title: "Experience", component: StepExperience },
+  { id: 4, title: "Payment", component: StepPayment },
+  { id: 5, title: "Review & Submit", component: StepTerms },
 ];
 
 export function FieldAgentOnboardingModal({
@@ -89,8 +80,6 @@ export function FieldAgentOnboardingModal({
     resolver: zodResolver(fieldAgentSchema),
     mode: "onChange",
     defaultValues: {
-      hasMultipleMarkets: false,
-      commodities: [],
       markets: [],
       agreedToTerms: false,
     },
@@ -104,23 +93,20 @@ export function FieldAgentOnboardingModal({
     // Validate current step fields
     switch (currentStep) {
       case 1:
-        isValid = await trigger(["fullName", "phoneNumber", "email"]);
+        isValid = await trigger(["phoneNumber"]);
         break;
       case 2:
         isValid = await trigger(["state", "lga", "markets"]);
         break;
       case 3:
-        isValid = await trigger(["commodities", "reportingFrequency"]);
-        break;
-      case 4:
         isValid = await trigger(["role", "experienceYears"]);
         break;
-      case 5:
+      case 4:
         // Payment is optional, so we can just proceed, validation is on individual fields if filled
         isValid = await trigger(["bankName", "accountNumber", "accountName"]);
         // If empty it's fine as they are optional in schema
         break;
-      case 6:
+      case 5:
         isValid = await trigger(["agreedToTerms"]);
         break;
     }
@@ -144,7 +130,23 @@ export function FieldAgentOnboardingModal({
 
   const onSubmit = async () => {
     const data = getValues();
-    console.log("Field Agent Onboarding Data:", data);
+
+    // Persist onboarding photos (best-effort — a failed upload must not block
+    // the agent from completing verification).
+    if (data.profilePhoto instanceof File) {
+      try {
+        await authService.uploadAgentPhoto(data.profilePhoto, "profile");
+      } catch (error) {
+        console.error("Profile photo upload failed:", error);
+      }
+    }
+    if (data.proofPhoto instanceof File) {
+      try {
+        await authService.uploadAgentPhoto(data.proofPhoto, "proof");
+      } catch (error) {
+        console.error("Proof photo upload failed:", error);
+      }
+    }
 
     try {
       // Call API to mark agent as verified

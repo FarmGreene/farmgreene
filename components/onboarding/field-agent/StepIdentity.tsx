@@ -9,10 +9,10 @@ import {
   FormMessage,
   FormDescription,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { PhoneInput } from "@/components/ui/phone-input";
+import { NumericInput } from "@/components/ui/numeric-input";
 import { FieldAgentFormData } from "./FieldAgentOnboardingModal";
-import { Button } from "@/components/ui/button";
-import { Camera, Upload } from "lucide-react";
+import { PhotoCaptureField } from "./PhotoCaptureField";
 
 export function StepIdentity() {
   const { control } = useFormContext<FieldAgentFormData>();
@@ -26,63 +26,33 @@ export function StepIdentity() {
         </p>
       </div>
 
-      {/* Profile Photo Placeholder - In a real app this would handle file upload */}
-      <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-lg border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer">
-        <div className="h-16 w-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-3">
-          <Camera className="h-8 w-8 text-gray-400" />
-        </div>
-        <p className="text-sm font-medium text-gray-700">
-          Upload Profile Photo
-        </p>
-        <p className="text-xs text-gray-400 mt-1">
-          Selfie required for verification
-        </p>
-      </div>
+      {/* Profile Photo */}
+      <PhotoCaptureField
+        name="profilePhoto"
+        label="Upload Profile Photo"
+        sublabel="A clear selfie helps us verify you (max 5MB)"
+      />
 
       <div className="space-y-4">
         <FormField
           control={control}
-          name="fullName"
+          name="phoneNumber"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Full Name</FormLabel>
+              <FormLabel>Phone Number</FormLabel>
               <FormControl>
-                <Input placeholder="Enter your full name" {...field} />
+                <PhoneInput
+                  name={field.name}
+                  ref={field.ref}
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            control={control}
-            name="phoneNumber"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Phone Number</FormLabel>
-                <FormControl>
-                  <Input placeholder="080..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email Address</FormLabel>
-                <FormControl>
-                  <Input placeholder="you@example.com" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
       </div>
 
       <div className="pt-4 border-t">
@@ -102,7 +72,14 @@ export function StepIdentity() {
                   </span>
                 </FormLabel>
                 <FormControl>
-                  <Input placeholder="11-digit NIN" {...field} />
+                  <NumericInput
+                    name={field.name}
+                    value={field.value}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                    maxLength={11}
+                    placeholder="11-digit NIN"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -120,7 +97,14 @@ export function StepIdentity() {
                   </span>
                 </FormLabel>
                 <FormControl>
-                  <Input placeholder="11-digit BVN" {...field} />
+                  <NumericInput
+                    name={field.name}
+                    value={field.value}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                    maxLength={11}
+                    placeholder="11-digit BVN"
+                  />
                 </FormControl>
                 <FormDescription className="text-[11px]">
                   Only required if you want to receive payments.
