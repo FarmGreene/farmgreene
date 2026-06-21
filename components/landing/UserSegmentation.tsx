@@ -1,5 +1,6 @@
-import { Tractor, Users, TrendingUp } from "lucide-react";
+import { Tractor, Users, TrendingUp, ArrowRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 const segments = [
   {
@@ -28,6 +29,7 @@ const segments = [
     icon: TrendingUp,
     title: "Market Agents",
     description: "Report real-time crop market pricing, upload data, and help eliminate price manipulation across local hubs.",
+    href: "/agents",
     image: "/images/stakeholder-agent.jpg",
     roundedClass: "rounded-[2rem_2rem_1rem_1rem]",
     color: "text-amber-600 dark:text-amber-400",
@@ -88,6 +90,7 @@ export default function UserSegmentation() {
         <div className="grid gap-8 md:grid-cols-3 relative z-10">
           {segments.map((segment, index) => {
             const IconComponent = segment.icon;
+            const href = "href" in segment ? segment.href : undefined;
             return (
               <div
                 key={index}
@@ -127,13 +130,23 @@ export default function UserSegmentation() {
 
                   {/* Pulsing Coming Soon Badge */}
                   <div className="pt-4 flex items-center justify-between border-t border-slate-100 dark:border-slate-800/50 w-full mt-4">
-                    <div className="flex items-center gap-2 px-4.5 py-2 rounded-full bg-emerald-50/70 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 text-xs font-bold border border-emerald-100/40 dark:border-emerald-950/30 shadow-inner select-none">
-                      <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                      </span>
-                      Coming Soon
-                    </div>
+                    {href ? (
+                      <Link
+                        href={href}
+                        className={`inline-flex items-center gap-1.5 text-sm font-bold ${segment.color} transition-all hover:gap-2.5`}
+                      >
+                        Learn more
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                    ) : (
+                      <div className="flex items-center gap-2 px-4.5 py-2 rounded-full bg-emerald-50/70 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 text-xs font-bold border border-emerald-100/40 dark:border-emerald-950/30 shadow-inner select-none">
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        Coming Soon
+                      </div>
+                    )}
                   </div>
                 </div>
 

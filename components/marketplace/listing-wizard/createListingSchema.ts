@@ -99,7 +99,16 @@ export const step2Schema = z.object({
   fuelType: z.enum(["petrol", "diesel", "electric", "manual"]).nullable().optional(),
   weightKg: optionalNumber,
   additionalSpecs: z.string().max(1000).nullable().optional(),
-  lastServiceDate: z.string().nullable().optional(),
+  // Required by the backend — validate on the frontend too. Kept loosely typed
+  // (string | null | undefined) so draft values still load, but a non-empty
+  // string is required to pass.
+  lastServiceDate: z
+    .string()
+    .nullable()
+    .optional()
+    .refine((v) => typeof v === "string" && v.length > 0, {
+      message: "Last service date is required",
+    }),
 });
 
 export type Step2Data = z.infer<typeof step2Schema>;

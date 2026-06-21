@@ -3,6 +3,7 @@ import {
   AuthResponse,
   LoginCredentials,
   RegisterData,
+  UpdateProfileInput,
   User,
 } from "@/types/auth";
 import { handleApiError } from "@/lib/utils/error-handler";
@@ -41,9 +42,38 @@ class AuthService {
     }
   }
 
+  /** Update the current user's editable profile fields. */
+  async updateProfile(data: UpdateProfileInput): Promise<User> {
+    try {
+      const response = await apiClient.patch<User>("/auth/me", data);
+      return response.data;
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
+  }
+
   async verifyAgent(): Promise<User> {
     try {
       const response = await apiClient.patch<User>("/auth/verify-agent");
+      return response.data;
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
+  }
+
+  /** Upload an onboarding photo (selfie or proof-of-activity) for the agent. */
+  async uploadAgentPhoto(
+    file: File,
+    type: "profile" | "proof",
+  ): Promise<unknown> {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await apiClient.post(
+        `/agent/profile/photo?type=${type}`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } },
+      );
       return response.data;
     } catch (error) {
       throw new Error(handleApiError(error));

@@ -11,23 +11,30 @@ import {
   Users,
   Bell,
   Settings,
-  Briefcase,
   ChevronLeft,
   ChevronRight,
-  TrendingUp,
   Tractor,
   Activity,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { useRegisterStore } from "@/lib/store/useRegisterStore";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuthStore } from "@/lib/store/useAuthStore";
+import {
+  getFullName,
+  getInitials,
+  getRoleLabel,
+} from "@/lib/utils/user-display";
 import { Logo } from "@/components/layout/Logo";
 
 interface DashboardSidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function DashboardSidebar({ className }: DashboardSidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const { role } = useRegisterStore(); // Get user role dynamically
+  const user = useAuthStore((state) => state.user);
+  const fullName = getFullName(user);
+  const initials = getInitials(user);
+  const roleLabel = getRoleLabel(user);
 
   return (
     <div
@@ -109,26 +116,6 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
 
           <Separator className="my-2" />
 
-          {/* Agent Tools (Conditional) */}
-          {role === "AGENT" && (
-            <>
-              <SidebarItem
-                icon={Briefcase}
-                label="Agent Tools"
-                href="/dashboard/agent"
-                isCollapsed={isCollapsed}
-                badge="New"
-              />
-              <SidebarItem
-                icon={TrendingUp}
-                label="Submit Prices"
-                href="/dashboard/agent/submit"
-                isCollapsed={isCollapsed}
-              />
-              <Separator className="my-2" />
-            </>
-          )}
-
           {/* System / Utility */}
           <div className={cn("mt-auto", isCollapsed ? "" : "pt-4")}>
             <SidebarItem
@@ -154,21 +141,37 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
         </nav>
       </div>
 
-      {/* User Profile / Footer (Optional - Collapsed state handling needed) */}
+      {/* User Profile / Footer */}
       <div className="p-4 border-t">
         {!isCollapsed && (
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-full bg-slate-200"></div>
+            <Avatar className="h-8 w-8">
+              {user?.avatarUrl ? (
+                <AvatarImage src={user.avatarUrl} alt={fullName} />
+              ) : null}
+              <AvatarFallback className="bg-green-700 text-white text-xs font-medium">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
             <div className="flex flex-col">
-              <span className="text-sm font-medium">Demo User</span>
+              <span className="text-sm font-medium truncate max-w-[120px]">
+                {fullName}
+              </span>
               <span className="text-xs text-muted-foreground truncate max-w-[120px]">
-                {role || "User"}
+                {roleLabel || "User"}
               </span>
             </div>
           </div>
         )}
         {isCollapsed && (
-          <div className="h-8 w-8 mx-auto rounded-full bg-slate-200"></div>
+          <Avatar className="h-8 w-8 mx-auto">
+            {user?.avatarUrl ? (
+              <AvatarImage src={user.avatarUrl} alt={fullName} />
+            ) : null}
+            <AvatarFallback className="bg-green-700 text-white text-xs font-medium">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
         )}
       </div>
     </div>

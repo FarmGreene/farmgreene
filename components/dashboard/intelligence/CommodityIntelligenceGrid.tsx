@@ -2,7 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, LayoutGrid, List } from "lucide-react";
+import {
+  Search,
+  LayoutGrid,
+  List,
+  ArrowUpRight,
+  ArrowDownRight,
+  Minus,
+} from "lucide-react";
+import { formatDistanceToNowStrict } from "date-fns";
 import { ColumnDef } from "@tanstack/react-table";
 import DataTable from "@/components/data-table";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,9 +24,55 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { useCommodityIndex } from "@/lib/hooks/useCommodities";
-import { CommodityCategory, CommodityIndexItem } from "@/types/commodity";
+import {
+  CATEGORY_LABELS,
+  CommodityCategory,
+  CommodityIndexItem,
+} from "@/types/commodity";
 import { Skeleton } from "@/components/ui/skeleton";
 import Pagination from "@/components/pagination/pagination";
+import Sparkline from "./Sparkline";
+
+type Trend = "up" | "down" | "flat";
+
+/** Direction from a % change, used for color + icon + sparkline. */
+function trendOf(change: number): Trend {
+  if (change > 0) return "up";
+  if (change < 0) return "down";
+  return "flat";
+}
+
+/** Tinted pill styles for the trend chip on each card. */
+const TREND_PILL: Record<Trend, string> = {
+  up: "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400",
+  down: "bg-rose-50 text-rose-700 dark:bg-rose-500/10 dark:text-rose-400",
+  flat: "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400",
+};
+
+const TREND_ICON: Record<Trend, typeof ArrowUpRight> = {
+  up: ArrowUpRight,
+  down: ArrowDownRight,
+  flat: Minus,
+};
+
+/** "2 hours" → "2h", so the freshness stamp fits the card footer. */
+function compactAge(dateStr?: string | null): string | null {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  if (Number.isNaN(d.getTime())) return null;
+  return formatDistanceToNowStrict(d)
+    .replace(/ seconds?/, "s")
+    .replace(/ minutes?/, "m")
+    .replace(/ hours?/, "h")
+    .replace(/ days?/, "d")
+    .replace(/ months?/, "mo")
+    .replace(/ years?/, "y");
+}
+
+function categoryLabel(category?: CommodityCategory | null): string {
+  if (!category) return "—";
+  return CATEGORY_LABELS[category] ?? category.replace(/_/g, " ");
+}
 
 type ViewMode = "grid" | "table";
 
@@ -76,11 +130,18 @@ export default function CommodityIntelligenceGrid() {
   const gridSkeletons = Array.from({ length: 8 }).map((_, i) => (
     <Card
       key={i}
-      className="border-none shadow-sm bg-white dark:bg-slate-900 rounded-2xl h-[120px]"
+      className="border-none shadow-sm bg-white dark:bg-slate-900 rounded-2xl h-[168px]"
     >
-      <CardContent className="p-5 h-full flex flex-col justify-between">
-        <Skeleton className="h-4 w-24" />
-        <Skeleton className="h-8 w-16" />
+      <CardContent className="p-5 h-full flex flex-col justify-between gap-3">
+        <div className="flex items-start justify-between">
+          <div className="space-y-1.5">
+            <Skeleton className="h-3 w-16" />
+            <Skeleton className="h-4 w-24" />
+          </div>
+          <Skeleton className="h-5 w-12 rounded-full" />
+        </div>
+        <Skeleton className="h-10 w-full rounded-md" />
+        <Skeleton className="h-6 w-20" />
       </CardContent>
     </Card>
   ));
@@ -142,13 +203,15 @@ export default function CommodityIntelligenceGrid() {
         const item = row.original;
         const change = item.sevenDayChange || 0;
         const isPositive = change > 0;
+        const TrendIcon = TREND_ICON[trendOf(change)];
         return (
           <div
             className={cn(
-              "text-right font-semibold",
+              "flex items-center justify-end gap-1 font-semibold tabular-nums",
               getPriceColor(change),
             )}
           >
+            <TrendIcon className="h-3.5 w-3.5" />
             {isPositive && "+"}
             {change}%
           </div>
@@ -236,66 +299,74 @@ export default function CommodityIntelligenceGrid() {
               const price = item.currentPrice || 0;
               const change = item.sevenDayChange || 0;
               const isPositive = change > 0;
-              const isStable = change === 0;
+              const trend = trendOf(change);
+              const TrendIcon = TREND_ICON[trend];
 
+              const series = (item.history ?? [])
+                .map((h) => h.averagePrice)
+                .filter((n): n is number => typeof n === "number");
+              const markets = item.latestAverage?.submissionCount ?? 0;
+              const age = compactAge(item.latestAverage?.date);
 
-// ... Inside grid render
               return (
-                <Link key={item.id} href={`/dashboard/intelligence/commodity/${item.id}?slug=${item.slug}`} passHref>
-                  <Card
-                    className="group relative cursor-pointer border-none shadow-sm hover:shadow-md transition-all duration-300 bg-white dark:bg-slate-900 rounded-2xl h-full"
-                  >
-                    <CardContent className="flex flex-col justify-between h-full space-y-4">
-                      {/* Header: Name & Badge */}
-                      <div className="flex justify-between items-start">
-                        <div className="space-y-0.5">
-                          <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
-                            {item.category?.replace("_", " ") || "UNKNOWN"}
+                <Link
+                  key={item.id}
+                  href={`/dashboard/intelligence/commodity/${item.id}?slug=${item.slug}`}
+                  className="block h-full"
+                >
+                  <Card className="group relative cursor-pointer border border-transparent hover:border-slate-200 dark:hover:border-slate-700 shadow-sm hover:shadow-md transition-all duration-300 bg-white dark:bg-slate-900 rounded-2xl h-full overflow-hidden">
+                    <CardContent className="flex flex-col h-full p-5 gap-3">
+                      {/* Header: category, name, trend pill */}
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <span className="text-[10px] uppercase font-semibold text-slate-500 dark:text-slate-400 tracking-wider">
+                            {categoryLabel(item.category)}
                           </span>
-                          <h3 className="font-bold text-base text-slate-900 dark:text-white truncate max-w-[140px]">
-                            {item.name}
+                          <h3 className="font-bold text-base text-slate-900 dark:text-white truncate flex items-center gap-1">
+                            <span className="truncate">{item.name}</span>
+                            <ArrowUpRight className="h-3.5 w-3.5 shrink-0 text-slate-300 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" />
                           </h3>
                         </div>
                         <div
                           className={cn(
-                            "h-2 w-2 rounded-full",
-                            getStatusDot(change),
+                            "flex items-center gap-0.5 shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums",
+                            TREND_PILL[trend],
                           )}
-                          title={
-                            isPositive
-                              ? "Rising"
-                              : isStable
-                                ? "Stable"
-                                : "Falling"
-                          }
-                        />
+                        >
+                          <TrendIcon className="h-3 w-3" />
+                          {isPositive && "+"}
+                          {change}%
+                        </div>
                       </div>
 
-                      {/* Price & Change */}
-                      <div className="flex items-baseline justify-between mt-auto">
-                        <div className="flex items-baseline gap-1">
-                          <span className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white whitespace-nowrap">
+                      {/* 7-day trend */}
+                      <div className="flex-1 flex items-end min-h-[40px]">
+                        <Sparkline data={series} trend={trend} height={40} />
+                      </div>
+
+                      {/* Footer: price + market depth / freshness */}
+                      <div className="flex items-end justify-between gap-2 pt-1">
+                        <div className="flex items-baseline gap-1 min-w-0">
+                          <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white whitespace-nowrap">
                             ₦{price.toLocaleString()}
                           </span>
-                          <span className="text-[11px] text-muted-foreground uppercase">
+                          <span className="text-[11px] text-slate-400 uppercase truncate">
                             / {item.unit}
                           </span>
                         </div>
-                        <div
-                          className={cn(
-                            "flex items-center gap-1 text-xs font-semibold",
-                            getPriceColor(change),
+                        <div className="text-[10px] text-slate-400 text-right shrink-0 leading-tight">
+                          {markets > 0 && (
+                            <div>
+                              {markets} mkt{markets === 1 ? "" : "s"}
+                            </div>
                           )}
-                        >
-                          {isPositive && "+"}
-                          {change}%
+                          {age && <div>{age} ago</div>}
                         </div>
                       </div>
                     </CardContent>
                   </Card>
                 </Link>
               );
-
             })
           ) : (
             emptyState

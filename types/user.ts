@@ -5,6 +5,9 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
+  phone?: string | null;
+  location?: string | null;
+  avatarUrl?: string | null;
   roles: UserRole[];
   password?: string;
   agentStatus?: "pending" | "active" | "suspended" | "rejected" | "banned";

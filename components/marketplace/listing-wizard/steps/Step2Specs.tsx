@@ -16,6 +16,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { format, parseISO } from "date-fns";
 import { cn } from "@/lib/utils";
 import {
   Wrench,
@@ -24,7 +32,7 @@ import {
   ShieldCheck,
   Sparkles,
   AlertTriangle,
-  Calendar,
+  Calendar as CalendarIcon,
   ClipboardList,
   Scale,
   Gauge,
@@ -314,17 +322,60 @@ export function Step2Specs({ onSubmit, defaultValues, isLoading }: Step2SpecsPro
           <div className="space-y-3.5">
             {/* Last Service Date */}
             <div className="space-y-1.5">
-              <Label htmlFor="lastServiceDate" className="text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
-                <Calendar className="h-3.5 w-3.5" /> Last Service Date
+              <Label className="text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+                <CalendarIcon className="h-3.5 w-3.5" /> Last Service Date{" "}
+                <span className="text-red-500">*</span>
               </Label>
-              <div className="relative flex items-center">
-                <Input
-                  id="lastServiceDate"
-                  type="date"
-                  className="w-full py-4 rounded-xl border border-slate-200 dark:border-slate-850 focus-visible:ring-emerald-500 focus-visible:border-emerald-500"
-                  {...register("lastServiceDate")}
-                />
-              </div>
+              <Controller
+                name="lastServiceDate"
+                control={control}
+                render={({ field }) => {
+                  const selected = field.value
+                    ? parseISO(field.value)
+                    : undefined;
+                  return (
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start gap-2 rounded-xl border border-slate-200 dark:border-slate-850 py-4 font-normal",
+                            !field.value && "text-muted-foreground",
+                            errors.lastServiceDate &&
+                              "border-red-500 focus-visible:ring-red-500",
+                          )}
+                        >
+                          <CalendarIcon className="h-4 w-4 text-slate-400" />
+                          {selected ? format(selected, "PPP") : "Pick a date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={selected}
+                          onSelect={(date) =>
+                            field.onChange(
+                              date ? format(date, "yyyy-MM-dd") : "",
+                            )
+                          }
+                          disabled={{ after: new Date() }}
+                          captionLayout="dropdown"
+                          startMonth={new Date(new Date().getFullYear() - 30, 0)}
+                          endMonth={new Date()}
+                          autoFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  );
+                }}
+              />
+              {errors.lastServiceDate && (
+                <p className="text-xs text-red-500 flex items-center gap-1">
+                  <Info className="h-3.5 w-3.5" />
+                  {errors.lastServiceDate.message}
+                </p>
+              )}
             </div>
 
             {/* Additional Specs / Notes */}
