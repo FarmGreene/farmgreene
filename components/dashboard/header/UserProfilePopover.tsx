@@ -33,20 +33,24 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useLogout } from "@/lib/hooks/useAuth";
 import { useAuthStore } from "@/lib/store/useAuthStore";
+import {
+  getFullName,
+  getInitials,
+  getRoleLabel,
+} from "@/lib/utils/user-display";
 
 export function UserProfilePopover() {
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const router = useRouter();
   const { mutateAsync: logout } = useLogout();
+  const currentUser = useAuthStore((state) => state.user);
 
-  // Mock User Data
-  const user = {
-    name: "Emmanuel Owolabi",
-    email: "emmanuel@farmgreene.com",
-    initials: "EO",
-    workspace: "FarmGreene Ltd",
-  };
+  const fullName = getFullName(currentUser);
+  const email = currentUser?.email ?? "";
+  const initials = getInitials(currentUser);
+  const roleLabel = getRoleLabel(currentUser);
+  const avatarUrl = currentUser?.avatarUrl ?? undefined;
 
   const handleLogout = async () => {
     // Implement logout logic here
@@ -64,9 +68,11 @@ export function UserProfilePopover() {
             className="relative h-9 w-9 rounded-full p-0 overflow-hidden ring-2 ring-transparent hover:ring-green-100 transition-all"
           >
             <Avatar className="h-9 w-9">
-              <AvatarImage src="/avatars/user.png" alt={user.name} />
+              {avatarUrl ? (
+                <AvatarImage src={avatarUrl} alt={fullName} />
+              ) : null}
               <AvatarFallback className="bg-green-700 text-white font-medium text-xs">
-                {user.initials}
+                {initials}
               </AvatarFallback>
             </Avatar>
           </Button>
@@ -74,21 +80,25 @@ export function UserProfilePopover() {
         <DropdownMenuContent className="w-64 p-0" align="end" forceMount>
           <div className="flex items-center gap-3 p-4 bg-slate-50/50 dark:bg-slate-900/50">
             <Avatar className="h-10 w-10 border border-slate-200 dark:border-slate-700">
-              <AvatarImage src="/avatars/user.png" alt={user.name} />
+              {avatarUrl ? (
+                <AvatarImage src={avatarUrl} alt={fullName} />
+              ) : null}
               <AvatarFallback className="bg-green-700 text-white font-medium">
-                {user.initials}
+                {initials}
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col space-y-0.5">
               <p className="text-sm font-semibold text-slate-900 dark:text-white leading-none">
-                {user.name}
+                {fullName}
               </p>
               <p className="text-xs text-slate-500 font-medium truncate max-w-[140px]">
-                {user.email}
+                {email}
               </p>
-              <p className="text-[10px] text-green-600 font-bold uppercase tracking-wider pt-1">
-                {user.workspace}
-              </p>
+              {roleLabel && (
+                <p className="text-[10px] text-green-600 font-bold uppercase tracking-wider pt-1">
+                  {roleLabel}
+                </p>
+              )}
             </div>
           </div>
           <DropdownMenuSeparator className="m-0" />

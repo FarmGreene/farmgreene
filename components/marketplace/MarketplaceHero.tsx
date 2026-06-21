@@ -54,7 +54,7 @@ export default function MarketplaceHero() {
               <Button
                 size="lg"
                 variant="outline"
-                className="text-white border-white/20 hover:bg-white/10 rounded-full px-8 text-lg font-semibold h-14 min-w-[200px]"
+                className="text-black border-white/20 hover:bg-white/10 rounded-full px-8 text-lg font-semibold h-14 min-w-[200px]"
               >
                 List Your Equipment
               </Button>

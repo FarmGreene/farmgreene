@@ -1,7 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { authService } from "@/lib/services/auth.service";
 import { useAuthStore } from "@/lib/store/useAuthStore";
-import { LoginCredentials, RegisterData } from "@/types/auth";
+import {
+  LoginCredentials,
+  RegisterData,
+  UpdateProfileInput,
+} from "@/types/auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";
@@ -84,6 +88,27 @@ export function useCurrentUser() {
   }, [query.error, logout]);
 
   return query;
+}
+
+/**
+ * Hook to update the current user's profile.
+ * On success, syncs the auth store and the cached current-user query.
+ */
+export function useUpdateProfile() {
+  const queryClient = useQueryClient();
+  const { setUser } = useAuthStore();
+
+  return useMutation({
+    mutationFn: (data: UpdateProfileInput) => authService.updateProfile(data),
+    onSuccess: (updated) => {
+      setUser(updated);
+      queryClient.setQueryData(authKeys.currentUser(), updated);
+      toast.success("Profile updated");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
 }
 
 /**
