@@ -15,6 +15,7 @@ const navLinks = [
   { name: "Marketplace", href: "/marketplace" },
   { name: "Intelligence", href: "/intelligence" },
   { name: "Pricing", href: "/pricing" },
+  { name: "Become an Agent", href: "/agents" },
   { name: "Contact", href: "/contact" },
 ];
 
@@ -51,7 +52,7 @@ export function Navbar() {
         {/* Desktop Buttons */}
         <div className="hidden md:flex items-center space-x-4">
           {isAuthenticated ? (
-            <Link href={user?.roles.includes("AGENT") ? "/agent" : "/dashboard"}>
+            <Link href={"/dashboard"}>
               <Button
                 size="sm"
                 className="bg-green-600 hover:bg-green-700 text-white font-semibold"
@@ -114,7 +115,7 @@ export function Navbar() {
                 <div className="flex flex-col gap-4 mt-4 px-4">
                   {isAuthenticated ? (
                     <Link
-                      href={user?.roles.includes("AGENT") ? "/agent" : "/dashboard"}
+                      href={"/dashboard"}
                       onClick={() => setIsOpen(false)}
                     >
                       <Button className="w-full h-11 text-base bg-green-600 hover:bg-green-700 text-white">

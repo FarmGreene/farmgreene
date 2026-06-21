@@ -18,30 +18,12 @@ import { Menu } from "lucide-react";
 import { SidebarSwitcher } from "@/components/layout/SidebarSwitcher";
 import { UserProfilePopover } from "@/components/dashboard/header/UserProfilePopover";
 import { QuickAlertCreateDialog } from "@/components/dashboard/header/QuickAlertCreateDialog";
-import Link from "next/link";
-import { FieldAgentOnboardingModal } from "@/components/onboarding/field-agent/FieldAgentOnboardingModal";
-import { useAuthStore } from "@/lib/store/useAuthStore";
 
 function DashboardHeaderContent() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const slugParam = searchParams.get("slug");
   const segments = pathname.split("/").filter((item) => item !== "");
-  const [showOnboarding, setShowOnboarding] = React.useState(false);
-  const user = useAuthStore((state) => state.user);
-  const isAgent = user?.roles.includes("AGENT") ?? false;
-  const isOnAgentDashboard = pathname.startsWith("/agent");
-
-  // Auto-show onboarding modal for agents who haven't completed it
-  React.useEffect(() => {
-    if (!user) return;
-
-    // Check if user is an agent and hasn't been verified
-    const isAgent = user.roles.includes("AGENT");
-    if (isAgent && user.agentStatus !== "active") {
-      setShowOnboarding(true);
-    }
-  }, [user]);
 
   // Generate breadcrumbs from path segments
   const breadcrumbItems = segments.map((segment, index) => {
@@ -131,27 +113,6 @@ function DashboardHeaderContent() {
         <div className="flex items-center gap-2">
           {/* Quick Alert Dialog */}
           <QuickAlertCreateDialog />
-          {!isAgent && (
-            <Button
-              id="agent-onboarding-trigger"
-              size="sm"
-              className="gap-2 bg-green-600 hover:bg-green-700 text-white"
-              onClick={() => setShowOnboarding(true)}
-            >
-              Become an agent
-            </Button>
-          )}
-          {isAgent && isOnAgentDashboard && (
-            <Button
-              id="agent-return-to-dashboard"
-              size="sm"
-              // variant="outline"
-              className="gap-2"
-              asChild
-            >
-              <Link href="/dashboard">Return to Dashboard</Link>
-            </Button>
-          )}
         </div>
 
         {/* User Profile */}
@@ -159,11 +120,6 @@ function DashboardHeaderContent() {
           <UserProfilePopover />
         </div>
       </div>
-
-      <FieldAgentOnboardingModal
-        open={showOnboarding}
-        onOpenChange={setShowOnboarding}
-      />
     </header>
   );
 }

@@ -2,16 +2,17 @@
 
 ## Overview
 
-The application uses Next.js middleware to protect authenticated routes (`/dashboard`, `/agent`) and redirect unauthenticated users to login.
+The application uses a Next.js proxy (`proxy.ts`) to protect authenticated routes (`/dashboard`) and redirect unauthenticated users to login.
 
 ## Protected Routes
 
 - `/dashboard/*` - All dashboard routes
-- `/agent/*` - All agent routes
+
+> Field agents now live in a separate app, so `/agent` is no longer a route here. Note `/agents` is the **public** "Become an Agent" marketing page and is intentionally not protected.
 
 ## How It Works
 
-### 1. Middleware (`middleware.ts`)
+### 1. Proxy (`proxy.ts`)
 
 Runs on the server before rendering pages:
 

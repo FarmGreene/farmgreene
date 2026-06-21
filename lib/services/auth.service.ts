@@ -3,6 +3,7 @@ import {
   AuthResponse,
   LoginCredentials,
   RegisterData,
+  UpdateProfileInput,
   User,
 } from "@/types/auth";
 import { handleApiError } from "@/lib/utils/error-handler";
@@ -35,6 +36,16 @@ class AuthService {
   async getCurrentUser(): Promise<User> {
     try {
       const response = await apiClient.get<User>("/auth/me");
+      return response.data;
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
+  }
+
+  /** Update the current user's editable profile fields. */
+  async updateProfile(data: UpdateProfileInput): Promise<User> {
+    try {
+      const response = await apiClient.patch<User>("/auth/me", data);
       return response.data;
     } catch (error) {
       throw new Error(handleApiError(error));

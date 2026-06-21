@@ -4,10 +4,13 @@ import type { NextRequest } from "next/server";
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Protected route patterns
-  const protectedRoutes = ["/dashboard", "/agent"];
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    pathname.startsWith(route),
+  // Protected route patterns. Match on whole path segments so a route like
+  // "/agents" (public marketing page) isn't caught by a "/agent" prefix.
+  // Note: field agents now live in a separate app, so "/agent" is no longer
+  // a protected route here.
+  const protectedRoutes = ["/dashboard"];
+  const isProtectedRoute = protectedRoutes.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
 
   if (!isProtectedRoute) {
