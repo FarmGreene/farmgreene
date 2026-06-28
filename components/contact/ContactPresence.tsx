@@ -44,7 +44,7 @@ export default function ContactPresence() {
                     key={index}
                     className="flex flex-col p-6 rounded-xl bg-slate-50 dark:bg-slate-900 border"
                   >
-                    <div className="h-10 w-10 text-green-600 mb-4 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                    <div className="h-10 w-10 text-[#049878] mb-4 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
                       <Icon className="h-5 w-5" />
                     </div>
                     <div className="text-sm font-medium text-muted-foreground mb-1">
@@ -53,7 +53,7 @@ export default function ContactPresence() {
                     <div className="text-xl font-bold text-foreground">
                       {stat.value}
                     </div>
-                    <div className="text-sm text-green-600 dark:text-green-400 mt-1">
+                    <div className="text-sm text-[#049878] dark:text-green-400 mt-1">
                       {stat.detail}
                     </div>
                   </div>

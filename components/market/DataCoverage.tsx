@@ -42,7 +42,7 @@ export default function DataCoverage() {
               key={i}
               className="bg-background p-6 rounded-2xl border shadow-sm hover:shadow-md transition-shadow"
             >
-              <div className="h-12 w-12 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 mb-4">
+              <div className="h-12 w-12 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-[#049878] mb-4">
                 <item.icon className="h-6 w-6" />
               </div>
               <h3 className="font-bold text-lg mb-2">{item.title}</h3>

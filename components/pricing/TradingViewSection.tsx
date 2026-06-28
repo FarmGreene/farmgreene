@@ -26,10 +26,10 @@ export default function TradingViewSection() {
             <div className="w-8 h-[85%] bg-green-500 rounded-t-md"></div>
           </div>
           <div className="z-10 bg-white dark:bg-slate-900 px-6 py-3 rounded-full border shadow-sm flex items-center gap-2 text-sm font-medium">
-            <LineChart className="h-4 w-4 text-green-600" />
+            <LineChart className="h-4 w-4 text-[#049878]" />
             Technical Indicators
             <span className="w-px h-4 bg-border mx-1"></span>
-            <BarChart3 className="h-4 w-4 text-green-600" />
+            <BarChart3 className="h-4 w-4 text-[#049878]" />
             Volume Analysis
           </div>
         </div>

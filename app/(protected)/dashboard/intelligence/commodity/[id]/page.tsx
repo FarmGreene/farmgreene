@@ -4,6 +4,7 @@ import React from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useCommodity, usePriceHistory } from "@/lib/hooks/useCommodities";
 import { CommodityHero } from "@/components/dashboard/intelligence/commodity/CommodityHero";
+import { VariantSwitcher } from "@/components/dashboard/intelligence/commodity/VariantSwitcher";
 import { CommodityAIAssistant } from "@/components/dashboard/intelligence/commodity/CommodityAIAssistant";
 import { CommodityFundamentals } from "@/components/dashboard/intelligence/commodity/CommodityFundamentals";
 import { CommodityPriceChart } from "@/components/dashboard/intelligence/commodity/CommodityPriceChart";
@@ -52,6 +53,9 @@ export default function CommodityIntelligenceHub() {
     <div className="flex flex-col gap-6 md:gap-8 max-w-[1600px] w-full pb-20">
       {/* 1. Hero Section */}
       <CommodityHero commodity={commodity} />
+
+      {/* 1b. Variant Switcher (only renders for commodities with siblings) */}
+      <VariantSwitcher variants={commodity.variants} />
 
       {/* 2. AI Market Summary */}
       <CommodityAIAssistant commodity={commodity} history={history} />

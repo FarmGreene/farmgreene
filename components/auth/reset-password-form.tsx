@@ -52,7 +52,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
       <div className="mx-auto w-full max-w-[400px] space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-500">
         <div className="flex flex-col items-center space-y-4 text-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-50">
-            <CheckCircle2 className="h-8 w-8 text-green-600" />
+            <CheckCircle2 className="h-8 w-8 text-[#049878]" />
           </div>
           <h1 className="text-3xl font-bold tracking-tight">
             Password Updated
@@ -137,7 +137,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
       <div className="text-center">
         <Link
           href="/login"
-          className="inline-flex items-center gap-2 text-sm font-medium text-green-600 hover:text-green-500"
+          className="inline-flex items-center gap-2 text-sm font-medium text-[#049878] hover:text-green-500"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Sign In

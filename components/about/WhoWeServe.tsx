@@ -9,7 +9,7 @@ const stakeholders = [
     description:
       "Access essential equipment when needed—without high upfront costs. Focus on productivity and yield.",
     image: "/images/stakeholder-farmer.jpg",
-    accent: "bg-green-600",
+    accent: "bg-[#049878]",
   },
   {
     icon: Tractor,

@@ -70,7 +70,7 @@ export default function IndexWidget({
           className={cn(
             "text-xs flex items-center font-medium",
             isPositive
-              ? "text-green-600 dark:text-green-400"
+              ? "text-[#049878] dark:text-green-400"
               : "text-red-600 dark:text-red-400"
           )}
         >

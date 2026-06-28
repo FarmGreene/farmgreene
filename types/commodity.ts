@@ -187,11 +187,28 @@ export interface Commodity {
   tags: string[];
   metadata: Record<string, any>;
   isActive: boolean;
+  /** Groups variants of the same base commodity, e.g. "maize"; null = standalone */
+  family?: string | null;
+  /** Short variant label within the family, e.g. "White" */
+  variantLabel?: string | null;
   createdById: string | null;
   createdAt: string;
   updatedAt: string;
   /** Joined from the latest CommodityDailyAverage */
   latestAverage?: CommodityDailyAverage | null;
+  /** Sibling variants sharing this commodity's family (incl. itself); [] if standalone */
+  variants?: CommodityVariant[];
+}
+
+/** Lightweight sibling entry for the detail-page variant switcher */
+export interface CommodityVariant {
+  id: string;
+  slug: string;
+  name: string;
+  /** Display label, e.g. "White" (falls back to full name) */
+  label: string;
+  /** True for the commodity currently being viewed */
+  active: boolean;
 }
 
 // ─── Daily Average ────────────────────────────────────────────────────────────

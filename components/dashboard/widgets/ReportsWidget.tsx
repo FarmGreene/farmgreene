@@ -244,7 +244,7 @@ const reportColumns: ColumnDef<Report>[] = [
         );
       }
       return (
-        <div className="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
+        <div className="flex items-center gap-1.5 text-xs text-[#049878] dark:text-green-400">
           <div className="h-1.5 w-1.5 rounded-full bg-current" />
           Ready
         </div>
@@ -261,7 +261,7 @@ const reportColumns: ColumnDef<Report>[] = [
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-muted-foreground hover:text-green-600"
+            className="h-8 w-8 text-muted-foreground hover:text-[#049878]"
             disabled={disabled}
           >
             <Eye className="h-4 w-4" />
@@ -415,7 +415,7 @@ export default function ReportsWidget() {
           </Button>
           <Button
             size="sm"
-            className="gap-2 bg-green-600 hover:bg-green-700 text-white"
+            className="gap-2 bg-[#049878] hover:bg-green-700 text-white"
           >
             <Plus className="h-4 w-4" />
             Generate Report
@@ -498,7 +498,7 @@ export default function ReportsWidget() {
                             <Button
                               variant="link"
                               size="sm"
-                              className="text-green-600"
+                              className="text-[#049878]"
                             >
                               Generate your first report
                             </Button>
@@ -592,7 +592,7 @@ export default function ReportsWidget() {
                             <Button
                               variant="link"
                               size="sm"
-                              className="text-green-600"
+                              className="text-[#049878]"
                             >
                               Create Alert
                             </Button>

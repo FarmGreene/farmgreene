@@ -48,7 +48,7 @@ export default function ContactFAQ() {
               value={`item-${index}`}
               className="border-slate-200 dark:border-slate-800"
             >
-              <AccordionTrigger className="text-left font-medium hover:text-green-600">
+              <AccordionTrigger className="text-left font-medium hover:text-[#049878]">
                 {faq.question}
               </AccordionTrigger>
               <AccordionContent className="text-muted-foreground leading-relaxed">

@@ -14,7 +14,7 @@ export default function MarketplaceTrust() {
 
           <div className="lg:col-span-3 grid md:grid-cols-3 gap-6">
             <div className="flex gap-4">
-              <ShieldCheck className="h-6 w-6 text-green-600 shrink-0" />
+              <ShieldCheck className="h-6 w-6 text-[#049878] shrink-0" />
               <div>
                 <h3 className="font-bold text-sm mb-1">Accountability</h3>
                 <p className="text-xs text-muted-foreground">
@@ -23,7 +23,7 @@ export default function MarketplaceTrust() {
               </div>
             </div>
             <div className="flex gap-4">
-              <UserCheck className="h-6 w-6 text-green-600 shrink-0" />
+              <UserCheck className="h-6 w-6 text-[#049878] shrink-0" />
               <div>
                 <h3 className="font-bold text-sm mb-1">Verified Owners</h3>
                 <p className="text-xs text-muted-foreground">
@@ -32,7 +32,7 @@ export default function MarketplaceTrust() {
               </div>
             </div>
             <div className="flex gap-4">
-              <FileCheck className="h-6 w-6 text-green-600 shrink-0" />
+              <FileCheck className="h-6 w-6 text-[#049878] shrink-0" />
               <div>
                 <h3 className="font-bold text-sm mb-1">Clear Terms</h3>
                 <p className="text-xs text-muted-foreground">

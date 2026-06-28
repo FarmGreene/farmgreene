@@ -73,7 +73,7 @@ export default function PlanTieIn() {
           <Link href="/register">
             <Button
               size="lg"
-              className="rounded-full px-8 bg-green-600 hover:bg-green-700 text-white"
+              className="rounded-full px-8 bg-[#049878] hover:bg-green-700 text-white"
             >
               Start Free
             </Button>
