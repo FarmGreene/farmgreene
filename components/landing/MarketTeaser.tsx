@@ -64,7 +64,7 @@ export default function MarketTeaser() {
 
             <Button
               size="lg"
-              className="bg-green-600 hover:bg-green-700 text-white rounded-full cursor-default"
+              className="bg-[#049878] hover:bg-green-700 text-white rounded-full cursor-default"
             >
               Coming Soon
             </Button>

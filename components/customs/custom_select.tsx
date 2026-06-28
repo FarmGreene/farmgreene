@@ -55,7 +55,7 @@ const Select = ({
       >
         <SelectTrigger
           className={cn(
-            "border bg-transparent text-green-600 flex items-center gap-1 w-auto focus-within:ring-0 focus:ring-0 focus-visible:ring-0 placeholder:text-gray-300 focus:outline-none h-[40px] py-0 text-sm",
+            "border bg-transparent text-[#049878] flex items-center gap-1 w-auto focus-within:ring-0 focus:ring-0 focus-visible:ring-0 placeholder:text-gray-300 focus:outline-none h-[40px] py-0 text-sm",
             variant === SelectVariant.FILLED
               ? "border border-gray-400 dark:border-gray-500 bg-gray-25 dark:bg-gray-600 px-6 text-accent rounded-xl gap-3"
               : variant === SelectVariant.OUTLINE

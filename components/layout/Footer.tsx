@@ -1,9 +1,10 @@
 "use client";
 import Link from "next/link";
-import { Facebook, Twitter, Instagram, Linkedin, Tractor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Logo } from "@/components/layout/Logo";
+import { FaXTwitter, FaInstagram } from "react-icons/fa6";
+import { LuFacebook, LuLinkedin } from "react-icons/lu";
 
 export function Footer() {
   return (
@@ -18,31 +19,33 @@ export function Footer() {
             </p>
             <div className="flex space-x-4">
               <Link
-                href="#"
-                className="text-muted-foreground hover:text-green-600 transition-colors"
+                href="https://www.facebook.com/profile.php?id=61591512838816"
+                target="_blank"
+                className="text-muted-foreground hover:text-[#049878] transition-colors"
               >
-                <Facebook className="h-5 w-5" />
+                <LuFacebook className="h-5 w-5" />
                 <span className="sr-only">Facebook</span>
               </Link>
               <Link
-                href="#"
-                className="text-muted-foreground hover:text-green-600 transition-colors"
+                href="https://x.com/usefarmgreene"
+                target="_blank"
+                className="text-muted-foreground hover:text-[#049878] transition-colors"
               >
-                <Twitter className="h-5 w-5" />
+                <FaXTwitter className="h-5 w-5" />
                 <span className="sr-only">Twitter</span>
               </Link>
               <Link
                 href="#"
-                className="text-muted-foreground hover:text-green-600 transition-colors"
+                className="text-muted-foreground hover:text-[#049878] transition-colors"
               >
-                <Instagram className="h-5 w-5" />
+                <FaInstagram className="h-5 w-5" />
                 <span className="sr-only">Instagram</span>
               </Link>
               <Link
                 href="#"
-                className="text-muted-foreground hover:text-green-600 transition-colors"
+                className="text-muted-foreground hover:text-[#049878] transition-colors"
               >
-                <Linkedin className="h-5 w-5" />
+                <LuLinkedin className="h-5 w-5" />
                 <span className="sr-only">LinkedIn</span>
               </Link>
             </div>
@@ -56,7 +59,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/marketplace"
-                  className="hover:text-green-600 transition-colors"
+                  className="hover:text-[#049878] transition-colors"
                 >
                   Equipment Rentals
                 </Link>
@@ -64,7 +67,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/co-op"
-                  className="hover:text-green-600 transition-colors"
+                  className="hover:text-[#049878] transition-colors"
                 >
                   Co-op Funding
                 </Link>
@@ -72,7 +75,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/market-prices"
-                  className="hover:text-green-600 transition-colors"
+                  className="hover:text-[#049878] transition-colors"
                 >
                   Market Price Index
                 </Link>
@@ -80,7 +83,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/agents"
-                  className="hover:text-green-600 transition-colors"
+                  className="hover:text-[#049878] transition-colors"
                 >
                   Become an Agent
                 </Link>
@@ -96,7 +99,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/about"
-                  className="hover:text-green-600 transition-colors"
+                  className="hover:text-[#049878] transition-colors"
                 >
                   About Us
                 </Link>
@@ -104,7 +107,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/careers"
-                  className="hover:text-green-600 transition-colors"
+                  className="hover:text-[#049878] transition-colors"
                 >
                   Careers
                 </Link>
@@ -112,7 +115,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/blog"
-                  className="hover:text-green-600 transition-colors"
+                  className="hover:text-[#049878] transition-colors"
                 >
                   Blog
                 </Link>
@@ -120,7 +123,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/contact"
-                  className="hover:text-green-600 transition-colors"
+                  className="hover:text-[#049878] transition-colors"
                 >
                   Contact
                 </Link>
@@ -148,7 +151,7 @@ export function Footer() {
               <Button
                 type="submit"
                 size="sm"
-                className="bg-green-600 hover:bg-green-700 text-white"
+                className="bg-[#049878] hover:bg-green-700 text-white h-9"
               >
                 Subscribe
               </Button>

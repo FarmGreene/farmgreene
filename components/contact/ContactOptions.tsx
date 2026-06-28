@@ -60,7 +60,7 @@ export default function ContactOptions() {
               className="flex flex-col h-full border-none shadow-lg hover:shadow-xl transition-shadow duration-300"
             >
               <CardHeader className="pb-2">
-                <div className="h-12 w-12 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400 mb-4">
+                <div className="h-12 w-12 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-[#049878] dark:text-green-400 mb-4">
                   <Icon className="h-6 w-6" />
                 </div>
                 <CardTitle className="text-xl font-bold">

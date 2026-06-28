@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Tractor } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
+import logo from '@/assets/images/logo.png'
 
 interface LogoProps {
   iconSize?: number;
@@ -16,16 +18,8 @@ export function Logo({
   return (
     <Link href="/" className="flex items-center gap-2 shrink-0">
       <div className="relative flex items-center justify-center">
-        {/* Abstract Leaf/Field Icon - Using Tractor as a placeholder since Leaf is not imported */}
-        <Tractor
-          size={iconSize}
-          className={cn(
-            variant === "white"
-              ? "text-green-400 fill-transparent"
-              : "text-green-600 fill-green-100",
-          )}
-          strokeWidth={2.5}
-        />
+   
+        <Image src={logo} alt="logo" width={50} height={50} className="rounded-lg"/>
       </div>
       <span
         className={cn(
@@ -34,7 +28,7 @@ export function Logo({
           variant === "white" ? "text-white" : "text-foreground",
         )}
       >
-        Farm<span className="text-green-600">greene</span>
+        Farm<span className="text-[#049878]">greene</span>
       </span>
     </Link>
   );

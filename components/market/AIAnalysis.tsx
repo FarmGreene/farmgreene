@@ -24,19 +24,19 @@ export default function AIAnalysis() {
             </div>
             <ul className="space-y-3">
               <li className="flex items-center gap-3">
-                <div className="h-6 w-6 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center text-green-600 text-xs font-bold">
+                <div className="h-6 w-6 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center text-[#049878] text-xs font-bold">
                   ✓
                 </div>
                 <span className="font-medium">Price trend summaries</span>
               </li>
               <li className="flex items-center gap-3">
-                <div className="h-6 w-6 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center text-green-600 text-xs font-bold">
+                <div className="h-6 w-6 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center text-[#049878] text-xs font-bold">
                   ✓
                 </div>
                 <span className="font-medium">Seasonal pattern analysis</span>
               </li>
               <li className="flex items-center gap-3">
-                <div className="h-6 w-6 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center text-green-600 text-xs font-bold">
+                <div className="h-6 w-6 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center text-[#049878] text-xs font-bold">
                   ✓
                 </div>
                 <span className="font-medium">

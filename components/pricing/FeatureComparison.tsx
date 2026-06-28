@@ -80,7 +80,7 @@ export default function FeatureComparison() {
                   Feature
                 </th>
                 <th className="py-4 px-6 font-bold text-center">Starter</th>
-                <th className="py-4 px-6 font-bold text-center text-green-600">
+                <th className="py-4 px-6 font-bold text-center text-[#049878]">
                   Insight
                 </th>
                 <th className="py-4 px-6 font-bold text-center">
@@ -121,7 +121,7 @@ export default function FeatureComparison() {
 function renderValue(val: string | boolean) {
   if (typeof val === "boolean") {
     return val ? (
-      <Check className="h-5 w-5 mx-auto text-green-600" />
+      <Check className="h-5 w-5 mx-auto text-[#049878]" />
     ) : (
       <Minus className="h-4 w-4 mx-auto text-slate-300" />
     );

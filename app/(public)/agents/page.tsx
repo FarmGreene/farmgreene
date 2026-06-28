@@ -90,7 +90,7 @@ export default function AgentsPage() {
               from your phone.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <Button
+              {/* <Button
                 asChild
                 size="lg"
                 className="h-12 bg-emerald-600 px-7 text-base font-semibold shadow-lg shadow-emerald-600/20 hover:bg-emerald-700"
@@ -99,7 +99,7 @@ export default function AgentsPage() {
                   Get started
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </a>
-              </Button>
+              </Button> */}
               <Button
                 asChild
                 size="lg"
@@ -136,7 +136,7 @@ export default function AgentsPage() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
             </div>
             {/* floating badge card */}
-            <div className="absolute -bottom-5 -left-5 flex items-center gap-3 rounded-2xl border border-slate-100 bg-white/95 p-4 shadow-xl backdrop-blur dark:border-slate-800 dark:bg-slate-900/95">
+            {/* <div className="absolute -bottom-5 -left-5 flex items-center gap-3 rounded-2xl border border-slate-100 bg-white/95 p-4 shadow-xl backdrop-blur dark:border-slate-800 dark:bg-slate-900/95">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
                 <Sparkles className="h-5 w-5" />
               </div>
@@ -146,7 +146,7 @@ export default function AgentsPage() {
                 </p>
                 <p className="text-xs text-slate-500">across Nigeria</p>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>
@@ -333,7 +333,7 @@ export default function AgentsPage() {
           className="object-cover"
         />
         <div className="absolute inset-0 bg-emerald-950/85" />
-        <div className="relative mx-auto max-w-3xl px-6 py-24 text-center text-white">
+        {/* <div className="relative mx-auto max-w-3xl px-6 py-24 text-center text-white">
           <h2 className="font-heading text-3xl font-bold tracking-tight sm:text-4xl">
             Ready to join the network?
           </h2>
@@ -361,7 +361,7 @@ export default function AgentsPage() {
               <Link href="/contact">Contact us to apply</Link>
             </Button>
           </div>
-        </div>
+        </div> */}
       </section>
     </div>
   );

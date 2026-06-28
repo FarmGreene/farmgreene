@@ -48,7 +48,7 @@ const CommodityRow = ({ commodity }: { commodity: CommodityIndexItem }) => {
     <div className="flex items-center justify-between group">
       {/* Name & Region */}
       <div className="min-w-[120px]">
-        <div className="font-medium text-sm text-foreground group-hover:text-green-600 transition-colors truncate max-w-[140px]">
+        <div className="font-medium text-sm text-foreground group-hover:text-[#049878] transition-colors truncate max-w-[140px]">
           {commodity.name}
         </div>
         <div className="text-[10px] text-muted-foreground truncate max-w-[140px]">
@@ -69,7 +69,7 @@ const CommodityRow = ({ commodity }: { commodity: CommodityIndexItem }) => {
         {change !== 0 ? (
           <div
             className={`text-[10px] flex items-center justify-end gap-0.5 ${
-              isPositive ? "text-green-600" : "text-red-500"
+              isPositive ? "text-[#049878]" : "text-red-500"
             }`}
           >
             {isPositive ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
@@ -146,7 +146,7 @@ export default function CommodityIndex() {
             {!isPremium && commodities.length >= visibleCount && (
               <div className="relative mt-2 p-3 rounded-lg border border-dashed border-green-200 bg-green-50/50 dark:bg-green-900/10 dark:border-green-800 flex flex-col items-center justify-center text-center gap-2">
                 <div className="p-2 bg-green-100 dark:bg-green-900 rounded-full">
-                  <Lock className="h-4 w-4 text-green-600" />
+                  <Lock className="h-4 w-4 text-[#049878]" />
                 </div>
                 <div>
                   <p className="text-xs font-medium text-green-900 dark:text-green-100">

@@ -37,7 +37,7 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
         data-slot="phone-input"
         className={cn(
           "border-input dark:bg-input/30 flex h-9 w-full min-w-0 items-center gap-2 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] md:text-sm",
-          "focus-within:border-green-600/80 focus-within:ring-green-600/30 focus-within:ring-[3px]",
+          "focus-within:border-[#049878]/80 focus-within:ring-[#049878]/30 focus-within:ring-[3px]",
           disabled && "pointer-events-none cursor-not-allowed opacity-50",
           className,
         )}

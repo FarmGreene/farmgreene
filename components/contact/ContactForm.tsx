@@ -67,7 +67,7 @@ export default function ContactForm() {
     return (
       <div className="bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-2xl p-8 md:p-12 text-center max-w-2xl mx-auto">
         <div className="mx-auto h-16 w-16 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center mb-6">
-          <Send className="h-8 w-8 text-green-600 dark:text-green-300" />
+          <Send className="h-8 w-8 text-[#049878] dark:text-green-300" />
         </div>
         <h3 className="text-2xl font-bold text-green-800 dark:text-green-300 mb-2">
           Message Sent!
@@ -234,7 +234,7 @@ export default function ContactForm() {
               <div className="pt-2">
                 <Button
                   type="submit"
-                  className="w-full h-12 text-base font-semibold bg-green-600 hover:bg-green-700"
+                  className="w-full h-12 text-base font-semibold bg-[#049878] hover:bg-green-700"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (

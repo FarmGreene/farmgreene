@@ -83,13 +83,13 @@ export default function PricingCards() {
               key={i}
               className={`relative flex flex-col p-8 rounded-3xl border ${
                 tier.popular
-                  ? "border-green-600 shadow-lg ring-1 ring-green-600"
+                  ? "border-[#049878] shadow-lg ring-1 ring-[#049878]"
                   : "bg-background shadow-sm"
               }`}
             >
               {tier.popular && (
                 <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-2">
-                  <span className="inline-flex items-center rounded-full bg-green-600 px-3 py-1 text-xs font-medium text-white shadow-sm ring-1 ring-inset ring-green-600/10">
+                  <span className="inline-flex items-center rounded-full bg-[#049878] px-3 py-1 text-xs font-medium text-white shadow-sm ring-1 ring-inset ring-[#049878]/10">
                     Most Popular
                   </span>
                 </div>
@@ -119,7 +119,7 @@ export default function PricingCards() {
                 {tier.features.map((feature) => (
                   <li key={feature} className="flex gap-x-3">
                     <Check
-                      className="h-5 w-5 flex-none text-green-600"
+                      className="h-5 w-5 flex-none text-[#049878]"
                       aria-hidden="true"
                     />
                     {feature}
@@ -137,11 +137,11 @@ export default function PricingCards() {
                 }
                 className={`w-full rounded-full ${
                   tier.variant === "default"
-                    ? "bg-green-600 hover:bg-green-700 text-white"
+                    ? "bg-[#049878] hover:bg-green-700 text-white"
                     : ""
                 } ${
                   tier.variant === "ghost"
-                    ? "hover:bg-transparent hover:text-green-600 hover:underline"
+                    ? "hover:bg-transparent hover:text-[#049878] hover:underline"
                     : ""
                 }`}
               >

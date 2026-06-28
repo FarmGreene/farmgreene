@@ -20,7 +20,7 @@ export default function PricingCTA() {
           <Link href="/register">
             <Button
               size="lg"
-              className="bg-green-600 hover:bg-green-700 text-white min-w-[180px] h-12 rounded-full font-semibold"
+              className="bg-[#049878] hover:bg-green-700 text-white min-w-[180px] h-12 rounded-full font-semibold"
             >
               Start Free
             </Button>

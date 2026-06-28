@@ -106,7 +106,7 @@ export default function ExportHistory() {
                       {file.type === "PDF" ? (
                         <FileText className="h-4 w-4 text-red-500" />
                       ) : file.type === "CSV" ? (
-                        <FileSpreadsheet className="h-4 w-4 text-green-600" />
+                        <FileSpreadsheet className="h-4 w-4 text-[#049878]" />
                       ) : (
                         <FileBarChart className="h-4 w-4 text-blue-500" />
                       )}

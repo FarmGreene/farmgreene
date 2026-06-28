@@ -17,7 +17,7 @@ export default function IntelligenceConnection() {
 
               <h2 className="font-heading text-3xl font-extrabold tracking-tight sm:text-5xl text-slate-900 dark:text-white leading-tight">
                 More Than Just <br />
-                <span className="bg-gradient-to-r from-green-600 to-emerald-500 dark:from-green-400 dark:to-emerald-300 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-[#049878] to-emerald-500 dark:from-green-400 dark:to-emerald-300 bg-clip-text text-transparent">
                   Equipment Access
                 </span>
               </h2>
@@ -30,7 +30,7 @@ export default function IntelligenceConnection() {
             {/* List of features */}
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <div className="h-6 w-6 rounded-md bg-green-500/10 text-green-600 dark:text-green-400 flex items-center justify-center">
+                <div className="h-6 w-6 rounded-md bg-green-500/10 text-[#049878] dark:text-green-400 flex items-center justify-center">
                   <TrendingUp className="h-3.5 w-3.5" />
                 </div>
                 <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">
@@ -38,7 +38,7 @@ export default function IntelligenceConnection() {
                 </span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="h-6 w-6 rounded-md bg-green-500/10 text-green-600 dark:text-green-400 flex items-center justify-center">
+                <div className="h-6 w-6 rounded-md bg-green-500/10 text-[#049878] dark:text-green-400 flex items-center justify-center">
                   <BarChart3 className="h-3.5 w-3.5" />
                 </div>
                 <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">
@@ -46,7 +46,7 @@ export default function IntelligenceConnection() {
                 </span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="h-6 w-6 rounded-md bg-green-500/10 text-green-600 dark:text-green-400 flex items-center justify-center">
+                <div className="h-6 w-6 rounded-md bg-green-500/10 text-[#049878] dark:text-green-400 flex items-center justify-center">
                   <LineChart className="h-3.5 w-3.5" />
                 </div>
                 <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">
@@ -56,10 +56,10 @@ export default function IntelligenceConnection() {
             </div>
 
             <div className="pt-2">
-              <Link href="/market">
+              <Link href="/intelligence">
                 <Button
                   size="lg"
-                  className="bg-green-600 hover:bg-green-700 text-white rounded-full font-semibold px-8 h-12 shadow-lg flex items-center gap-2 group"
+                  className="bg-[#049878] hover:bg-green-700 text-white rounded-full font-semibold px-8 h-12 shadow-lg flex items-center gap-2 group"
                 >
                   <span>Explore Market Intelligence</span>
                   <ArrowRight className="h-4 w-4 transform group-hover:translate-x-1 transition-transform" />

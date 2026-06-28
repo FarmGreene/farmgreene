@@ -6,7 +6,7 @@ export default function AIExplainer() {
       <div className="w-[1440px] max-w-full mx-auto px-6 lg:px-14">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <div className="space-y-6">
-            <div className="inline-flex items-center rounded-full border border-green-500/30 bg-green-500/10 px-3 py-1 text-sm font-medium text-green-600">
+            <div className="inline-flex items-center rounded-full border border-green-500/30 bg-green-500/10 px-3 py-1 text-sm font-medium text-[#049878]">
               <Sparkles className="mr-2 h-4 w-4" />
               AI-Powered Intelligence
             </div>
@@ -20,7 +20,7 @@ export default function AIExplainer() {
             </p>
             <div className="grid sm:grid-cols-2 gap-6 pt-4">
               <div className="flex gap-3">
-                <BrainCircuit className="h-6 w-6 text-green-600 shrink-0" />
+                <BrainCircuit className="h-6 w-6 text-[#049878] shrink-0" />
                 <div>
                   <h3 className="font-semibold text-sm">Smart Summaries</h3>
                   <p className="text-xs text-muted-foreground">
@@ -29,7 +29,7 @@ export default function AIExplainer() {
                 </div>
               </div>
               <div className="flex gap-3">
-                <FileSearch className="h-6 w-6 text-green-600 shrink-0" />
+                <FileSearch className="h-6 w-6 text-[#049878] shrink-0" />
                 <div>
                   <h3 className="font-semibold text-sm">Deep Reports</h3>
                   <p className="text-xs text-muted-foreground">
