@@ -16,7 +16,7 @@ export default function AboutCTA() {
           <Link href="/marketplace">
             <Button
               size="lg"
-              className="bg-green-600 hover:bg-green-700 text-white min-w-[200px] h-12 rounded-full font-semibold"
+              className="bg-[#049878] hover:bg-green-700 text-white min-w-[200px] h-12 rounded-full font-semibold"
             >
               Explore the Marketplace
             </Button>

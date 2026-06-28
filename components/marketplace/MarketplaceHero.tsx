@@ -45,7 +45,7 @@ export default function MarketplaceHero() {
             <Link href="#listings" className="inline-block">
               <Button
                 size="lg"
-                className="bg-green-600 hover:bg-green-700 text-white rounded-full px-8 text-lg font-semibold h-14 shadow-lg min-w-[200px]"
+                className="bg-[#049878] hover:bg-green-700 text-white rounded-full px-8 text-lg font-semibold h-14 shadow-lg min-w-[200px]"
               >
                 Explore Equipment
               </Button>

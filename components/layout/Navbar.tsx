@@ -26,7 +26,7 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
-      <div className="container flex h-16 items-center justify-between max-w-[1440px] mx-auto px-6 lg:px-14">
+      <div className="container flex h-22 items-center justify-between max-w-[1440px] mx-auto px-6 lg:px-14">
         <div className="flex items-center gap-12">
           <Logo />
 
@@ -39,7 +39,7 @@ export function Navbar() {
                 className={cn(
                   "transition-colors hover:text-foreground/80 py-1 border-b-2",
                   pathname === link.href
-                    ? "text-green-600 border-green-600"
+                    ? "text-[#049878] border-[#049878]"
                     : "text-foreground/60 border-transparent",
                 )}
               >
@@ -50,12 +50,13 @@ export function Navbar() {
         </div>
 
         {/* Desktop Buttons */}
-        <div className="hidden md:flex items-center space-x-4">
+        {/* Auth buttons to be added when fully live */}
+        {/* <div className="hidden md:flex items-center space-x-4">
           {isAuthenticated ? (
             <Link href={"/dashboard"}>
               <Button
                 size="sm"
-                className="bg-green-600 hover:bg-green-700 text-white font-semibold"
+                className="bg-[#049878] hover:bg-green-700 text-white font-semibold"
               >
                 Go to dashboard
               </Button>
@@ -70,14 +71,14 @@ export function Navbar() {
               <Link href="/signup">
                 <Button
                   size="sm"
-                  className="bg-green-600 hover:bg-green-700 text-white"
+                  className="bg-[#049878] hover:bg-green-700 text-white"
                 >
                   Sign up
                 </Button>
               </Link>
             </>
           )}
-        </div>
+        </div> */}
 
         {/* Mobile Menu Trigger */}
         {/* <div className="md:hidden">
@@ -103,7 +104,7 @@ export function Navbar() {
                       className={cn(
                         "block px-2 py-2 text-lg font-medium transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md",
                         pathname === link.href
-                          ? "text-green-600 bg-green-50 dark:bg-green-900/10"
+                          ? "text-[#049878] bg-green-50 dark:bg-green-900/10"
                           : "text-foreground/80"
                       )}
                     >
@@ -118,7 +119,7 @@ export function Navbar() {
                       href={"/dashboard"}
                       onClick={() => setIsOpen(false)}
                     >
-                      <Button className="w-full h-11 text-base bg-green-600 hover:bg-green-700 text-white">
+                      <Button className="w-full h-11 text-base bg-[#049878] hover:bg-green-700 text-white">
                         Go to dashboard
                       </Button>
                     </Link>
@@ -130,7 +131,7 @@ export function Navbar() {
                         </Button>
                       </Link>
                       <Link href="/signup" onClick={() => setIsOpen(false)}>
-                        <Button className="w-full h-11 text-base bg-green-600 hover:bg-green-700 text-white">
+                        <Button className="w-full h-11 text-base bg-[#049878] hover:bg-green-700 text-white">
                           Get Started
                         </Button>
                       </Link>

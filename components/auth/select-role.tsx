@@ -51,7 +51,7 @@ export default function SelectRole() {
               className={cn(
                 "relative flex items-center gap-4 p-6 cursor-pointer rounded-xl border-2 transition-all hover:bg-slate-50 dark:hover:bg-slate-900",
                 role === r.id
-                  ? "border-green-600 bg-green-50/50 dark:border-green-500 dark:bg-green-900/10 shadow-sm"
+                  ? "border-[#049878] bg-green-50/50 dark:border-green-500 dark:bg-green-900/10 shadow-sm"
                   : "border-muted hover:border-green-200 dark:hover:border-green-800"
               )}
             >
@@ -76,7 +76,7 @@ export default function SelectRole() {
         })}
       </div>
       <Button
-        className="w-full rounded-full bg-green-600 hover:bg-green-700"
+        className="w-full rounded-full bg-[#049878] hover:bg-green-700"
         disabled={!role}
         onClick={handleContinue}
       >

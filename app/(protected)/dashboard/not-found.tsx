@@ -20,7 +20,7 @@ export default function NotFound() {
       </p>
 
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <Button asChild size="lg" className="bg-green-600 hover:bg-green-700">
+        <Button asChild size="lg" className="bg-[#049878] hover:bg-green-700">
           <Link href="/dashboard">
             <Home className="mr-2 h-4 w-4" />
             Back to Home

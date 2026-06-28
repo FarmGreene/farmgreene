@@ -57,7 +57,7 @@ export default function RentalProcess() {
               {/* Floating overlay badge */}
               <div className="absolute -bottom-6 -right-6 md:right-6 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-6 rounded-2xl shadow-2xl max-w-xs transition-transform duration-500 hover:-translate-y-2">
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-xl bg-green-500/10 text-green-600 dark:text-green-400 flex items-center justify-center font-bold text-xl">
+                  <div className="h-12 w-12 rounded-xl bg-green-500/10 text-[#049878] dark:text-green-400 flex items-center justify-center font-bold text-xl">
                     99%
                   </div>
                   <div className="text-left">
@@ -103,10 +103,10 @@ export default function RentalProcess() {
                   {/* Step Info */}
                   <div className="flex-1 text-left space-y-1">
                     <div className="flex items-center gap-2">
-                      <div className="h-6 w-6 rounded-lg bg-green-500/10 text-green-600 dark:text-green-400 flex items-center justify-center">
+                      <div className="h-6 w-6 rounded-lg bg-green-500/10 text-[#049878] dark:text-green-400 flex items-center justify-center">
                         <step.icon className="h-3.5 w-3.5" />
                       </div>
-                      <h3 className="font-heading text-lg font-bold text-slate-900 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
+                      <h3 className="font-heading text-lg font-bold text-slate-900 dark:text-white group-hover:text-[#049878] dark:group-hover:text-green-400 transition-colors">
                         {step.title}
                       </h3>
                     </div>

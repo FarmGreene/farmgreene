@@ -95,7 +95,7 @@ export function UserProfilePopover() {
                 {email}
               </p>
               {roleLabel && (
-                <p className="text-[10px] text-green-600 font-bold uppercase tracking-wider pt-1">
+                <p className="text-[10px] text-[#049878] font-bold uppercase tracking-wider pt-1">
                   {roleLabel}
                 </p>
               )}

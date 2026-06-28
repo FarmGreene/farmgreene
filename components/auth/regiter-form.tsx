@@ -170,7 +170,7 @@ export function RegisterForm() {
 
             <div className="flex flex-col gap-3">
               <Button
-                className="w-full h-11 bg-green-600 hover:bg-green-700 text-white font-semibold text-base"
+                className="w-full h-11 bg-[#049878] hover:bg-green-700 text-white font-semibold text-base"
                 type="submit"
                 disabled={isLoading}
               >

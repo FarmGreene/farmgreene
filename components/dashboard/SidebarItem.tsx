@@ -53,7 +53,7 @@ export function SidebarItem({
         className={cn(
           "h-4 w-4 shrink-0 transition-colors",
           isActive
-            ? "text-green-600 dark:text-green-400"
+            ? "text-[#049878] dark:text-green-400"
             : "text-muted-foreground group-hover:text-foreground",
         )}
       />

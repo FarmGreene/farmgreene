@@ -134,7 +134,7 @@ export function PriceReportForm() {
           )}
         </Button>
         {success && (
-          <p className="text-sm text-green-600 text-center font-medium">
+          <p className="text-sm text-[#049878] text-center font-medium">
             Report submitted successfully!
           </p>
         )}

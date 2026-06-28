@@ -53,7 +53,7 @@ export default function Approach() {
                 key={i}
                 className="bg-slate-50 dark:bg-slate-900 border rounded-xl p-6 hover:border-green-500/50 transition-colors"
               >
-                <item.icon className="h-8 w-8 text-green-600 mb-4" />
+                <item.icon className="h-8 w-8 text-[#049878] mb-4" />
                 <h3 className="font-bold text-lg mb-2">{item.title}</h3>
                 <p className="text-sm text-muted-foreground">
                   {item.description}

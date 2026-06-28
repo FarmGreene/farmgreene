@@ -24,7 +24,7 @@ export default function TrustSection() {
 
         <div className="grid md:grid-cols-3 gap-8 mt-16 text-center">
           <div>
-            <div className="text-4xl font-black text-green-600 mb-2">500+</div>
+            <div className="text-4xl font-black text-[#049878] mb-2">500+</div>
             <div className="text-sm font-medium text-muted-foreground">
               Active Farmers
             </div>

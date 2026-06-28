@@ -55,7 +55,7 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
         {isCollapsed && (
           <Tractor
             size={20}
-            className={cn("text-green-600 fill-green-100")}
+            className={cn("text-[#049878] fill-green-100")}
             strokeWidth={2.5}
           />
         )}{" "}

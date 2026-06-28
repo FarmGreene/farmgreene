@@ -21,7 +21,7 @@ const Hero = () => {
               field agent to contribute to the vision. Farmgreene bridges the
               gap.
             </p>
-            <div className="flex flex-wrap items-center gap-6">
+            {/* <div className="flex flex-wrap items-center gap-6">
               <Link href="/signup">
                 <Button
                   size="lg"
@@ -32,7 +32,7 @@ const Hero = () => {
               </Link>
               <Link
                 href="/market"
-                className="flex items-center gap-2 text-green-600 font-semibold hover:underline"
+                className="flex items-center gap-2 text-[#049878] font-semibold hover:underline"
               >
                 <div className="h-10 w-10 rounded-full border border-green-200 flex items-center justify-center bg-green-50">
                   <svg
@@ -51,7 +51,7 @@ const Hero = () => {
                 </div>
                 View Market Live
               </Link>
-            </div>
+            </div> */}
             {/* TODO: Bring this to live when we have partners */}
             {/* <div className="pt-8 flex items-center gap-8">
               <p className="text-sm font-medium text-slate-500">
