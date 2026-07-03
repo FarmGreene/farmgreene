@@ -51,7 +51,7 @@ export function Navbar() {
 
         {/* Desktop Buttons */}
         {/* Auth buttons to be added when fully live */}
-        <div className="hidden md:flex items-center space-x-4">
+        {/* <div className="hidden md:flex items-center space-x-4">
           {isAuthenticated ? (
             <Link href={"/dashboard"}>
               <Button
@@ -78,7 +78,7 @@ export function Navbar() {
               </Link>
             </>
           )}
-        </div>
+        </div> */}
 
         {/* Mobile Menu Trigger */}
         {/* <div className="md:hidden">
