@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import WaitlistInput from "@/components/landing/WaitlistInput";
+import WaitlistDialog from "@/components/landing/WaitlistDialog";
 
 const Hero = () => {
   return (
@@ -66,7 +66,7 @@ const Hero = () => {
                 <div className="h-8 w-8 rounded-full bg-slate-300"></div>
               </div>
             </div> */}
-            <WaitlistInput />
+            <WaitlistDialog />
           </div>
 
           <div className="order-1 lg:order-2 relative h-[600px] w-full hidden lg:block">
