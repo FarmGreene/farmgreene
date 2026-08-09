@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { TrendingUp, TrendingDown, Activity, Globe } from "lucide-react";
+import { TrendingUp, TrendingDown, Activity, Globe, AlertTriangle } from "lucide-react";
 import { formatDistanceToNowStrict } from "date-fns";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -27,9 +27,12 @@ const VOLUME_LABEL: Record<VolumeLevel, string> = {
 };
 
 export default function MarketSnapshot() {
-  const { data: snapshot, isLoading } = useMarketSnapshot();
+  const { data: snapshot, isLoading, isError } = useMarketSnapshot();
   const status = snapshot?.status ?? "NEUTRAL";
   const volumeLevel = snapshot?.volumeLevel ?? "MED";
+  const description = snapshot
+    ? (snapshot.description ?? "Daily market summary unavailable.")
+    : "No market snapshot yet — check back soon.";
 
   return (
     <Card className="col-span-1 md:col-span-2 lg:col-span-2 overflow-hidden border-none shadow-xl bg-linear-to-br from-green-950 via-emerald-900 to-slate-900 text-white relative group min-h-[220px] flex flex-col justify-center">
@@ -50,6 +53,16 @@ export default function MarketSnapshot() {
               <Skeleton className="h-8 w-24 bg-white/10" />
             </div>
           </div>
+        ) : isError ? (
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
+            <div>
+              <h2 className="text-lg font-semibold text-white mb-1">Market data unavailable</h2>
+              <p className="text-emerald-100/70 text-sm max-w-sm leading-relaxed">
+                We couldn&apos;t load today&apos;s market snapshot. Try refreshing shortly.
+              </p>
+            </div>
+          </div>
         ) : (
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-emerald-300/80 text-xs font-medium uppercase tracking-wider">
@@ -66,7 +79,7 @@ export default function MarketSnapshot() {
                 Market is <span className={STATUS_COLOR[status]}>{STATUS_LABEL[status]}</span>
               </h2>
               <p className="text-emerald-100/70 text-sm max-w-sm leading-relaxed">
-                {snapshot?.description ?? "Market data updated — no notable moves today."}
+                {description}
               </p>
             </div>
 
