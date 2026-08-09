@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import WaitlistDialog from "@/components/landing/WaitlistDialog";
 
 const Hero = () => {
   return (
@@ -66,7 +65,37 @@ const Hero = () => {
                 <div className="h-8 w-8 rounded-full bg-slate-300"></div>
               </div>
             </div> */}
-            <WaitlistDialog />
+            <div className="flex flex-wrap items-center gap-6">
+              <Link href="/signup">
+                <Button
+                  size="lg"
+                  className="rounded-full px-8 h-14 bg-brand-600 hover:bg-brand-700 text-white text-lg font-semibold shadow-xl shadow-brand-600/20"
+                >
+                  Get Started
+                </Button>
+              </Link>
+              <Link
+                href="/marketplace"
+                className="flex items-center gap-2 text-[#049878] font-semibold hover:underline"
+              >
+                <div className="h-10 w-10 rounded-full border border-green-200 flex items-center justify-center bg-green-50">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="ml-0.5"
+                  >
+                    <polygon points="5 3 19 12 5 21 5 3" />
+                  </svg>
+                </div>
+                Explore Marketplace
+              </Link>
+            </div>
           </div>
 
           <div className="order-1 lg:order-2 relative h-[600px] w-full hidden lg:block">

@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/layout/Logo";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, X } from "lucide-react";
+import { Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/lib/store/useAuthStore";
 
@@ -14,18 +14,18 @@ const navLinks = [
   { name: "About", href: "/about" },
   { name: "Marketplace", href: "/marketplace" },
   { name: "Intelligence", href: "/intelligence" },
-  { name: "Pricing", href: "/pricing" },
-  { name: "Become an Agent", href: "/agents" },
+  // { name: "Pricing", href: "/pricing" },
+  // { name: "Become an Agent", href: "/agents" },
   { name: "Contact", href: "/contact" },
 ];
 
 export function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+    <header className="sticky top-[46px] z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="container flex h-22 items-center justify-between max-w-[1440px] mx-auto px-6 lg:px-14">
         <div className="flex items-center gap-12">
           <Logo />
@@ -50,8 +50,7 @@ export function Navbar() {
         </div>
 
         {/* Desktop Buttons */}
-        {/* Auth buttons to be added when fully live */}
-        {/* <div className="hidden md:flex items-center space-x-4">
+        <div className="hidden md:flex items-center space-x-4">
           {isAuthenticated ? (
             <Link href={"/dashboard"}>
               <Button
@@ -78,10 +77,10 @@ export function Navbar() {
               </Link>
             </>
           )}
-        </div> */}
+        </div>
 
         {/* Mobile Menu Trigger */}
-        {/* <div className="md:hidden">
+        <div className="md:hidden">
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
@@ -105,7 +104,7 @@ export function Navbar() {
                         "block px-2 py-2 text-lg font-medium transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md",
                         pathname === link.href
                           ? "text-[#049878] bg-green-50 dark:bg-green-900/10"
-                          : "text-foreground/80"
+                          : "text-foreground/80",
                       )}
                     >
                       {link.name}
@@ -115,10 +114,7 @@ export function Navbar() {
 
                 <div className="flex flex-col gap-4 mt-4 px-4">
                   {isAuthenticated ? (
-                    <Link
-                      href={"/dashboard"}
-                      onClick={() => setIsOpen(false)}
-                    >
+                    <Link href={"/dashboard"} onClick={() => setIsOpen(false)}>
                       <Button className="w-full h-11 text-base bg-[#049878] hover:bg-green-700 text-white">
                         Go to dashboard
                       </Button>
@@ -126,7 +122,10 @@ export function Navbar() {
                   ) : (
                     <>
                       <Link href="/login" onClick={() => setIsOpen(false)}>
-                        <Button variant="outline" className="w-full h-11 text-base">
+                        <Button
+                          variant="outline"
+                          className="w-full h-11 text-base"
+                        >
                           Log in
                         </Button>
                       </Link>
@@ -137,11 +136,11 @@ export function Navbar() {
                       </Link>
                     </>
                   )}
-                 </div>
+                </div>
               </div>
             </SheetContent>
           </Sheet>
-        </div> */}
+        </div>
       </div>
     </header>
   );

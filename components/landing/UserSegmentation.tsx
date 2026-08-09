@@ -7,6 +7,7 @@ const segments = [
     icon: Users,
     title: "Farmers",
     description: "Rent premium agricultural equipment on demand, optimize operating costs, and scale your seasonal harvest.",
+    href: "/marketplace",
     image: "/images/stakeholder-farmer.jpg",
     roundedClass: "rounded-[2.5rem_1rem_2.5rem_1rem]",
     color: "text-emerald-600 dark:text-emerald-400",
@@ -18,6 +19,7 @@ const segments = [
     icon: Tractor,
     title: "Equipment Owners",
     description: "Monetize your idle machinery and tractors securely. Turn expensive assets into constant active income streams.",
+    href: "/marketplace",
     image: "/images/stakeholder-owner.jpg",
     roundedClass: "rounded-[1rem_2.5rem_1rem_2.5rem]",
     color: "text-blue-600 dark:text-blue-400",
@@ -82,7 +84,7 @@ export default function UserSegmentation() {
             Who Farmgreene Is For
           </h2>
           <p className="text-slate-600 dark:text-slate-400 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-            Whether you're farming the land, owning the machines, or tracking the market, we build the perfect tools for your success.
+            Whether you&apos;re farming the land, owning the machines, or tracking the market, we build the perfect tools for your success.
           </p>
         </div>
 
@@ -90,7 +92,6 @@ export default function UserSegmentation() {
         <div className="grid gap-8 md:grid-cols-3 relative z-10">
           {segments.map((segment, index) => {
             const IconComponent = segment.icon;
-            const href = "href" in segment ? segment.href : undefined;
             return (
               <div
                 key={index}
@@ -128,25 +129,15 @@ export default function UserSegmentation() {
                     </p>
                   </div>
 
-                  {/* Pulsing Coming Soon Badge */}
+                  {/* Learn more link */}
                   <div className="pt-4 flex items-center justify-between border-t border-slate-100 dark:border-slate-800/50 w-full mt-4">
-                    {href ? (
-                      <Link
-                        href={href}
-                        className={`inline-flex items-center gap-1.5 text-sm font-bold ${segment.color} transition-all hover:gap-2.5`}
-                      >
-                        Learn more
-                        <ArrowRight className="h-4 w-4" />
-                      </Link>
-                    ) : (
-                      <div className="flex items-center gap-2 px-4.5 py-2 rounded-full bg-emerald-50/70 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 text-xs font-bold border border-emerald-100/40 dark:border-emerald-950/30 shadow-inner select-none">
-                        <span className="relative flex h-2 w-2">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                        </span>
-                        Coming Soon
-                      </div>
-                    )}
+                    <Link
+                      href={segment.href}
+                      className={`inline-flex items-center gap-1.5 text-sm font-bold ${segment.color} transition-all hover:gap-2.5`}
+                    >
+                      Learn more
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
                   </div>
                 </div>
 

@@ -17,6 +17,19 @@ export const authKeys = {
 };
 
 /**
+ * Post-login redirect target from the `?next=` query param. Read from
+ * window.location at call time (not useSearchParams) to avoid forcing a
+ * Suspense boundary on the login page at build. Only same-origin relative
+ * paths are honoured, to prevent open-redirects.
+ */
+function redirectTarget(): string {
+  if (typeof window === "undefined") return "/dashboard";
+  const next = new URLSearchParams(window.location.search).get("next");
+  if (next && next.startsWith("/") && !next.startsWith("//")) return next;
+  return "/dashboard";
+}
+
+/**
  * Hook to login user
  */
 export function useLogin() {
@@ -30,7 +43,7 @@ export function useLogin() {
       clearError();
       setUser(data.user);
       setTokens(data.accessToken, data.refreshToken);
-      router.push("/dashboard");
+      router.push(redirectTarget());
     },
     onError: (error: Error) => {
       setError(error.message);

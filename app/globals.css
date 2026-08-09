@@ -135,3 +135,37 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Commodities price marquee (see components/layout/CommodityMarquee.tsx).
+   Duration is set inline so it scales with the number of items. */
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee-scroll linear infinite;
+}
+/* Clip the track with no visible scrollbar; pause the scroll on hover. */
+.marquee-viewport {
+  overflow: hidden;
+}
+.marquee-viewport:hover .animate-marquee {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+  /* No auto-scroll for these users — let them pan manually, scrollbar hidden. */
+  .marquee-viewport {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .marquee-viewport::-webkit-scrollbar {
+    display: none;
+  }
+}

@@ -43,10 +43,7 @@ export default function MarketplacePage() {
         {/* Dynamic Content View */}
         <div className="min-h-[500px]">
           {role === "owner" ? (
-            <OwnerView
-              listings={[]}
-              requests={[]}
-            />
+            <OwnerView listings={[]} />
           ) : (
             <BrowserView listings={[]} />
           )}

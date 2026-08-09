@@ -5,7 +5,6 @@ import { ArrowRight, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { MarketPriceChart } from "@/components/dashboard/MarketPriceChart";
-import { Card, CardContent } from "@/components/ui/card";
 
 export default function MarketTeaser() {
   return (
@@ -62,12 +61,15 @@ export default function MarketTeaser() {
               ))}
             </ul>
 
-            <Button
-              size="lg"
-              className="bg-[#049878] hover:bg-green-700 text-white rounded-full cursor-default"
-            >
-              Coming Soon
-            </Button>
+            <Link href="/intelligence">
+              <Button
+                size="lg"
+                className="bg-[#049878] hover:bg-green-700 text-white rounded-full"
+              >
+                Explore Market Intelligence
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

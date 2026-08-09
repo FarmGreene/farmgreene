@@ -17,12 +17,12 @@ export const roles = [
     description: "List equipment, manage rentals, and track earnings.",
     icon: Tractor,
   },
-  {
-    id: "AGENT",
-    title: "Market Agent",
-    description: "Submit market price data and contribute to transparency.",
-    icon: ShoppingBag,
-  },
+  // {
+  //   id: "AGENT",
+  //   title: "Market Agent",
+  //   description: "Submit market price data and contribute to transparency.",
+  //   icon: ShoppingBag,
+  // },
 ];
 
 export default function SelectRole() {
@@ -52,7 +52,7 @@ export default function SelectRole() {
                 "relative flex items-center gap-4 p-6 cursor-pointer rounded-xl border-2 transition-all hover:bg-slate-50 dark:hover:bg-slate-900",
                 role === r.id
                   ? "border-[#049878] bg-green-50/50 dark:border-green-500 dark:bg-green-900/10 shadow-sm"
-                  : "border-muted hover:border-green-200 dark:hover:border-green-800"
+                  : "border-muted hover:border-green-200 dark:hover:border-green-800",
               )}
             >
               <div
@@ -60,7 +60,7 @@ export default function SelectRole() {
                   "h-12 w-12 rounded-full flex items-center justify-center shrink-0 transition-colors",
                   role === r.id
                     ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
-                    : "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+                    : "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400",
                 )}
               >
                 <Icon className="h-6 w-6" />
@@ -80,7 +80,7 @@ export default function SelectRole() {
         disabled={!role}
         onClick={handleContinue}
       >
-        continue
+        Continue
       </Button>
     </div>
   );

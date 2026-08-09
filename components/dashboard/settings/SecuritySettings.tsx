@@ -20,8 +20,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
 
 export default function SecuritySettings() {
   return (
@@ -78,23 +76,6 @@ export default function SecuritySettings() {
               </p>
             </div>
             <Switch />
-          </div>
-          <Separator />
-          <div className="flex items-center justify-between space-x-2 opacity-50 cursor-not-allowed">
-            <div className="space-y-0.5">
-              <div className="flex items-center gap-2">
-                <Label className="text-base font-medium">
-                  Authenticator App
-                </Label>
-                <Badge variant="outline" className="text-[10px] h-5">
-                  Coming Soon
-                </Badge>
-              </div>
-              <p className="text-sm text-slate-500">
-                Use Google Authenticator or Authy.
-              </p>
-            </div>
-            <Switch disabled />
           </div>
         </CardContent>
       </Card>
