@@ -26,6 +26,7 @@ interface ListingCardProps {
   variant: "owner" | "browser";
   onArchive?: (id: string) => void;
   onUnarchive?: (id: string) => void;
+  onEdit?: (listing: EquipmentListing) => void;
 }
 
 export function ListingCard({
@@ -33,6 +34,7 @@ export function ListingCard({
   variant,
   onArchive,
   onUnarchive,
+  onEdit,
 }: ListingCardProps) {
   const isOwner = variant === "owner";
   const isArchived = !!listing.archivedAt;
@@ -198,6 +200,25 @@ export function ListingCard({
               </p>
             )}
 
+          {/* Pending edit awaiting admin approval — owner only */}
+          {isOwner && listing.pendingChanges && (
+            <p className="text-[10px] leading-snug text-amber-700 dark:text-amber-400 bg-amber-50/60 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/30 rounded-md px-2 py-1">
+              <span className="font-bold">Edit pending review</span> — the current
+              version above is still what renters see.
+            </p>
+          )}
+
+          {/* Last edit rejection — owner only, dismissed by the next edit submission */}
+          {isOwner && !listing.pendingChanges && listing.lastEditRejectionReason && (
+            <p
+              className="text-[10px] leading-snug text-red-600 dark:text-red-400 bg-red-50/60 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-md px-2 py-1"
+              title={listing.lastEditRejectionReason}
+            >
+              <span className="font-bold">Edit rejected:</span>{" "}
+              {listing.lastEditRejectionReason}
+            </p>
+          )}
+
           {/* Consolidated Specification Capsules (Single row, compact!) */}
           <div className="flex flex-wrap items-center gap-1.5">
             {listing.yearManufactured && (
@@ -290,6 +311,10 @@ export function ListingCard({
                   <Button
                     variant="outline"
                     size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEdit?.(listing);
+                    }}
                     className="h-9 px-3 border-slate-200 dark:border-slate-700 hover:border-slate-350 dark:hover:border-slate-650 hover:bg-slate-50 dark:hover:bg-slate-800/50 font-extrabold text-[10px] uppercase tracking-wider rounded-xl transition-all"
                   >
                     <Edit className="h-3 w-3 mr-1 text-slate-500" />

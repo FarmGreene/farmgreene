@@ -27,6 +27,7 @@ import {
   getRoleLabel,
 } from "@/lib/utils/user-display";
 import { Logo } from "@/components/layout/Logo";
+import { useUnreadCount } from "@/lib/hooks/useNotifications";
 
 interface DashboardSidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -36,6 +37,7 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
   const fullName = getFullName(user);
   const initials = getInitials(user);
   const roleLabel = getRoleLabel(user);
+  const { data: unread } = useUnreadCount();
 
   return (
     <div
@@ -132,7 +134,7 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
               label="Notifications"
               href="/dashboard/notifications"
               isCollapsed={isCollapsed}
-              badge={3}
+              badge={unread?.count || undefined}
             />
             <SidebarItem
               icon={Settings}

@@ -1,5 +1,6 @@
 import { apiClient } from "@/lib/api/axios";
 import {
+  EditListingBody,
   EquipmentListing,
   ListingDraftResponse,
   ListingStatus,
@@ -193,6 +194,21 @@ export async function unarchiveListing(id: string): Promise<EquipmentListing> {
     `/marketplace/listings/${id}/unarchive`,
   );
   return data;
+}
+
+// ─── Edit an existing listing ─────────────────────────────────────────────────
+
+/**
+ * Submits an edit to any field the wizard covers. For an ACTIVE listing the
+ * backend stages this until an admin approves it — the response still
+ * reflects the live (unchanged) data, not the pending edit.
+ */
+export async function submitListingEdit(
+  id: string,
+  data: Partial<EditListingBody>,
+): Promise<EquipmentListing> {
+  const { data: res } = await apiClient.patch(`/marketplace/listings/${id}/edit`, data);
+  return res;
 }
 
 export async function getOwnerStats(): Promise<OwnerStats> {

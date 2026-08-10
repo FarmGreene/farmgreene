@@ -1,121 +1,57 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { LayoutGroup, AnimatePresence, motion } from "motion/react";
-import NotificationItem, { Notification } from "./NotificationItem";
+import NotificationItem from "./NotificationItem";
 import NotificationFilters from "./NotificationFilters";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Bell, Check, Sparkles } from "lucide-react";
+import { Check, Sparkles, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import type { Notification } from "@/types/notification";
+import {
+  useNotifications,
+  useMarkAsRead,
+  useMarkAllAsRead,
+} from "@/lib/hooks/useNotifications";
 
-// Mock Data Generation
-const MOCK_NOTIFICATIONS: Notification[] = [
-  {
-    id: "1",
-    type: "alert",
-    priority: "high",
-    title: "Maize Price Surge in Kaduna",
-    description:
-      "Maize price in Kaduna has risen above ₦82,000, triggering your alert threshold.",
-    timestamp: "2 hours ago",
-    isRead: false,
-    actionLabel: "View Commodity",
-  },
-  {
-    id: "2",
-    type: "report",
-    priority: "normal",
-    title: "AI Report Ready: Rice (Lagos)",
-    description:
-      "Your requested AI analysis for Rice market trends in Lagos is ready for review.",
-    timestamp: "4 hours ago",
-    isRead: false,
-    actionLabel: "View Report",
-  },
-  {
-    id: "3",
-    type: "reminder",
-    priority: "normal",
-    title: "Submit Market Prices",
-    description:
-      "Reminder: Please submit the daily market prices for your assigned region (Ogun).",
-    timestamp: "5 hours ago",
-    isRead: true,
-    actionLabel: "Submit Now",
-  },
-  {
-    id: "4",
-    type: "signal",
-    priority: "normal",
-    title: "High Volatility Detected",
-    description:
-      "Cassava prices are showing unusual volatility this week. Check the intelligence hub for details.",
-    timestamp: "Yesterday",
-    isRead: true,
-    actionLabel: "View Intelligence",
-  },
-  {
-    id: "5",
-    type: "system",
-    priority: "low",
-    title: "New Feature: TradingView Charts",
-    description:
-      "We've integrated TradingView charts for advanced technical analysis. Explore it now.",
-    timestamp: "2 days ago",
-    isRead: true,
-    actionLabel: "Explore Feature",
-  },
-  {
-    id: "6",
-    type: "alert",
-    priority: "normal",
-    title: "Soybeans Price Drop",
-    description: "Soybeans in Benue have dropped by 5% in the last 24 hours.",
-    timestamp: "3 days ago",
-    isRead: true,
-  },
-];
+function groupByRecency(notifications: Notification[]) {
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const startOfYesterday = new Date(startOfToday);
+  startOfYesterday.setDate(startOfYesterday.getDate() - 1);
+
+  const groups: Record<"Today" | "Yesterday" | "Earlier", Notification[]> = {
+    Today: [],
+    Yesterday: [],
+    Earlier: [],
+  };
+
+  for (const n of notifications) {
+    const createdAt = new Date(n.createdAt);
+    if (createdAt >= startOfToday) groups.Today.push(n);
+    else if (createdAt >= startOfYesterday) groups.Yesterday.push(n);
+    else groups.Earlier.push(n);
+  }
+
+  return groups;
+}
 
 export default function NotificationFeed() {
   const [activeTab, setActiveTab] = useState("all");
   const [showUnreadOnly, setShowUnreadOnly] = useState(false);
-  const [notifications, setNotifications] =
-    useState<Notification[]>(MOCK_NOTIFICATIONS);
 
-  const handleRead = (id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
-    );
-  };
-
-  const markAllAsRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
-  };
-
-  // Filter Logic
-  const filteredNotifications = notifications.filter((n) => {
-    const matchesTab = activeTab === "all" || n.type === activeTab;
-    const matchesUnread = !showUnreadOnly || !n.isRead;
-    return matchesTab && matchesUnread;
+  const { data: notifications = [], isLoading } = useNotifications({
+    type: activeTab !== "all" ? activeTab : undefined,
+    unreadOnly: showUnreadOnly,
   });
+  const markReadMutation = useMarkAsRead();
+  const markAllReadMutation = useMarkAllAsRead();
 
-  // Grouping Logic
-  const groupedNotifications = {
-    Today: filteredNotifications.filter(
-      (n) => n.timestamp.includes("ago") && !n.timestamp.includes("day"),
-    ),
-    Yesterday: filteredNotifications.filter((n) =>
-      n.timestamp.toLowerCase().includes("yesterday"),
-    ),
-    Earlier: filteredNotifications.filter(
-      (n) =>
-        (!n.timestamp.includes("ago") && n.timestamp !== "Yesterday") ||
-        n.timestamp.includes("day"),
-    ),
-  };
+  const groupedNotifications = useMemo(
+    () => groupByRecency(notifications),
+    [notifications],
+  );
 
-  const hasNotifications = filteredNotifications.length > 0;
+  const hasNotifications = notifications.length > 0;
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   return (
@@ -135,8 +71,8 @@ export default function NotificationFeed() {
         <Button
           variant="ghost"
           size="sm"
-          onClick={markAllAsRead}
-          disabled={unreadCount === 0}
+          onClick={() => markAllReadMutation.mutate()}
+          disabled={unreadCount === 0 || markAllReadMutation.isPending}
           className="text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
         >
           <Check className="h-4 w-4 mr-2" />
@@ -156,7 +92,11 @@ export default function NotificationFeed() {
 
       {/* Feed */}
       <div className="min-h-[500px]">
-        {hasNotifications ? (
+        {isLoading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          </div>
+        ) : hasNotifications ? (
           <LayoutGroup>
             <div className="space-y-8 pb-10">
               {Object.entries(groupedNotifications).map(
@@ -180,7 +120,7 @@ export default function NotificationFeed() {
                             <NotificationItem
                               key={notification.id}
                               notification={notification}
-                              onRead={() => handleRead(notification.id)}
+                              onRead={() => markReadMutation.mutate(notification.id)}
                               index={index}
                             />
                           ))}

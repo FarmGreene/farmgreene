@@ -17,6 +17,7 @@ import type {
   CommodityIndexItem,
   RecentlyAddedCommodity,
   PriceSpike,
+  WatchlistItem,
 } from "@/types/commodity";
 import type { CommodityInsight } from "@/types/commodity-insight";
 
@@ -259,4 +260,22 @@ export async function adminRecomputeAverage(
   await apiClient.post("/admin/commodities/recompute", undefined, {
     params: { id: commodityId, ...(date ? { date } : {}) },
   });
+}
+
+// ─── Watchlist ──────────────────────────────────────────────────────────────
+
+/** GET /commodities/watchlist — commodities the current user is tracking */
+export async function getWatchlist(): Promise<WatchlistItem[]> {
+  const { data } = await apiClient.get("/commodities/watchlist");
+  return data;
+}
+
+/** POST /commodities/watchlist */
+export async function addToWatchlist(commodityId: string): Promise<void> {
+  await apiClient.post("/commodities/watchlist", { commodityId });
+}
+
+/** DELETE /commodities/watchlist?commodityId= */
+export async function removeFromWatchlist(commodityId: string): Promise<void> {
+  await apiClient.delete("/commodities/watchlist", { params: { commodityId } });
 }

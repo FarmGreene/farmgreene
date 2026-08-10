@@ -10,6 +10,7 @@ import {
 } from "@/types/marketplace";
 import { ListingCard } from "./ListingCard";
 import { ListingCardSkeleton } from "./ListingCardSkeleton";
+import { EditListingSheet } from "./EditListingSheet";
 import { CreateListingModal } from "../listing-wizard/CreateListingModal";
 import {
   archiveListing,
@@ -79,6 +80,7 @@ export function OwnerView({ listings = [] }: OwnerViewProps) {
   const [resumeId, setResumeId] = useState<string | undefined>();
   const [filter, setFilter] = useState<InventoryFilter>("all");
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
+  const [editingListing, setEditingListing] = useState<EquipmentListing | null>(null);
 
   const { data: requests = [] } = useReceivedRentRequests();
   const { data: utilization } = useOwnerUtilization();
@@ -222,6 +224,7 @@ export function OwnerView({ listings = [] }: OwnerViewProps) {
                 variant="owner"
                 onArchive={handleArchive}
                 onUnarchive={handleUnarchive}
+                onEdit={setEditingListing}
               />
             ))}
           </div>
@@ -326,6 +329,13 @@ export function OwnerView({ listings = [] }: OwnerViewProps) {
         request={selectedRequest}
         open={!!selectedRequest}
         onOpenChange={(open) => !open && setSelectedRequestId(null)}
+      />
+
+      <EditListingSheet
+        listing={editingListing}
+        open={!!editingListing}
+        onOpenChange={(open) => !open && setEditingListing(null)}
+        onSaved={() => fetchListings(filter)}
       />
     </div>
   );

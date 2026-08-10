@@ -109,6 +109,11 @@ export interface EquipmentListing {
   // Admin
   rejectionReason?: string | null;
   reviewedAt?: string | null;
+  /** Staged edit awaiting admin approval (ACTIVE listings only); null if none. */
+  pendingChanges?: Record<string, unknown> | null;
+  pendingChangesSubmittedAt?: string | null;
+  /** Set when an admin rejects a staged edit; cleared on the next edit submission. */
+  lastEditRejectionReason?: string | null;
   // Archive (owner-hidden; separate from status)
   archivedAt?: string | null;
   // Stats
@@ -123,6 +128,47 @@ export interface EquipmentListing {
 
 /** Shape returned by every listing API endpoint */
 export type ListingDraftResponse = EquipmentListing;
+
+/** Every field the edit form can submit — all optional (partial edit). */
+export interface EditListingBody {
+  name: string;
+  category: EquipmentCategory;
+  subcategory: string;
+  brand: string;
+  model?: string | null;
+  yearManufactured: number;
+  description: string;
+  condition: EquipmentCondition;
+  maintenanceStatus: MaintenanceStatus;
+  engineHours?: number;
+  horsePower?: number;
+  fuelType?: FuelType | null;
+  weightKg?: number;
+  additionalSpecs?: string | null;
+  lastServiceDate: string;
+  pricePerDay: number;
+  pricePerWeek?: number;
+  pricePerMonth?: number;
+  primaryPeriod: RentalPeriod;
+  minRentalDays: number;
+  maxRentalDays?: number;
+  depositRequired: boolean;
+  depositAmount?: number;
+  includesOperator: boolean;
+  operatorChargePerDay?: number;
+  cancellationPolicy: CancellationPolicy;
+  additionalRules?: string | null;
+  state: string;
+  lga: string;
+  city: string;
+  exactAddress?: string | null;
+  landmark?: string | null;
+  deliveryAvailable: boolean;
+  deliveryRadiusKm?: number;
+  deliveryFeePerKm?: number;
+  availabilityType: AvailabilityType;
+  advanceBookingDays: number;
+}
 
 /** Non-PII owner summary attached to public listings. */
 export interface PublicOwnerSummary {

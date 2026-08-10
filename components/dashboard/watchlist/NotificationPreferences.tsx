@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Bell, Mail, Smartphone, Moon, Sparkles, Clock } from "lucide-react";
+import { Bell, Moon, Sparkles, Clock } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -12,8 +12,19 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import {
+  useNotificationPreferences,
+  useUpdateNotificationPreferences,
+} from "@/lib/hooks/useNotifications";
+import type { NotificationPreferences as Prefs } from "@/types/notification";
 
 export default function NotificationPreferences() {
+  const { data: prefs, isLoading } = useNotificationPreferences();
+  const updateMutation = useUpdateNotificationPreferences();
+
+  const set = (partial: Partial<Prefs>) => updateMutation.mutate(partial);
+  const disabled = isLoading || updateMutation.isPending;
+
   return (
     <div className="space-y-6 max-w-2xl">
       <Card className="border-slate-200 dark:border-slate-800">
@@ -36,7 +47,12 @@ export default function NotificationPreferences() {
                 Receive alerts within the Farmgreene dashboard.
               </p>
             </div>
-            <Switch id="in-app" defaultChecked />
+            <Switch
+              id="in-app"
+              checked={prefs?.inAppNotifications ?? true}
+              onCheckedChange={(v) => set({ inAppNotifications: v })}
+              disabled={disabled}
+            />
           </div>
           <Separator />
           <div className="flex items-center justify-between space-x-2">
@@ -48,19 +64,12 @@ export default function NotificationPreferences() {
                 Get critical updates sent to your registered email.
               </p>
             </div>
-            <Switch id="email" defaultChecked />
-          </div>
-          <Separator />
-          <div className="flex items-center justify-between space-x-2">
-            <div className="space-y-0.5">
-              <Label htmlFor="push" className="text-base font-medium">
-                Mobile Push Notifications
-              </Label>
-              <p className="text-sm text-slate-500">
-                Receive real-time alerts on your mobile device.
-              </p>
-            </div>
-            <Switch id="push" />
+            <Switch
+              id="email"
+              checked={prefs?.emailAlerts ?? true}
+              onCheckedChange={(v) => set({ emailAlerts: v })}
+              disabled={disabled}
+            />
           </div>
         </CardContent>
       </Card>
@@ -85,7 +94,12 @@ export default function NotificationPreferences() {
                 A summary of all your watchlist movements at 8:00 AM.
               </p>
             </div>
-            <Switch id="digest" defaultChecked />
+            <Switch
+              id="digest"
+              checked={prefs?.dailyDigest ?? true}
+              onCheckedChange={(v) => set({ dailyDigest: v })}
+              disabled={disabled}
+            />
           </div>
           <Separator />
           <div className="flex items-center justify-between space-x-2">
@@ -97,10 +111,15 @@ export default function NotificationPreferences() {
                 </Label>
               </div>
               <p className="text-sm text-slate-500">
-                Pause notifications between 10:00 PM and 7:00 AM.
+                Pause email alerts between 10:00 PM and 7:00 AM.
               </p>
             </div>
-            <Switch id="quiet-hours" defaultChecked />
+            <Switch
+              id="quiet-hours"
+              checked={prefs?.quietHoursEnabled ?? true}
+              onCheckedChange={(v) => set({ quietHoursEnabled: v })}
+              disabled={disabled}
+            />
           </div>
         </CardContent>
       </Card>
@@ -132,7 +151,9 @@ export default function NotificationPreferences() {
             <Switch
               id="ai-suggest"
               className="data-[state=checked]:bg-emerald-600"
-              defaultChecked
+              checked={prefs?.aiSuggestions ?? true}
+              onCheckedChange={(v) => set({ aiSuggestions: v })}
+              disabled={disabled}
             />
           </div>
         </CardContent>

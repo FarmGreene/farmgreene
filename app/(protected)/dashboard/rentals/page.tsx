@@ -98,7 +98,7 @@ export default function RentalsPage() {
             Browse the marketplace and send a request to rent equipment near
             you.
           </p>
-          <Link href="/marketplace">
+          <Link href="/dashboard/marketplace">
             <Button className="bg-emerald-600 hover:bg-emerald-700">
               <PackageSearch className="mr-2 h-4 w-4" />
               Explore marketplace

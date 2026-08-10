@@ -15,8 +15,16 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { EquipmentCategory } from "@/types/marketplace";
+import { cn } from "@/lib/utils";
 
-export function FilterPanel() {
+interface FilterPanelProps {
+  categories: { name: EquipmentCategory; count: number }[];
+  selectedCategory: EquipmentCategory | null;
+  onSelectCategory: (category: EquipmentCategory | null) => void;
+}
+
+export function FilterPanel({ categories, selectedCategory, onSelectCategory }: FilterPanelProps) {
   return (
     <>
       {/* Mobile Trigger */}
@@ -33,7 +41,11 @@ export function FilterPanel() {
               <SheetTitle>Filters</SheetTitle>
             </SheetHeader>
             <div className="mt-4">
-              <FilterContent />
+              <FilterContent
+                categories={categories}
+                selectedCategory={selectedCategory}
+                onSelectCategory={onSelectCategory}
+              />
             </div>
           </SheetContent>
         </Sheet>
@@ -47,7 +59,11 @@ export function FilterPanel() {
               <CardTitle className="text-base">Filters</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <FilterContent />
+              <FilterContent
+                categories={categories}
+                selectedCategory={selectedCategory}
+                onSelectCategory={onSelectCategory}
+              />
             </CardContent>
           </Card>
         </div>
@@ -56,24 +72,31 @@ export function FilterPanel() {
   );
 }
 
-function FilterContent() {
+function FilterContent({ categories, selectedCategory, onSelectCategory }: FilterPanelProps) {
   return (
     <div className="space-y-6">
       {/* Categories */}
       <div className="space-y-3">
         <Label>Category</Label>
         <div className="flex flex-wrap gap-2">
-          {["Tractors", "Harvesters", "Processing", "Tools", "Irrigation"].map(
-            (cat) => (
+          {categories.map((cat) => {
+            const active = selectedCategory === cat.name;
+            return (
               <Badge
-                key={cat}
+                key={cat.name}
                 variant="secondary"
-                className="cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700"
+                onClick={() => onSelectCategory(active ? null : cat.name)}
+                className={cn(
+                  "cursor-pointer transition-colors",
+                  active
+                    ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                    : "hover:bg-slate-200 dark:hover:bg-slate-700",
+                )}
               >
-                {cat}
+                {cat.name} ({cat.count})
               </Badge>
-            ),
-          )}
+            );
+          })}
         </div>
       </div>
 
@@ -127,6 +150,7 @@ function FilterContent() {
       <Button
         variant="ghost"
         className="w-full text-muted-foreground hover:text-red-500"
+        onClick={() => onSelectCategory(null)}
       >
         <X className="mr-2 h-4 w-4" />
         Reset Filters

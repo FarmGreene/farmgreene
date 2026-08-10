@@ -18,6 +18,9 @@ import {
   submitPrice,
   getPublicCommodityIndex,
   getPremiumCommodityIndex,
+  getWatchlist,
+  addToWatchlist,
+  removeFromWatchlist,
 } from "@/lib/services/commodity.service";
 
 import type { CommodityQueryParams, SubmitPriceBody } from "@/types/commodity";
@@ -45,6 +48,7 @@ export const commodityKeys = {
   index: (params?: CommodityQueryParams, isPremium?: boolean) =>
     [...commodityKeys.all, "index", isPremium, params] as const,
   insight: (id: string) => [...commodityKeys.all, "insight", id] as const,
+  watchlist: () => [...commodityKeys.all, "watchlist"] as const,
 };
 
 // ─── Read Hooks ───────────────────────────────────────────────────────────────
@@ -193,7 +197,36 @@ export function useCommodityInsight(commodityId: string) {
   });
 }
 
+/** The current user's tracked commodities, with real 7-day trend + sparkline. */
+export function useWatchlist() {
+  return useQuery({
+    queryKey: commodityKeys.watchlist(),
+    queryFn: getWatchlist,
+    staleTime: 60 * 1000,
+  });
+}
+
 // ─── Mutation Hooks ───────────────────────────────────────────────────────────
+
+export function useAddToWatchlist() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (commodityId: string) => addToWatchlist(commodityId),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: commodityKeys.watchlist() });
+    },
+  });
+}
+
+export function useRemoveFromWatchlist() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (commodityId: string) => removeFromWatchlist(commodityId),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: commodityKeys.watchlist() });
+    },
+  });
+}
 
 /**
  * Agent: Submit a new price for a commodity.

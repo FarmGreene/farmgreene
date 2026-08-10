@@ -319,6 +319,20 @@ export interface CommodityIndexItem extends CommodityWithLatest {
   history: CommodityDailyAverage[];
 }
 
+/** A commodity a user is tracking, with its real 7-day trend and sparkline series. */
+export interface WatchlistItem {
+  id: string;
+  commodityId: string;
+  commodity: CommodityWithLatest;
+  latestPrice: number | null;
+  /** Percent change over the last 7 days of daily averages. */
+  changePct: number;
+  submissionCount: number;
+  /** Ascending daily-average prices over the last 7 days, for the sparkline. */
+  history: number[];
+  addedAt: string;
+}
+
 export interface RegionalPrices {
   commodity: Pick<Commodity, "id" | "name" | "unit">;
   date: string | null;
