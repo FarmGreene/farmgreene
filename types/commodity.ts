@@ -273,6 +273,30 @@ export interface TopMovers {
   decliners: CommodityMover[];
 }
 
+// ─── Recently Added ───────────────────────────────────────────────────────────
+
+export interface RecentlyAddedCommodity {
+  id: string;
+  name: string;
+  slug: string;
+  category: string;
+  createdAt: string;
+}
+
+// ─── Price Spikes ───────────────────────────────────────────────────────────────
+
+export interface PriceSpike {
+  id: string;
+  name: string;
+  slug: string;
+  category: string;
+  unit: string;
+  currentPrice: number;
+  baselineAvg: number;
+  spikePercent: number;
+  sampleCount: number;
+}
+
 // ─── API Shapes ───────────────────────────────────────────────────────────────
 
 export interface PaginatedResponse<T> {
@@ -305,6 +329,31 @@ export interface RegionalPrices {
 export interface PriceHistory {
   commodity: Pick<Commodity, "id" | "name" | "unit">;
   history: CommodityDailyAverage[];
+}
+
+// ─── Weekly Average ───────────────────────────────────────────────────────────
+
+export interface CommodityWeeklyAverage {
+  id: string;
+  commodityId: string;
+  isoYear: number;
+  isoWeek: number;
+  weekStartDate: string;
+  weekEndDate: string;
+  averagePrice: number;
+  minPrice: number;
+  maxPrice: number;
+  submissionCount: number;
+  regionalBreakdown: Record<string, number>;
+  priceChange: number | null;
+  source: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface WeeklyPriceHistory {
+  commodity: Pick<Commodity, "id" | "name" | "unit">;
+  history: CommodityWeeklyAverage[];
 }
 
 // ─── Query Params ─────────────────────────────────────────────────────────────
