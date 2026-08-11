@@ -19,69 +19,39 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, Download, Eye, Trash2, FileText, Filter } from "lucide-react";
+import { Search, Download, Eye, Trash2, FileText, Filter, Loader2 } from "lucide-react";
 import { NotFoundIllustration } from "@/components/ui/illustrations";
-
-// Mock Data
-const SAVED_REPORTS = [
-  {
-    id: "1",
-    title: "Maize Price Forecast Q1",
-    commodity: "Maize",
-    region: "North Central",
-    date: "Feb 12, 2026",
-    type: "Forecast",
-    format: "PDF",
-  },
-  {
-    id: "2",
-    title: "Cocoa Trends - South West",
-    commodity: "Cocoa",
-    region: "South West",
-    date: "Feb 10, 2026",
-    type: "Trend Analysis",
-    format: "PDF",
-  },
-  {
-    id: "3",
-    title: "Weekly Market Summary",
-    commodity: "All Commodities",
-    region: "Nationwide",
-    date: "Feb 05, 2026",
-    type: "Summary",
-    format: "PDF",
-  },
-  {
-    id: "4",
-    title: "Logistics Impact Report",
-    commodity: "Soybeans",
-    region: "Kano",
-    date: "Jan 28, 2026",
-    type: "Volatility",
-    format: "CSV",
-  },
-  {
-    id: "5",
-    title: "Cashew Export Readiness",
-    commodity: "Cashew",
-    region: "Lagos",
-    date: "Jan 15, 2026",
-    type: "Forecast",
-    format: "PDF",
-  },
-];
+import { toast } from "sonner";
+import { useSavedReports, useDeleteSavedReport } from "@/lib/hooks/useReports";
+import { REPORT_TYPE_OPTIONS, locationLabel } from "@/lib/constants/report";
+import { SavedReportViewDialog } from "./SavedReportViewDialog";
+import { HiddenReportDownloader } from "./HiddenReportDownloader";
+import type { ReportType } from "@/types/report";
 
 export default function SavedReports() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [typeFilter, setTypeFilter] = useState("All");
+  const { data: reports = [], isLoading } = useSavedReports();
+  const deleteMutation = useDeleteSavedReport();
 
-  const filteredReports = SAVED_REPORTS.filter((report) => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [typeFilter, setTypeFilter] = useState<ReportType | "All">("All");
+  const [viewingId, setViewingId] = useState<string | null>(null);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+
+  const filteredReports = reports.filter((report) => {
     const matchesSearch = report.title
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
-    const matchesType = typeFilter === "All" || report.type === typeFilter;
+    const matchesType = typeFilter === "All" || report.reportType === typeFilter;
     return matchesSearch && matchesType;
   });
+
+  const handleDelete = (id: string, title: string) => {
+    if (!window.confirm(`Delete "${title}"? This can't be undone.`)) return;
+    deleteMutation.mutate(id, {
+      onSuccess: () => toast.success("Report deleted."),
+      onError: () => toast.error("Failed to delete report."),
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -97,21 +67,27 @@ export default function SavedReports() {
           />
         </div>
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger className="w-full sm:w-[160px] bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+          <Select
+            value={typeFilter}
+            onValueChange={(v) => setTypeFilter(v as ReportType | "All")}
+          >
+            <SelectTrigger className="w-full sm:w-[180px] bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800">
               <div className="flex items-center gap-2">
                 <Filter className="h-3.5 w-3.5 text-slate-500" />
                 <span className="text-slate-600 dark:text-slate-300">
-                  {typeFilter === "All" ? "All Types" : typeFilter}
+                  {typeFilter === "All"
+                    ? "All Types"
+                    : REPORT_TYPE_OPTIONS.find((t) => t.value === typeFilter)?.label}
                 </span>
               </div>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="All">All Types</SelectItem>
-              <SelectItem value="Forecast">Forecast</SelectItem>
-              <SelectItem value="Trend Analysis">Trend Analysis</SelectItem>
-              <SelectItem value="Summary">Summary</SelectItem>
-              <SelectItem value="Volatility">Volatility</SelectItem>
+              {REPORT_TYPE_OPTIONS.map((t) => (
+                <SelectItem key={t.value} value={t.value}>
+                  {t.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -124,13 +100,19 @@ export default function SavedReports() {
             <TableRow>
               <TableHead className="w-[40%] pl-6">Report Title</TableHead>
               <TableHead>Commodity</TableHead>
-              <TableHead>Region</TableHead>
+              <TableHead>Location</TableHead>
               <TableHead>Date Generated</TableHead>
               <TableHead className="text-right pr-6">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredReports.length > 0 ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={5} className="h-96 text-center">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground mx-auto" />
+                </TableCell>
+              </TableRow>
+            ) : filteredReports.length > 0 ? (
               filteredReports.map((report) => (
                 <TableRow key={report.id} className="group">
                   <TableCell className="pl-6 font-medium">
@@ -143,7 +125,7 @@ export default function SavedReports() {
                           {report.title}
                         </div>
                         <div className="text-xs text-slate-500 md:hidden">
-                          {report.type}
+                          {REPORT_TYPE_OPTIONS.find((t) => t.value === report.reportType)?.label}
                         </div>
                       </div>
                     </div>
@@ -153,14 +135,18 @@ export default function SavedReports() {
                       variant="outline"
                       className="font-normal text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800"
                     >
-                      {report.commodity}
+                      {report.commodityName}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-slate-600 dark:text-slate-400">
-                    {report.region}
+                    {locationLabel(report.location)}
                   </TableCell>
                   <TableCell className="text-slate-500">
-                    {report.date}
+                    {new Date(report.createdAt).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
                   </TableCell>
                   <TableCell className="text-right pr-6">
                     <div className="flex items-center justify-end gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
@@ -168,6 +154,7 @@ export default function SavedReports() {
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-slate-500 hover:text-emerald-600"
+                        onClick={() => setViewingId(report.id)}
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
@@ -175,13 +162,20 @@ export default function SavedReports() {
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-slate-500 hover:text-emerald-600"
+                        disabled={downloadingId === report.id}
+                        onClick={() => setDownloadingId(report.id)}
                       >
-                        <Download className="h-4 w-4" />
+                        {downloadingId === report.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Download className="h-4 w-4" />
+                        )}
                       </Button>
                       <Button
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-slate-500 hover:text-red-600"
+                        onClick={() => handleDelete(report.id, report.title)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -208,6 +202,15 @@ export default function SavedReports() {
           </TableBody>
         </Table>
       </div>
+
+      <SavedReportViewDialog
+        reportId={viewingId}
+        onOpenChange={(open) => !open && setViewingId(null)}
+      />
+      <HiddenReportDownloader
+        reportId={downloadingId}
+        onDone={() => setDownloadingId(null)}
+      />
     </div>
   );
 }
