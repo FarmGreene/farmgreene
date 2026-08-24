@@ -21,7 +21,7 @@ export function CommodityMarquee() {
 
   if (isLoading) {
     return (
-      <div className="sticky top-0 z-[60] w-full h-[46px] flex items-center justify-center border-b border-slate-800 bg-slate-950 text-[11px] font-medium text-slate-400">
+      <div className="sticky top-0 z-[60] w-full h-[46px] flex items-center justify-center border-b border-bush-700 bg-bush-900 font-data text-[11px] tracking-[0.14em] uppercase text-white/40">
         Loading market prices…
       </div>
     );
@@ -36,7 +36,7 @@ export function CommodityMarquee() {
     // marquee-viewport (see globals.css): clips overflow with no scrollbar,
     // pauses the animation on hover, and enables manual scroll only under
     // prefers-reduced-motion.
-    <div className="marquee-viewport sticky top-0 z-[60] w-full border-b border-slate-800 bg-slate-950 h-[46px]">
+    <div className="marquee-viewport sticky top-0 z-[60] w-full border-b border-bush-700 bg-bush-900 h-[46px]">
       <div
         className="animate-marquee flex h-full w-max items-center"
         style={{ animationDuration: `${durationSeconds}s` }}
@@ -78,21 +78,23 @@ function TickerItem({ commodity }: { commodity: CommodityIndexItem }) {
   return (
     <Link
       href="/intelligence"
-      className="flex items-center gap-2 whitespace-nowrap px-4 border-r border-slate-800/60 h-full hover:bg-white/5 transition-colors"
+      className="flex items-center gap-2 whitespace-nowrap px-4 border-r border-bush-700/60 h-full hover:bg-white/5 transition-colors"
     >
-      <span className="text-[12px] font-semibold text-slate-100">
+      <span className="text-[12px] font-medium text-white/80">
         {commodity.name}
       </span>
-      <span className="text-[12px] font-bold text-white tabular-nums">
+      <span className="font-data text-[12px] font-semibold text-white tabular-nums">
         ₦{Number(commodity.currentPrice).toLocaleString()}
       </span>
-      <span className="text-[10px] text-slate-500">{commodity.unit}</span>
+      <span className="font-data text-[10px] text-white/35">
+        {commodity.unit}
+      </span>
       <span
         className={cn(
-          "flex items-center gap-0.5 text-[11px] font-bold tabular-nums",
-          up && "text-emerald-400",
-          down && "text-rose-400",
-          !up && !down && "text-slate-400",
+          "flex items-center gap-0.5 font-data text-[11px] font-medium tabular-nums",
+          up && "text-rise-bright",
+          down && "text-fall-bright",
+          !up && !down && "text-white/40",
         )}
       >
         <Icon className="h-3 w-3" />

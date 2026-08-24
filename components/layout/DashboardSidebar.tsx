@@ -123,12 +123,12 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
 
           {/* System / Utility */}
           <div className={cn("mt-auto", isCollapsed ? "" : "pt-4")}>
-            <SidebarItem
+            {/* <SidebarItem
               icon={Users}
               label="Manage Workspace"
               href="/dashboard/workspace"
               isCollapsed={isCollapsed}
-            />
+            /> */}
             <SidebarItem
               icon={Bell}
               label="Notifications"

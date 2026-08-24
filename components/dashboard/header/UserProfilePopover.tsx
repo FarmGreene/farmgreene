@@ -125,7 +125,7 @@ export function UserProfilePopover() {
                 </div>
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild className="cursor-pointer">
+            {/* <DropdownMenuItem asChild className="cursor-pointer">
               <Link
                 href="/dashboard/workspace/billing"
                 className="flex items-center justify-between w-full"
@@ -146,7 +146,7 @@ export function UserProfilePopover() {
                   <span>Workspace</span>
                 </div>
               </Link>
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
           </DropdownMenuGroup>
           <DropdownMenuSeparator className="m-0" />
           <div className="p-1">

@@ -3,19 +3,23 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/layout/Logo";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/lib/store/useAuthStore";
+import { Action } from "@/components/marketing/ui";
 
+/**
+ * Pricing is deliberately absent: there is no payment flow yet, so the page
+ * exists but stays unlinked until it's real. Agents is linked because the
+ * field-agent signup flow genuinely works.
+ */
 const navLinks = [
   { name: "About", href: "/about" },
   { name: "Marketplace", href: "/marketplace" },
   { name: "Intelligence", href: "/intelligence" },
-  // { name: "Pricing", href: "/pricing" },
-  // { name: "Become an Agent", href: "/agents" },
+  // { name: "Agents", href: "/agents" },
   { name: "Contact", href: "/contact" },
 ];
 
@@ -25,115 +29,130 @@ export function Navbar() {
   const { isAuthenticated } = useAuthStore();
 
   return (
-    <header className="sticky top-[46px] z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
-      <div className="container flex h-22 items-center justify-between max-w-[1440px] mx-auto px-6 lg:px-14">
-        <div className="flex items-center gap-12">
+    <header
+      className={cn(
+        "sticky top-[46px] z-50 w-full backdrop-blur-md",
+        "border-bark/10 bg-field/90",
+      )}
+    >
+      <div className="mx-auto flex h-20 max-w-[1320px] items-center justify-between px-5 sm:px-8 lg:px-12">
+        <div className="flex items-center gap-10 lg:gap-14">
           <Logo />
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  "transition-colors hover:text-foreground/80 py-1 border-b-2",
-                  pathname === link.href
-                    ? "text-[#049878] border-[#049878]"
-                    : "text-foreground/60 border-transparent",
-                )}
-              >
-                {link.name}
-              </Link>
-            ))}
+          <nav className="hidden md:flex items-center gap-8">
+            {navLinks.map((link) => {
+              const active = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "relative py-1 text-[14px] font-medium transition-colors",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-leaf focus-visible:rounded-sm",
+                    active ? "text-bark" : "text-bark-soft hover:text-bark",
+                  )}
+                >
+                  {link.name}
+                  {active && (
+                    <span className="absolute -bottom-px left-0 h-0.5 w-full bg-leaf" />
+                  )}
+                </Link>
+              );
+            })}
           </nav>
         </div>
 
-        {/* Desktop Buttons */}
-        <div className="hidden md:flex items-center space-x-4">
+        <div className="hidden md:flex items-center gap-3">
           {isAuthenticated ? (
-            <Link href={"/dashboard"}>
-              <Button
-                size="sm"
-                className="bg-[#049878] hover:bg-green-700 text-white font-semibold"
-              >
-                Go to dashboard
-              </Button>
-            </Link>
+            <Action href="/dashboard" className="h-10 py-1.5 pl-5 text-[14px]">
+              Go to dashboard
+            </Action>
           ) : (
             <>
-              <Link href="/login">
-                <Button variant="ghost" size="sm">
-                  Log in
-                </Button>
+              <Link
+                href="/login"
+                className={cn(
+                  "rounded-sm px-3 py-2 text-[14px] font-medium transition-colors",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-leaf",
+                  "text-bark-soft hover:text-bark",
+                )}
+              >
+                Log in
               </Link>
-              <Link href="/signup">
-                <Button
-                  size="sm"
-                  className="bg-[#049878] hover:bg-green-700 text-white"
-                >
-                  Sign up
-                </Button>
+              <Link
+                href="/signup"
+                className="inline-flex h-10 items-center justify-center rounded-full bg-leaf px-5 text-[14px] font-semibold text-white transition-colors hover:bg-leaf-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-leaf focus-visible:ring-offset-2"
+              >
+                Start free
               </Link>
             </>
           )}
         </div>
 
-        {/* Mobile Menu Trigger */}
         <div className="md:hidden">
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Toggle menu</span>
-              </Button>
+              <button
+                type="button"
+                aria-label="Open menu"
+                className={cn(
+                  "inline-flex h-10 w-10 items-center justify-center rounded-sm text-bark",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-leaf",
+                )}
+              >
+                <Menu className="h-5 w-5" />
+              </button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-              <div className="flex flex-col gap-8 mt-10">
+            <SheetContent
+              side="right"
+              className="w-[320px] bg-field border-bark/10 font-body"
+            >
+              <div className="mt-10 flex flex-col gap-10">
                 <div className="px-4">
                   <Logo textSize="text-2xl" />
                 </div>
 
-                <nav className="flex flex-col gap-4 px-4">
-                  {navLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      onClick={() => setIsOpen(false)}
-                      className={cn(
-                        "block px-2 py-2 text-lg font-medium transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md",
-                        pathname === link.href
-                          ? "text-[#049878] bg-green-50 dark:bg-green-900/10"
-                          : "text-foreground/80",
-                      )}
-                    >
-                      {link.name}
-                    </Link>
-                  ))}
+                <nav className="flex flex-col px-4">
+                  {navLinks.map((link) => {
+                    const active = pathname === link.href;
+                    return (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        onClick={() => setIsOpen(false)}
+                        aria-current={active ? "page" : undefined}
+                        className={cn(
+                          "border-b border-bark/10 py-4 text-[17px] font-medium transition-colors",
+                          active ? "text-leaf" : "text-bark",
+                        )}
+                      >
+                        {link.name}
+                      </Link>
+                    );
+                  })}
                 </nav>
 
-                <div className="flex flex-col gap-4 mt-4 px-4">
+                <div className="flex flex-col gap-3 px-4">
                   {isAuthenticated ? (
-                    <Link href={"/dashboard"} onClick={() => setIsOpen(false)}>
-                      <Button className="w-full h-11 text-base bg-[#049878] hover:bg-green-700 text-white">
-                        Go to dashboard
-                      </Button>
-                    </Link>
+                    <Action
+                      href="/dashboard"
+                      className="w-full justify-between"
+                    >
+                      Go to dashboard
+                    </Action>
                   ) : (
                     <>
-                      <Link href="/login" onClick={() => setIsOpen(false)}>
-                        <Button
-                          variant="outline"
-                          className="w-full h-11 text-base"
-                        >
-                          Log in
-                        </Button>
-                      </Link>
-                      <Link href="/signup" onClick={() => setIsOpen(false)}>
-                        <Button className="w-full h-11 text-base bg-[#049878] hover:bg-green-700 text-white">
-                          Get Started
-                        </Button>
-                      </Link>
+                      <Action href="/signup" className="w-full justify-between">
+                        Start free
+                      </Action>
+                      <Action
+                        href="/login"
+                        variant="outline"
+                        className="w-full justify-between"
+                      >
+                        Log in
+                      </Action>
                     </>
                   )}
                 </div>

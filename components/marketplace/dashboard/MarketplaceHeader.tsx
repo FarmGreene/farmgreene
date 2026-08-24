@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Search, LayoutDashboard } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import { useHasRole } from "@/lib/store/useRoleHooks";
+import { BecomeOwnerButton } from "./BecomeOwnerButton";
 
 export function MarketplaceHeader() {
   const isOwner = useHasRole("OWNER");
@@ -24,13 +25,17 @@ export function MarketplaceHeader() {
             className="w-full pl-9 bg-white dark:bg-slate-900"
           />
         </div>
-        {isOwner && (
+        {isOwner ? (
           <Button asChild variant="outline" className="shrink-0">
             <Link href="/dashboard/marketplace/manage">
               <LayoutDashboard className="mr-2 h-4 w-4" />
               Manage Listings
             </Link>
           </Button>
+        ) : (
+          // Previously there was nothing here for non-owners, so somebody who
+          // signed up without picking a role had no way to ever list anything.
+          <BecomeOwnerButton />
         )}
       </div>
     </div>

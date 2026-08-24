@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useQueryState, parseAsString } from "nuqs";
 import {
   Search,
   LayoutGrid,
@@ -79,7 +80,10 @@ type ViewMode = "grid" | "table";
 export default function CommodityIntelligenceGrid() {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [category, setCategory] = useState<string>("ALL");
+  const [category, setCategory] = useQueryState(
+    "category",
+    parseAsString.withDefault("ALL"),
+  );
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(12);
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
@@ -253,7 +257,7 @@ export default function CommodityIntelligenceGrid() {
               <SelectItem value="ALL">All Categories</SelectItem>
               {Object.values(CommodityCategory).map((cat) => (
                 <SelectItem key={cat} value={cat}>
-                  {cat.replace("_", " ")}
+                  {CATEGORY_LABELS[cat]}
                 </SelectItem>
               ))}
             </SelectContent>

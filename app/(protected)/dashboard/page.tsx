@@ -1,10 +1,9 @@
 "use client";
 import React from "react";
 import MarketSnapshot from "@/components/dashboard/widgets/MarketSnapshot";
-import IndexWidget from "@/components/dashboard/widgets/IndexWidget";
+import { CategoryMovementWidget } from "@/components/dashboard/widgets/CategoryMovementWidget";
 import CommodityIndex from "@/components/dashboard/widgets/CommodityIndex";
 import ReportsWidget from "@/components/dashboard/widgets/ReportsWidget";
-import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 import NewsPulse from "@/components/dashboard/widgets/NewsPulse";
 import AIInsightWidget from "@/components/dashboard/widgets/AIInsightWidget";
 import TopMoversWidget from "@/components/dashboard/widgets/TopMoversWidget";
@@ -18,21 +17,9 @@ export default function DashboardPage() {
           <MarketSnapshot />
         </div>
         <div className="col-span-1 lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <IndexWidget
-            title="Grains Index"
-            value="2,450"
-            trend="+2.4%"
-            trendIcon={ArrowUpRight}
-            trendColor="green"
-          />
-
-          <IndexWidget
-            title="Tubers Index"
-            value="1,120"
-            trend="-0.8%"
-            trendIcon={ArrowDownRight}
-            trendColor="red"
-          />
+          {/* Was two hardcoded index tiles ("Grains Index 2,450"). These pick
+              the two categories actually moving most today, from live data. */}
+          <CategoryMovementWidget />
         </div>
       </div>
 

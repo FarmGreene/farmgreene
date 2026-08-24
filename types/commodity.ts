@@ -7,6 +7,9 @@ export enum CommodityCategory {
   CASH_CROPS = "CASH_CROPS",
   VEGETABLES = "VEGETABLES",
   LIVESTOCK = "LIVESTOCK",
+  // Present in the backend enum and in live data; was missing here, so fruit
+  // commodities looked up `undefined` in CATEGORY_LABELS.
+  FRUITS = "FRUITS",
   OTHERS = "OTHERS",
 }
 
@@ -80,6 +83,7 @@ export const CATEGORY_LABELS: Record<CommodityCategory, string> = {
   CASH_CROPS: "Cash Crops",
   VEGETABLES: "Vegetables",
   LIVESTOCK: "Livestock",
+  FRUITS: "Fruits",
   OTHERS: "Others",
 };
 

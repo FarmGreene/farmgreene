@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   EquipmentListing,
   ListingStatus,
@@ -73,6 +74,7 @@ const STATUS_ORDER: Record<RentRequestStatus, number> = {
 };
 
 export function OwnerView({ listings = [] }: OwnerViewProps) {
+  const router = useRouter();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [drafts, setDrafts] = useState<EquipmentListing[]>([]);
   const [activeListings, setActiveListings] = useState<EquipmentListing[]>(listings);
@@ -118,6 +120,21 @@ export function OwnerView({ listings = [] }: OwnerViewProps) {
   useEffect(() => {
     getMyDrafts().then(setDrafts).catch(() => {});
   }, []);
+
+  // Arriving from "List your equipment" — the person has just been granted the
+  // OWNER role and came here to do one thing, so open the wizard rather than
+  // making them find the button again. The param is cleared so a refresh or a
+  // back-navigation doesn't reopen it.
+  //
+  // Read from window rather than useSearchParams(): that hook opts the whole
+  // subtree into dynamic rendering and fails the build on a statically
+  // prerendered route unless it's wrapped in Suspense. This runs in an effect,
+  // so it's client-only anyway and the hook buys nothing.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("new") !== "1") return;
+    setIsCreateModalOpen(true);
+    router.replace("/dashboard/marketplace/manage");
+  }, [router]);
 
   useEffect(() => {
     fetchListings(filter);

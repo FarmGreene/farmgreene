@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
+import { useQueryStates } from "nuqs";
 import { EquipmentCategory, PublicListing } from "@/types/marketplace";
 import { ListingCard } from "./ListingCard";
 import { ListingCardSkeleton } from "./ListingCardSkeleton";
@@ -23,6 +24,7 @@ import {
 } from "lucide-react";
 import { usePublicListings } from "@/lib/hooks/usePublicListings";
 import { haversineDistanceKm, NEAR_YOU_RADIUS_KM, useUserLocation } from "@/lib/marketplace/geolocation";
+import { DEFAULT_FILTERS, marketplaceFilterParsers } from "@/lib/marketplace/filters";
 
 const CATEGORY_ICONS: Record<EquipmentCategory, React.ReactNode> = {
   "Tractors & Power": <Tractor className="h-6 w-6" />,
@@ -36,7 +38,8 @@ const CATEGORY_ICONS: Record<EquipmentCategory, React.ReactNode> = {
 
 export function BrowserView() {
   const { data: listings = [], isLoading } = usePublicListings(60);
-  const [selectedCategory, setSelectedCategory] = useState<EquipmentCategory | null>(null);
+  const [filters, setFilters] = useQueryStates(marketplaceFilterParsers);
+  const selectedCategory = filters.category as EquipmentCategory | null;
   const userLocation = useUserLocation();
 
   // Real category counts from the fetched batch.
@@ -83,17 +86,29 @@ export function BrowserView() {
       .slice(0, 6);
   }, [listings, userLocation.coords]);
 
-  const filteredListings = useMemo(
-    () => (selectedCategory ? listings.filter((l) => l.category === selectedCategory) : listings),
-    [listings, selectedCategory],
-  );
+  const filteredListings = useMemo(() => {
+    const filtered = listings.filter((l) => {
+      if (filters.category && l.category !== filters.category) return false;
+      if (filters.minPrice != null && l.price < filters.minPrice) return false;
+      if (filters.maxPrice != null && l.price > filters.maxPrice) return false;
+      if (filters.state && l.state !== filters.state) return false;
+      return true;
+    });
+    if (filters.sort === "price_asc") return [...filtered].sort((a, b) => a.price - b.price);
+    if (filters.sort === "price_desc") return [...filtered].sort((a, b) => b.price - a.price);
+    return filtered;
+  }, [listings, filters]);
+
+  const hasActiveFilters =
+    filters.category != null || filters.minPrice != null || filters.maxPrice != null || filters.state != null;
 
   return (
     <div className="flex flex-col lg:flex-row gap-6">
       <FilterPanel
         categories={categories}
-        selectedCategory={selectedCategory}
-        onSelectCategory={setSelectedCategory}
+        filters={{ ...filters, category: selectedCategory }}
+        onApply={setFilters}
+        onClear={() => setFilters(DEFAULT_FILTERS)}
       />
 
       <div className="flex-1 space-y-10 min-w-0">
@@ -107,7 +122,7 @@ export function BrowserView() {
                 return (
                   <button
                     key={cat.name}
-                    onClick={() => setSelectedCategory(active ? null : cat.name)}
+                    onClick={() => setFilters({ category: active ? null : cat.name })}
                     className={`group relative h-40 w-full overflow-hidden rounded-xl p-5 flex flex-col justify-between text-left transition-all hover:shadow-lg ${
                       active
                         ? "bg-emerald-600 text-white"
@@ -209,9 +224,9 @@ export function BrowserView() {
                 <Search className="h-6 w-6 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-medium">No equipment found</h3>
-              {selectedCategory && (
-                <Button variant="outline" className="mt-4" onClick={() => setSelectedCategory(null)}>
-                  Clear Filter
+              {hasActiveFilters && (
+                <Button variant="outline" className="mt-4" onClick={() => setFilters(DEFAULT_FILTERS)}>
+                  Clear Filters
                 </Button>
               )}
             </div>

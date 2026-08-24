@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { ResetPasswordForm } from "@/components/auth/reset-password-form";
-import { Logo } from "@/components/layout/Logo";
+import { AuthPanel } from "@/components/marketing/shared/AuthPanel";
 import Link from "next/link";
 import { Suspense } from "react";
 
@@ -12,16 +12,19 @@ function ResetPasswordContent() {
 
   if (!token) {
     return (
-      <div className="mx-auto w-full max-w-[400px] space-y-6 text-center">
-        <h1 className="text-3xl font-bold tracking-tight">Invalid Link</h1>
-        <p className="text-muted-foreground">
-          This password reset link is invalid or has expired. Please request a
-          new one.
+      <div className="mx-auto w-full max-w-[400px] space-y-5 text-center">
+        <h1 className="font-display text-[2rem] font-semibold leading-[1.05] tracking-[-0.03em] text-bark">
+          This link doesn&rsquo;t work
+        </h1>
+        <p className="text-[15px] leading-[1.65] text-bark-soft">
+          The reset link is invalid or has expired. Request a fresh one and
+          we&rsquo;ll email it straight over.
         </p>
-        <Link href="/forgot-password">
-          <button className="w-full h-11 font-semibold rounded-md bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2">
-            Request New Link
-          </button>
+        <Link
+          href="/forgot-password"
+          className="inline-flex h-12 w-full items-center justify-center rounded-full bg-leaf px-6 text-[15px] font-semibold text-white transition-colors hover:bg-leaf-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-leaf focus-visible:ring-offset-2 focus-visible:ring-offset-field"
+        >
+          Request a new link
         </Link>
       </div>
     );
@@ -32,30 +35,15 @@ function ResetPasswordContent() {
 
 export default function ResetPasswordPage() {
   return (
-    <div className="w-full lg:grid lg:min-h-[calc(100vh-64px)] lg:grid-cols-2 xl:min-h-[calc(100vh-64px)]">
-      <div className="hidden bg-green-900 lg:flex lg:flex-col lg:justify-between lg:p-14 lg:text-white">
-        <div className="text-white">
-          <Logo textSize="text-3xl" variant="white" />
-        </div>
-        <div className="space-y-4">
-          <blockquote className="space-y-2">
-            <p className="text-2xl font-medium leading-relaxed">
-              &quot;Security matters. With Farmgreene, your account and data are
-              always protected with industry-leading practices.&quot;
-            </p>
-            <footer className="text-sm text-green-200">
-              — Farmgreene Security Team
-            </footer>
-          </blockquote>
-        </div>
-        <div className="text-green-200 text-sm">
-          Your data, your control. <br /> We take security seriously.
-        </div>
-      </div>
-      <div className="flex items-center justify-center py-12 px-6">
+    <div className="w-full lg:grid lg:min-h-[calc(100vh-64px)] lg:grid-cols-2">
+      <AuthPanel />
+      <div className="flex items-center justify-center bg-field px-6 py-16">
         <Suspense
           fallback={
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#049878] border-t-transparent" />
+            <div
+              className="h-8 w-8 animate-spin rounded-full border-2 border-leaf border-t-transparent"
+              aria-label="Loading"
+            />
           }
         >
           <ResetPasswordContent />

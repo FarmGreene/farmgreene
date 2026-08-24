@@ -1,5 +1,12 @@
 import type { Metadata } from "next";
-import { Inter, Outfit, Caveat } from "next/font/google";
+import {
+  Inter,
+  Outfit,
+  Caveat,
+  Fraunces,
+  Public_Sans,
+  IBM_Plex_Mono,
+} from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import { AuthProvider } from "@/components/providers/AuthProvider";
@@ -22,31 +29,57 @@ const caveat = Caveat({
   weight: ["400", "500", "600", "700"],
 });
 
+/**
+ * Marketing typeface trio. Scoped to the public site via `font-body` on the
+ * (public) layout — the dashboard keeps Inter/Outfit untouched.
+ *
+ * Fraunces carries the display voice (warm, high-craft, not a default pairing),
+ * Public Sans is built for legibility at small sizes on poor screens, and
+ * IBM Plex Mono sets every figure so numbers read as a record of fact.
+ */
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
+  subsets: ["latin"],
+  axes: ["SOFT", "WONK", "opsz"],
+});
+
+const publicSans = Public_Sans({
+  variable: "--font-public-sans",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
+
 export const metadata: Metadata = {
   title: {
     default: "Farmgreene | Agricultural Equipment Rental & Market Intelligence",
     template: "%s | Farmgreene",
   },
   description:
-    "Farmgreene connects farmers, equipment owners, and agents. Rent agricultural machinery, track market prices, and access data-driven intelligence for Australian agriculture.",
+    "Daily commodity prices collected by field agents across every region, price alerts, market analysis, and farm equipment to rent from owners near you.",
   keywords: [
+    "commodity prices",
+    "market intelligence",
     "farm equipment rental",
     "agriculture machinery",
-    "market intelligence",
-    "farm data Australia",
-    "tractor rental",
     "crop pricing",
+    "price alerts",
     "agtech",
   ],
   authors: [{ name: "Farmgreene Team" }],
   creator: "Farmgreene",
   openGraph: {
     type: "website",
-    locale: "en_AU",
+    locale: "en_NG",
     url: "https://farmgreene.com",
     title: "Farmgreene | Agricultural Equipment Rental & Market Intelligence",
     description:
-      "Connect, rent, and grow with Farmgreene. The premier platform for agricultural equipment sharing and market insights.",
+      "Know what your crop is worth before you sell it. Real prices from real markets, plus the equipment to work your land.",
     siteName: "Farmgreene",
     images: [
       {
@@ -59,9 +92,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Farmgreene | AgTech Platform",
+    title: "Farmgreene | Market prices and farm equipment",
     description:
-      "Rent equipment, track prices, and optimize your farm operations.",
+      "Daily commodity prices from real markets, alerts when your price hits, and equipment to rent nearby.",
     images: ["/og-image.jpg"],
     creator: "@farmgreene",
   },
@@ -79,7 +112,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${outfit.variable} ${caveat.variable} antialiased font-sans`}
+        className={`${inter.variable} ${outfit.variable} ${caveat.variable} ${fraunces.variable} ${publicSans.variable} ${plexMono.variable} antialiased font-sans`}
       >
         <NuqsAdapter>
           <QueryProvider>
