@@ -31,21 +31,30 @@ export function TabNavigation({
 }: TabNavigationProps) {
   const pathname = usePathname();
 
+  // Route-based active item: longest href that matches pathname exactly or as a path segment.
+  // Using plain startsWith would match every ancestor tab (e.g. both "/dashboard/settings"
+  // and "/dashboard/settings/security" match pathname "/dashboard/settings/security"),
+  // so pick the single most specific (longest) href instead.
+  const activeHref = React.useMemo(() => {
+    let best: string | undefined;
+    for (const item of items) {
+      if (!item.href) continue;
+      const matches =
+        pathname === item.href || pathname.startsWith(item.href + "/");
+      if (matches && (!best || item.href.length > best.length)) {
+        best = item.href;
+      }
+    }
+    return best;
+  }, [items, pathname]);
+
   // Determine active state: either controlled (activeValue) or route-based (pathname matches href)
   const isActive = (item: TabItem) => {
     if (activeValue && item.value) {
       return activeValue === item.value;
     }
     if (item.href) {
-      if (
-        item.href === "/dashboard/workspace" &&
-        pathname === "/dashboard/workspace"
-      ) {
-        return true;
-      }
-      return (
-        pathname.startsWith(item.href) && item.href !== "/dashboard/workspace"
-      );
+      return item.href === activeHref;
     }
     return false;
   };

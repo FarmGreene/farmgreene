@@ -56,6 +56,75 @@
   --color-brand-800: oklch(0.448 0.119 151.328);
   --color-brand-900: oklch(0.393 0.095 152.541);
   --color-brand-950: oklch(0.266 0.065 152.934);
+
+  /* ------------------------------------------------------------------
+     Marketing system ("Market Board") — public pages only.
+     Additive: nothing above is changed, so the dashboard is untouched.
+     These deliberately have no .dark variants. Marketing is a fixed light
+     system; the dashboard owns dark mode. Keeping them theme-stable stops
+     public pages half-flipping if a .dark class ever reaches the root.
+     ------------------------------------------------------------------ */
+  --font-display: var(--font-fraunces);
+  --font-body: var(--font-public-sans);
+  --font-data: var(--font-plex-mono);
+
+  /* Ground */
+  --color-chalk: oklch(0.976 0.004 120);
+  --color-chalk-deep: oklch(0.945 0.006 120);
+
+  /* Deep — data bands, footer, auth panel */
+  --color-bush-900: oklch(0.19 0.032 158);
+  --color-bush-800: oklch(0.255 0.038 158);
+  --color-bush-700: oklch(0.33 0.042 158);
+
+  /* Accent — harmattan gold */
+  --color-harmattan-400: oklch(0.845 0.135 82);
+  --color-harmattan-500: oklch(0.782 0.152 76);
+  --color-harmattan-600: oklch(0.68 0.145 68);
+
+  /* Data semantics. `rise` matches brand-600 so a price gain and a primary
+     action read as the same green; the -bright pair is for dark bands. */
+  --color-rise: oklch(0.627 0.194 149.214);
+  --color-rise-bright: oklch(0.78 0.17 150);
+  --color-fall: oklch(0.6 0.18 25);
+  --color-fall-bright: oklch(0.7 0.17 25);
+
+  /* Text */
+  --color-ink: oklch(0.2 0.015 150);
+  --color-ink-muted: oklch(0.48 0.012 150);
+
+  /* ------------------------------------------------------------------
+     "Market Morning" — the landing page.
+
+     Warm daylight rather than the dark/neon register: the audience reads
+     phones outdoors, and premium here comes from photography scale and
+     type craft, not from darkness. Values are hex so the brand green is
+     exactly the brand green, with no round-tripping through oklch.
+     ------------------------------------------------------------------ */
+
+  /* Brand. #049878 is the identity colour — everything else defers to it. */
+  --color-leaf: #049878;
+  --color-leaf-dark: #037a60;
+  --color-leaf-deep: #02614c;
+  --color-leaf-soft: #e0f2ed;
+  --color-leaf-tint: #f0f9f6;
+
+  /* Ground — a whisper of the brand green in a near-white. Not cream. */
+  --color-field: #f4f6f3;
+  --color-field-2: #e9ede8;
+
+  /* Deep tone for the single dark section, warm rather than blue-black. */
+  --color-loam: #04231d;
+  --color-loam-2: #0a362c;
+  --color-loam-3: #16493c;
+
+  /* Maize gold — used sparingly, keeps the green from reading clinical. */
+  --color-sun: #e8a33d;
+  --color-sun-soft: #f7e3c2;
+
+  /* Text */
+  --color-bark: #1c2622;
+  --color-bark-soft: #5a6661;
 }
 
 :root {
@@ -133,5 +202,77 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Landing-page surface treatments.
+
+   Plain CSS rather than utility classes because these carry multi-stop
+   gradients and an inline SVG that would be illegible inline.
+   --------------------------------------------------------------------- */
+
+/* Low morning light falling from the top-left, in the brand green. Very
+   restrained — it should read as daylight on a wall, not as a gradient. */
+.morning-light {
+  background-image:
+    radial-gradient(
+      52rem 34rem at 12% -8%,
+      color-mix(in srgb, var(--color-leaf) 13%, transparent),
+      transparent 68%
+    ),
+    radial-gradient(
+      38rem 26rem at 92% 4%,
+      color-mix(in srgb, var(--color-sun) 11%, transparent),
+      transparent 70%
+    );
+}
+
+/* Warms and darkens the bottom of a photograph so overlaid text and the
+   price card stay readable regardless of what the image is doing. */
+.photo-veil::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--color-loam) 72%, transparent) 0%,
+    color-mix(in srgb, var(--color-loam) 22%, transparent) 38%,
+    transparent 70%
+  );
+}
+
+/* Commodities price marquee (see components/layout/CommodityMarquee.tsx).
+   Duration is set inline so it scales with the number of items. */
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee-scroll linear infinite;
+}
+/* Clip the track with no visible scrollbar; pause the scroll on hover. */
+.marquee-viewport {
+  overflow: hidden;
+}
+.marquee-viewport:hover .animate-marquee {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+  /* No auto-scroll for these users — let them pan manually, scrollbar hidden. */
+  .marquee-viewport {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .marquee-viewport::-webkit-scrollbar {
+    display: none;
   }
 }

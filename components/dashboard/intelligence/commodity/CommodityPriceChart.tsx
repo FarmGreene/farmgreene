@@ -1,61 +1,165 @@
 "use client";
 
-import React, { useState } from "react";
-import { format, subDays } from "date-fns";
+import React, { useEffect, useRef, useState } from "react";
+import { useTheme } from "next-themes";
 import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+  createChart,
+  AreaSeries,
+  ColorType,
+  CrosshairMode,
+  IChartApi,
+  ISeriesApi,
+  Time,
+} from "lightweight-charts";
+import { subDays } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PriceHistory } from "@/types/commodity";
+import { useWeeklyPriceHistory } from "@/lib/hooks/useCommodities";
+
+type TimeRange = "7D" | "30D" | "90D" | "1Y" | "ALL";
+
+const RANGES: TimeRange[] = ["7D", "30D", "90D", "1Y", "ALL"];
+const ONE_YEAR_WEEKS = 52;
 
 interface CommodityPriceChartProps {
+  commodityId: string;
   history?: PriceHistory;
 }
 
-export function CommodityPriceChart({ history }: CommodityPriceChartProps) {
-  const [timeRange, setTimeRange] = useState<"7D" | "30D" | "90D">("30D");
+interface ChartPoint {
+  time: Time;
+  value: number;
+}
+
+function toIsoDay(date: string | Date): string {
+  return new Date(date).toISOString().slice(0, 10);
+}
+
+export function CommodityPriceChart({ commodityId, history }: CommodityPriceChartProps) {
+  const [timeRange, setTimeRange] = useState<TimeRange>("30D");
+  const isLongRange = timeRange === "1Y" || timeRange === "ALL";
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
+
+  const { data: weeklyHistory, isLoading: isWeeklyLoading } = useWeeklyPriceHistory(
+    commodityId,
+    timeRange === "1Y" ? ONE_YEAR_WEEKS : undefined,
+    isLongRange,
+  );
 
   const data = history?.history || [];
-  
-  // Fake backfill if backend doesn't give enough data for smooth chart
-  const formattedData = React.useMemo(() => {
+
+  const formattedData: ChartPoint[] = React.useMemo(() => {
+    if (isLongRange) {
+      const weeklyData = weeklyHistory?.history || [];
+      return [...weeklyData]
+        .sort((a, b) => new Date(a.weekStartDate).getTime() - new Date(b.weekStartDate).getTime())
+        .map((w) => ({ time: toIsoDay(w.weekStartDate) as Time, value: Number(w.averagePrice) }));
+    }
+
     if (data.length === 0) return [];
-    
-    // Sort chronological just in case
-    const sorted = [...data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-    
-    // Filter by time range
+
+    const sorted = [...data].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+    );
+
     const daysToKeep = timeRange === "7D" ? 7 : timeRange === "30D" ? 30 : 90;
     const cutoffDate = subDays(new Date(), daysToKeep);
-    
+
     return sorted
       .filter((d) => new Date(d.date) >= cutoffDate)
-      .map((d) => ({
-        date: format(new Date(d.date), "MMM dd"),
-        price: d.averagePrice,
-        min: d.minPrice,
-        max: d.maxPrice,
-      }));
-  }, [data, timeRange]);
+      .map((d) => ({ time: toIsoDay(d.date) as Time, value: Number(d.averagePrice) }));
+  }, [data, timeRange, isLongRange, weeklyHistory]);
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-slate-900 border border-slate-800 p-3 rounded-lg shadow-xl">
-          <p className="text-slate-400 text-xs mb-1 font-medium">{label}</p>
-          <p className="text-white font-bold text-lg">₦{payload[0].value.toLocaleString()}</p>
-        </div>
-      );
-    }
-    return null;
-  };
+  const isLoading = isLongRange && isWeeklyLoading;
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const chartRef = useRef<IChartApi | null>(null);
+  const seriesRef = useRef<ISeriesApi<"Area"> | null>(null);
+  const [legend, setLegend] = useState<{ date: string; price: number } | null>(null);
+
+  // Create the chart once per container mount.
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const chart = createChart(containerRef.current, {
+      autoSize: true,
+      layout: {
+        background: { type: ColorType.Solid, color: "transparent" },
+        textColor: isDark ? "#94a3b8" : "#64748b",
+        fontSize: 10,
+      },
+      grid: {
+        vertLines: { visible: false },
+        horzLines: { color: isDark ? "rgba(51,65,85,0.3)" : "rgba(148,163,184,0.2)" },
+      },
+      rightPriceScale: {
+        borderVisible: false,
+      },
+      timeScale: {
+        borderVisible: false,
+      },
+      crosshair: {
+        mode: CrosshairMode.Normal,
+      },
+    });
+
+    const series = chart.addSeries(AreaSeries, {
+      lineColor: "#10b981",
+      lineWidth: 3,
+      topColor: "rgba(16,185,129,0.3)",
+      bottomColor: "rgba(16,185,129,0)",
+      priceLineVisible: false,
+      lastValueVisible: false,
+    });
+
+    chart.subscribeCrosshairMove((param) => {
+      if (!param.time || !param.seriesData.size) {
+        setLegend(null);
+        return;
+      }
+      const point = param.seriesData.get(series) as { value?: number } | undefined;
+      if (point?.value != null) {
+        setLegend({ date: String(param.time), price: point.value });
+      }
+    });
+
+    chartRef.current = chart;
+    seriesRef.current = series;
+
+    return () => {
+      chart.remove();
+      chartRef.current = null;
+      seriesRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Re-theme on dark/light switch without recreating the chart.
+  useEffect(() => {
+    chartRef.current?.applyOptions({
+      layout: {
+        background: { type: ColorType.Solid, color: "transparent" },
+        textColor: isDark ? "#94a3b8" : "#64748b",
+      },
+      grid: {
+        horzLines: { color: isDark ? "rgba(51,65,85,0.3)" : "rgba(148,163,184,0.2)" },
+      },
+    });
+  }, [isDark]);
+
+  // Push new data whenever the range/series changes.
+  useEffect(() => {
+    if (!seriesRef.current) return;
+    seriesRef.current.setData(formattedData);
+    chartRef.current?.timeScale().fitContent();
+    setLegend(
+      formattedData.length > 0
+        ? { date: String(formattedData[formattedData.length - 1].time), price: formattedData[formattedData.length - 1].value }
+        : null,
+    );
+  }, [formattedData]);
 
   return (
     <Card className="border-none shadow-sm bg-white dark:bg-slate-900 rounded-2xl overflow-hidden">
@@ -64,7 +168,7 @@ export function CommodityPriceChart({ history }: CommodityPriceChartProps) {
           Price History & Volatility
         </CardTitle>
         <div className="flex bg-slate-100 dark:bg-slate-950 p-1 rounded-lg">
-          {(["7D", "30D", "90D"] as const).map((range) => (
+          {RANGES.map((range) => (
             <Button
               key={range}
               variant="ghost"
@@ -76,53 +180,38 @@ export function CommodityPriceChart({ history }: CommodityPriceChartProps) {
                   : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
               }`}
             >
-              {range}
+              {range === "ALL" ? "All" : range}
             </Button>
           ))}
         </div>
       </CardHeader>
-      <CardContent className="p-0 pt-6">
-        {formattedData.length > 0 ? (
-          <div className="h-[280px] w-full px-2">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={formattedData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" opacity={0.2} />
-                <XAxis 
-                  dataKey="date" 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{ fontSize: 10, fill: '#64748b' }} 
-                  dy={10}
-                />
-                <YAxis 
-                  domain={['auto', 'auto']} 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{ fontSize: 10, fill: '#64748b' }}
-                  tickFormatter={(val) => `₦${val.toLocaleString()}`}
-                  width={60}
-                />
-                <Tooltip content={<CustomTooltip />} />
-                <Area
-                  type="monotone"
-                  dataKey="price"
-                  stroke="#10b981"
-                  strokeWidth={3}
-                  fillOpacity={1}
-                  fill="url(#colorPrice)"
-                  activeDot={{ r: 6, fill: "#10b981", stroke: "#fff", strokeWidth: 2 }}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+      <CardContent className="p-0 pt-6 relative">
+        {!isLoading && legend && formattedData.length > 0 && (
+          <div className="absolute top-3 left-5 z-10 bg-slate-900/90 border border-slate-800 px-3 py-2 rounded-lg shadow-xl pointer-events-none">
+            <p className="text-slate-400 text-[10px] mb-0.5 font-medium">{legend.date}</p>
+            <p className="text-white font-bold text-base">
+              ₦{legend.price.toLocaleString()}
+            </p>
           </div>
-        ) : (
-          <div className="h-[280px] flex items-center justify-center text-slate-400 text-sm font-medium">
+        )}
+
+        {/* Container stays mounted at all times — lightweight-charts binds to
+            it once on mount, so conditionally unmounting it would leave a
+            dead ref if data arrives later. */}
+        <div ref={containerRef} className="h-[280px] w-full px-2" />
+        <style jsx global>{`
+          a#tv-attr-logo {
+            display: none !important;
+          }
+        `}</style>
+
+        {isLoading && (
+          <div className="absolute inset-0 top-6 flex items-center justify-center text-slate-400 text-sm font-medium bg-white dark:bg-slate-900">
+            Loading weekly history…
+          </div>
+        )}
+        {!isLoading && formattedData.length === 0 && (
+          <div className="absolute inset-0 top-6 flex items-center justify-center text-slate-400 text-sm font-medium bg-white dark:bg-slate-900">
             Insufficient data for chart
           </div>
         )}

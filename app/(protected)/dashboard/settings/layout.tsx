@@ -25,16 +25,16 @@ const SETTINGS_NAV_ITEMS = [
     href: "/dashboard/settings/notifications",
     icon: Bell,
   },
-  {
-    label: "Subscription",
-    href: "/dashboard/settings/billing",
-    icon: CreditCard,
-  },
-  {
-    label: "Workspace",
-    href: "/dashboard/settings/workspace",
-    icon: Briefcase,
-  },
+  // {
+  //   label: "Subscription",
+  //   href: "/dashboard/settings/billing",
+  //   icon: CreditCard,
+  // },
+  // {
+  //   label: "Workspace",
+  //   href: "/dashboard/settings/workspace",
+  //   icon: Briefcase,
+  // },
 ];
 
 export default function SettingsLayout({

@@ -2,31 +2,50 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { EquipmentListing, ListingStatus } from "@/types/marketplace";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
   Edit,
   Heart,
   MapPin,
-  PauseCircle,
-  PlayCircle,
   ImageIcon,
   Calendar,
   Settings2,
   Zap,
   Gauge,
+  Archive,
+  ArchiveRestore,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ListingCardProps {
   listing: EquipmentListing;
   variant: "owner" | "browser";
+  onArchive?: (id: string) => void;
+  onUnarchive?: (id: string) => void;
+  onEdit?: (listing: EquipmentListing) => void;
 }
 
-export function ListingCard({ listing, variant }: ListingCardProps) {
+export function ListingCard({
+  listing,
+  variant,
+  onArchive,
+  onUnarchive,
+  onEdit,
+}: ListingCardProps) {
   const isOwner = variant === "owner";
+  const isArchived = !!listing.archivedAt;
   const [isSaved, setIsSaved] = useState(false);
+  const router = useRouter();
+  const detailHref = `/marketplace/${listing.id}`;
+
+  // Browser cards navigate to the public detail page (where the rent flow lives).
+  const goToDetail = () => {
+    if (!isOwner) router.push(detailHref);
+  };
 
   const getStatusConfig = (status: ListingStatus) => {
     switch (status) {
@@ -69,7 +88,14 @@ export function ListingCard({ listing, variant }: ListingCardProps) {
     }
   };
 
-  const statusConfig = getStatusConfig(listing.status);
+  const statusConfig = isArchived
+    ? {
+        label: "Archived",
+        dotColor: "bg-slate-400",
+        className:
+          "bg-slate-100 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700",
+      }
+    : getStatusConfig(listing.status);
 
   // Compute location
   const locationText = [listing.lga, listing.state].filter(Boolean).join(", ") || "Location not specified";
@@ -92,7 +118,14 @@ export function ListingCard({ listing, variant }: ListingCardProps) {
   };
 
   return (
-    <div className="group flex flex-col h-full bg-white dark:bg-slate-900 border border-slate-100/80 dark:border-slate-800/80 rounded-[22px] overflow-hidden hover:shadow-[0_16px_36px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_16px_36px_rgba(0,0,0,0.3)] hover:border-emerald-500/20 dark:hover:border-emerald-500/25 hover:-translate-y-1 transition-all duration-300">
+    <div
+      onClick={goToDetail}
+      className={cn(
+        "group flex flex-col h-full bg-white dark:bg-slate-900 border border-slate-100/80 dark:border-slate-800/80 rounded-[22px] overflow-hidden hover:shadow-[0_16px_36px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_16px_36px_rgba(0,0,0,0.3)] hover:border-emerald-500/20 dark:hover:border-emerald-500/25 hover:-translate-y-1 transition-all duration-300",
+        isArchived && "opacity-60 grayscale hover:opacity-100",
+        !isOwner && "cursor-pointer",
+      )}
+    >
       {/* Short wide aspect ratio image container */}
       <div className="relative aspect-[1.5] w-full overflow-hidden bg-slate-50 dark:bg-slate-950 flex items-center justify-center">
         {listing.primaryPhotoUrl || listing.imageUrl ? (
@@ -153,6 +186,38 @@ export function ListingCard({ listing, variant }: ListingCardProps) {
               {listing.name}
             </h3>
           </div>
+
+          {/* Rejection reason — owner only */}
+          {isOwner &&
+            listing.status === "rejected" &&
+            listing.rejectionReason && (
+              <p
+                className="text-[10px] leading-snug text-red-600 dark:text-red-400 bg-red-50/60 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-md px-2 py-1"
+                title={listing.rejectionReason}
+              >
+                <span className="font-bold">Rejected:</span>{" "}
+                {listing.rejectionReason}
+              </p>
+            )}
+
+          {/* Pending edit awaiting admin approval — owner only */}
+          {isOwner && listing.pendingChanges && (
+            <p className="text-[10px] leading-snug text-amber-700 dark:text-amber-400 bg-amber-50/60 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/30 rounded-md px-2 py-1">
+              <span className="font-bold">Edit pending review</span> — the current
+              version above is still what renters see.
+            </p>
+          )}
+
+          {/* Last edit rejection — owner only, dismissed by the next edit submission */}
+          {isOwner && !listing.pendingChanges && listing.lastEditRejectionReason && (
+            <p
+              className="text-[10px] leading-snug text-red-600 dark:text-red-400 bg-red-50/60 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-md px-2 py-1"
+              title={listing.lastEditRejectionReason}
+            >
+              <span className="font-bold">Edit rejected:</span>{" "}
+              {listing.lastEditRejectionReason}
+            </p>
+          )}
 
           {/* Consolidated Specification Capsules (Single row, compact!) */}
           <div className="flex flex-wrap items-center gap-1.5">
@@ -224,35 +289,65 @@ export function ListingCard({ listing, variant }: ListingCardProps) {
           {/* Action Buttons Block (Right) */}
           <div className="flex items-center">
             {isOwner ? (
-              <div className="flex items-center gap-1.5">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-9 px-3 border-slate-200 dark:border-slate-700 hover:border-slate-350 dark:hover:border-slate-650 hover:bg-slate-50 dark:hover:bg-slate-800/50 font-extrabold text-[10px] uppercase tracking-wider rounded-xl transition-all"
-                >
-                  <Edit className="h-3 w-3 mr-1 text-slate-500" />
-                  Edit
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className={cn(
-                    "h-9 w-9 border-slate-200 dark:border-slate-700 rounded-xl transition-all",
-                    listing.status === "paused"
-                      ? "text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50/50"
-                      : "text-amber-600 hover:text-amber-700 hover:bg-amber-50/50"
-                  )}
-                  aria-label={listing.status === "paused" ? "Resume listing" : "Pause listing"}
-                >
-                  {listing.status === "paused" ? (
-                    <PlayCircle className="h-4.5 w-4.5" />
-                  ) : (
-                    <PauseCircle className="h-4.5 w-4.5" />
-                  )}
-                </Button>
-              </div>
+              isArchived ? (
+                <ConfirmDialog
+                  title="Restore this listing?"
+                  description="It will become visible in your inventory again with its previous status."
+                  confirmLabel="Restore"
+                  onConfirm={() => onUnarchive?.(listing.id)}
+                  trigger={
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-9 px-3 border-slate-200 dark:border-slate-700 hover:border-emerald-350 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/20 font-extrabold text-[10px] uppercase tracking-wider rounded-xl transition-all"
+                    >
+                      <ArchiveRestore className="h-3 w-3 mr-1 text-emerald-600" />
+                      Restore
+                    </Button>
+                  }
+                />
+              ) : (
+                <div className="flex items-center gap-1.5">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEdit?.(listing);
+                    }}
+                    className="h-9 px-3 border-slate-200 dark:border-slate-700 hover:border-slate-350 dark:hover:border-slate-650 hover:bg-slate-50 dark:hover:bg-slate-800/50 font-extrabold text-[10px] uppercase tracking-wider rounded-xl transition-all"
+                  >
+                    <Edit className="h-3 w-3 mr-1 text-slate-500" />
+                    Edit
+                  </Button>
+                  <ConfirmDialog
+                    title="Archive this listing?"
+                    description="It will be hidden from your inventory and from the public marketplace. You can restore it anytime from the Archived filter."
+                    confirmLabel="Archive"
+                    destructive
+                    onConfirm={() => onArchive?.(listing.id)}
+                    trigger={
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-9 w-9 border-slate-200 dark:border-slate-700 rounded-xl transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                        aria-label="Archive listing"
+                        title="Archive (hide) listing"
+                      >
+                        <Archive className="h-4.5 w-4.5" />
+                      </Button>
+                    }
+                  />
+                </div>
+              )
             ) : (
-              <Button className="h-9 px-4 bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white font-extrabold text-[10px] uppercase tracking-wider rounded-xl shadow-sm shadow-emerald-500/10 hover:shadow-md hover:shadow-emerald-500/20 transition-all active:scale-95 flex items-center justify-center">
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  router.push(detailHref);
+                }}
+                className="h-9 px-4 bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white font-extrabold text-[10px] uppercase tracking-wider rounded-xl shadow-sm shadow-emerald-500/10 hover:shadow-md hover:shadow-emerald-500/20 transition-all active:scale-95 flex items-center justify-center"
+              >
                 Rent Now
               </Button>
             )}

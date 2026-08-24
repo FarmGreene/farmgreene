@@ -15,12 +15,12 @@ import { TabNavigation } from "@/components/ui/tab-navigation";
 const REPORTS_NAV_ITEMS = [
   { label: "Generate", href: "/dashboard/reports", icon: Sparkles },
   { label: "Saved Reports", href: "/dashboard/reports/saved", icon: FileText },
-  {
-    label: "Scheduled",
-    href: "/dashboard/reports/scheduled",
-    icon: CalendarClock,
-  },
-  { label: "Exports", href: "/dashboard/reports/exports", icon: Download },
+  // {
+  //   label: "Scheduled",
+  //   href: "/dashboard/reports/scheduled",
+  //   icon: CalendarClock,
+  // },
+  // { label: "Exports", href: "/dashboard/reports/exports", icon: Download },
 ];
 
 export default function ReportsLayout({

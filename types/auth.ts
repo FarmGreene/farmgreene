@@ -38,3 +38,12 @@ export interface RegisterData {
   lastName?: string;
   roles: UserRole[];
 }
+
+export interface Session {
+  id: string;
+  deviceLabel: string;
+  city: string | null;
+  country: string | null;
+  lastActiveAt: string;
+  isCurrent: boolean;
+}

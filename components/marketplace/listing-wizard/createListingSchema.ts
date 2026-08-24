@@ -115,6 +115,10 @@ export type Step2Data = z.infer<typeof step2Schema>;
 
 // ─── Step 3: Pricing ─────────────────────────────────────────────────────────
 
+// A security deposit is capped at this many times the daily rate, keeping
+// owners from demanding outrageous amounts. Shared with the Step 3 UI hint.
+export const DEPOSIT_MAX_DAILY_RATE_MULTIPLIER = 7;
+
 export const step3Schema = z
   .object({
     pricePerDay: z
@@ -142,6 +146,19 @@ export const step3Schema = z
         path: ["depositAmount"],
         message: "Deposit amount is required when deposit is enabled",
       });
+    }
+    // Cap the deposit so owners can't demand outrageous amounts: at most a
+    // week's worth of the daily rate. Duration-independent — a deposit protects
+    // the machine's worth, not how long it's rented.
+    if (data.depositRequired && data.depositAmount && data.pricePerDay > 0) {
+      const cap = data.pricePerDay * DEPOSIT_MAX_DAILY_RATE_MULTIPLIER;
+      if (data.depositAmount > cap) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["depositAmount"],
+          message: `Deposit can't exceed ₦${cap.toLocaleString()} (${DEPOSIT_MAX_DAILY_RATE_MULTIPLIER}× your daily rate)`,
+        });
+      }
     }
     if (
       data.primaryPeriod === "week" &&

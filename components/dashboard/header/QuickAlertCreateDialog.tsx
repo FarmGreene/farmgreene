@@ -1,17 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Bell,
-  Plus,
-  Check,
   TrendingUp,
   TrendingDown,
-  Target,
-  Mail,
-  Smartphone,
   ChevronRight,
-  ClockPlus,
   AlarmPlus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -36,104 +30,119 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { useCommodities } from "@/lib/hooks/useCommodities";
+import { useCreateAlert } from "@/lib/hooks/useAlerts";
+import type { PriceAlertCondition } from "@/types/alert";
+import { toast } from "sonner";
 
-export function QuickAlertCreateDialog() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [commodity, setCommodity] = useState("");
-  const [condition, setCondition] = useState("above");
-  const [notifications, setNotifications] = useState({
-    inApp: true,
-    email: false,
-  });
+interface QuickAlertCreateDialogProps {
+  /** Pass both to control the dialog from a parent trigger (hides the built-in triggers). */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export function QuickAlertCreateDialog({
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
+}: QuickAlertCreateDialogProps = {}) {
+  const isControlled = controlledOpen !== undefined;
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isOpen = isControlled ? controlledOpen : internalOpen;
+  const setIsOpen = isControlled ? controlledOnOpenChange! : setInternalOpen;
+
+  const [commodityId, setCommodityId] = useState("");
+  const [condition, setCondition] = useState<PriceAlertCondition>("above");
+  const [targetPrice, setTargetPrice] = useState("");
+
+  const { data } = useCommodities({ limit: 100 });
+  const commodities = data?.data ?? [];
+  const selectedCommodity = commodities.find((c) => c.id === commodityId);
+  const createMutation = useCreateAlert();
+
+  useEffect(() => {
+    if (!isOpen) {
+      setCommodityId("");
+      setCondition("above");
+      setTargetPrice("");
+    }
+  }, [isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    const price = Number(targetPrice);
+    if (!commodityId || !price || price <= 0) return;
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    setIsSubmitting(false);
-    setIsOpen(false);
-
-    // Show success toast (mock)
-    // In a real app: toast.success("Alert created for " + commodity);
+    try {
+      await createMutation.mutateAsync({ commodityId, condition, targetPrice: price });
+      toast.success(`Alert created for ${selectedCommodity?.name ?? "commodity"}`);
+      setIsOpen(false);
+    } catch {
+      toast.error("Couldn't create alert — try again");
+    }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button
-          size="sm"
-          variant="outline"
-          className="hidden md:flex gap-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
-        >
-          <AlarmPlus className="h-6 w-6 text-slate-500 shrink-0" />
-          <span className="text-slate-600 dark:text-slate-400">
-            Create Alert
-          </span>
-        </Button>
-      </DialogTrigger>
-      {/* Mobile Trigger (Icon Only) */}
-      <DialogTrigger asChild>
-        <Button size="icon" variant="ghost" className="md:hidden">
-          <Bell className="h-5 w-5 text-slate-500" />
-          <div className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-white" />
-        </Button>
-      </DialogTrigger>
+      {!isControlled && (
+        <>
+          <DialogTrigger asChild>
+            <Button
+              size="sm"
+              variant="outline"
+              className="hidden md:flex gap-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
+            >
+              <AlarmPlus className="h-6 w-6 text-slate-500 shrink-0" />
+              <span className="text-slate-600 dark:text-slate-400">
+                Create Alert
+              </span>
+            </Button>
+          </DialogTrigger>
+          {/* Mobile Trigger (Icon Only) */}
+          <DialogTrigger asChild>
+            <Button size="icon" variant="ghost" className="md:hidden">
+              <Bell className="h-5 w-5 text-slate-500" />
+              <div className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-white" />
+            </Button>
+          </DialogTrigger>
+        </>
+      )}
 
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>Create Price Alert</DialogTitle>
             <DialogDescription>
-              Get notified immediately when market conditions change.
+              Get notified by email when a commodity crosses your target price.
             </DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-5 py-4">
-            {/* Commodity & Region Row */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="commodity">Commodity</Label>
-                <Select value={commodity} onValueChange={setCommodity} required>
-                  <SelectTrigger id="commodity" className="w-full">
-                    <SelectValue placeholder="Select..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="maize">Maize</SelectItem>
-                    <SelectItem value="rice">Rice</SelectItem>
-                    <SelectItem value="soybeans">Soybeans</SelectItem>
-                    <SelectItem value="cassava">Cassava</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="region">Region</Label>
-                <Select defaultValue="lagos">
-                  <SelectTrigger id="region" className="w-full">
-                    <SelectValue placeholder="Select..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="lagos">Lagos</SelectItem>
-                    <SelectItem value="kano">Kano</SelectItem>
-                    <SelectItem value="kaduna">Kaduna</SelectItem>
-                    <SelectItem value="ibadan">Ibadan</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="commodity">Commodity</Label>
+              <Select value={commodityId} onValueChange={setCommodityId} required>
+                <SelectTrigger id="commodity" className="w-full">
+                  <SelectValue placeholder="Select..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {commodities.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {c.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Condition Type - Custom Radio Group */}
             <div className="space-y-3">
               <Label>Alert me when price...</Label>
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { id: "above", label: "Goes Above", icon: TrendingUp },
-                  { id: "below", label: "Drops Below", icon: TrendingDown },
-                  { id: "exact", label: "Is Exactly", icon: Target },
-                ].map((type) => {
+              <div className="grid grid-cols-2 gap-2">
+                {(
+                  [
+                    { id: "above" as const, label: "Goes Above", icon: TrendingUp },
+                    { id: "below" as const, label: "Drops Below", icon: TrendingDown },
+                  ]
+                ).map((type) => {
                   const Icon = type.icon;
                   const isSelected = condition === type.id;
                   return (
@@ -167,81 +176,18 @@ export function QuickAlertCreateDialog() {
                 <Input
                   id="price"
                   type="number"
+                  min={0}
                   placeholder="0.00"
                   className="pl-7"
+                  value={targetPrice}
+                  onChange={(e) => setTargetPrice(e.target.value)}
                   required
                 />
               </div>
               <p className="text-[11px] text-slate-500">
-                We'll notify you when {commodity ? commodity : "the commodity"}{" "}
-                price{" "}
-                {condition === "above"
-                  ? "exceeds"
-                  : condition === "below"
-                    ? "falls below"
-                    : "reaches"}{" "}
-                this amount.
+                We&apos;ll email you when {selectedCommodity ? selectedCommodity.name : "the commodity"}{" "}
+                price {condition === "above" ? "exceeds" : "falls below"} this amount.
               </p>
-            </div>
-
-            {/* Notification Method - Custom Checkboxes */}
-            <div className="space-y-3">
-              <Label>Notify me via</Label>
-              <div className="flex gap-4">
-                <label className="flex items-center gap-2 cursor-pointer group">
-                  <div
-                    className={cn(
-                      "h-5 w-5 rounded border flex items-center justify-center transition-colors",
-                      notifications.inApp
-                        ? "bg-emerald-600 border-emerald-600"
-                        : "border-slate-300 group-hover:border-slate-400",
-                    )}
-                  >
-                    {notifications.inApp && (
-                      <Check className="h-3.5 w-3.5 text-white" />
-                    )}
-                  </div>
-                  <input
-                    type="checkbox"
-                    className="hidden"
-                    checked={notifications.inApp}
-                    onChange={() =>
-                      setNotifications((p) => ({ ...p, inApp: !p.inApp }))
-                    }
-                  />
-                  <div className="flex items-center gap-1.5 text-sm text-slate-700 dark:text-slate-300">
-                    <Smartphone className="h-4 w-4 text-slate-400" />
-                    In-app
-                  </div>
-                </label>
-
-                <label className="flex items-center gap-2 cursor-pointer group">
-                  <div
-                    className={cn(
-                      "h-5 w-5 rounded border flex items-center justify-center transition-colors",
-                      notifications.email
-                        ? "bg-emerald-600 border-emerald-600"
-                        : "border-slate-300 group-hover:border-slate-400",
-                    )}
-                  >
-                    {notifications.email && (
-                      <Check className="h-3.5 w-3.5 text-white" />
-                    )}
-                  </div>
-                  <input
-                    type="checkbox"
-                    className="hidden"
-                    checked={notifications.email}
-                    onChange={() =>
-                      setNotifications((p) => ({ ...p, email: !p.email }))
-                    }
-                  />
-                  <div className="flex items-center gap-1.5 text-sm text-slate-700 dark:text-slate-300">
-                    <Mail className="h-4 w-4 text-slate-400" />
-                    Email
-                  </div>
-                </label>
-              </div>
             </div>
           </div>
 
@@ -268,10 +214,10 @@ export function QuickAlertCreateDialog() {
             </DialogClose>
             <Button
               type="submit"
-              disabled={isSubmitting || !commodity}
+              disabled={createMutation.isPending || !commodityId || !targetPrice}
               className="bg-emerald-600 hover:bg-emerald-700 text-white"
             >
-              {isSubmitting ? "Creating..." : "Create Alert"}
+              {createMutation.isPending ? "Creating..." : "Create Alert"}
             </Button>
           </DialogFooter>
         </form>

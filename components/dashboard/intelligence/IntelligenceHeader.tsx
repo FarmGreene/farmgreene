@@ -17,7 +17,7 @@ export default function IntelligenceHeader() {
 
         <div className="flex items-center gap-3">
           {/* Minimalist Time Filter */}
-          <div className="flex items-center p-1 bg-slate-100 dark:bg-slate-900 rounded-lg">
+          {/* <div className="flex items-center p-1 bg-slate-100 dark:bg-slate-900 rounded-lg">
             <button className="px-3 py-1.5 text-xs font-medium text-slate-900 dark:text-white bg-white dark:bg-slate-800 rounded shadow-sm transition-all hover:text-slate-900">
               7D
             </button>
@@ -27,12 +27,12 @@ export default function IntelligenceHeader() {
             <button className="px-3 py-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
               3M
             </button>
-          </div>
+          </div> */}
 
-          <Separator orientation="vertical" className="h-6 mx-1" />
+          {/* <Separator orientation="vertical" className="h-6 mx-1" /> */}
 
           {/* Minimalist Options */}
-          <Button
+          {/* <Button
             variant="outline"
             size="sm"
             className="h-8 border-slate-200 dark:border-slate-800 text-xs font-medium"
@@ -47,7 +47,7 @@ export default function IntelligenceHeader() {
           >
             <Filter className="w-3.5 h-3.5 mr-2 text-slate-500" />
             Filter
-          </Button>
+          </Button> */}
         </div>
       </div>
       <Separator className="bg-slate-100 dark:bg-slate-800/50" />

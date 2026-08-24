@@ -8,13 +8,18 @@ import type {
   TopMovers,
   RegionalPrices,
   PriceHistory,
+  WeeklyPriceHistory,
   CommodityQueryParams,
   PriceSubmissionQueryParams,
   CreateCommodityBody,
   UpdateCommodityBody,
   SubmitPriceBody,
   CommodityIndexItem,
+  RecentlyAddedCommodity,
+  PriceSpike,
+  WatchlistItem,
 } from "@/types/commodity";
+import type { CommodityInsight } from "@/types/commodity-insight";
 
 
 // ─── Public Endpoints ─────────────────────────────────────────────────────────
@@ -73,6 +78,24 @@ export async function getTopMovers(limit = 10): Promise<TopMovers> {
   return data;
 }
 
+/** GET /commodities/recently-added?limit= */
+export async function getRecentlyAdded(
+  limit = 5,
+): Promise<RecentlyAddedCommodity[]> {
+  const { data } = await apiClient.get("/commodities/recently-added", {
+    params: { limit },
+  });
+  return data;
+}
+
+/** GET /commodities/price-spikes?limit= */
+export async function getPriceSpikes(limit = 5): Promise<PriceSpike[]> {
+  const { data } = await apiClient.get("/commodities/price-spikes", {
+    params: { limit },
+  });
+  return data;
+}
+
 /** GET /commodities/price-history?id=&days= */
 export async function getCommodityPriceHistory(
   commodityId: string,
@@ -80,6 +103,33 @@ export async function getCommodityPriceHistory(
 ): Promise<PriceHistory> {
   const { data } = await apiClient.get("/commodities/price-history", {
     params: { id: commodityId, days },
+  });
+  return data;
+}
+
+/**
+ * GET /commodities/insight?id= — 7-day-cached AI insight. A cold or
+ * stale cache generates synchronously server-side, which can take ~25s.
+ */
+export async function getCommodityInsight(
+  commodityId: string,
+): Promise<CommodityInsight | null> {
+  const { data } = await apiClient.get("/commodities/insight", {
+    params: { id: commodityId },
+  });
+  return data || null;
+}
+
+/**
+ * GET /commodities/weekly-price-history?id=&weeks= — long-range chart
+ * data. Omit `weeks` for the full all-time weekly history.
+ */
+export async function getCommodityWeeklyPriceHistory(
+  commodityId: string,
+  weeks?: number,
+): Promise<WeeklyPriceHistory> {
+  const { data } = await apiClient.get("/commodities/weekly-price-history", {
+    params: { id: commodityId, ...(weeks ? { weeks } : {}) },
   });
   return data;
 }
@@ -210,4 +260,22 @@ export async function adminRecomputeAverage(
   await apiClient.post("/admin/commodities/recompute", undefined, {
     params: { id: commodityId, ...(date ? { date } : {}) },
   });
+}
+
+// ─── Watchlist ──────────────────────────────────────────────────────────────
+
+/** GET /commodities/watchlist — commodities the current user is tracking */
+export async function getWatchlist(): Promise<WatchlistItem[]> {
+  const { data } = await apiClient.get("/commodities/watchlist");
+  return data;
+}
+
+/** POST /commodities/watchlist */
+export async function addToWatchlist(commodityId: string): Promise<void> {
+  await apiClient.post("/commodities/watchlist", { commodityId });
+}
+
+/** DELETE /commodities/watchlist?commodityId= */
+export async function removeFromWatchlist(commodityId: string): Promise<void> {
+  await apiClient.delete("/commodities/watchlist", { params: { commodityId } });
 }

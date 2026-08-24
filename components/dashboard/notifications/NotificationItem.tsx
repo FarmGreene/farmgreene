@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { motion } from "motion/react";
 import {
   TrendingUp,
@@ -9,30 +10,11 @@ import {
   Activity,
   Info,
   ArrowRight,
-  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-
-export type NotificationType =
-  | "alert"
-  | "report"
-  | "reminder"
-  | "signal"
-  | "system";
-export type NotificationPriority = "high" | "normal" | "low";
-
-export interface Notification {
-  id: string;
-  type: NotificationType;
-  priority: NotificationPriority;
-  title: string;
-  description: string;
-  timestamp: string;
-  isRead: boolean;
-  actionLabel?: string;
-  onAction?: () => void;
-}
+import type { Notification } from "@/types/notification";
+import { timeAgo } from "@/lib/utils/time-ago";
 
 interface NotificationItemProps {
   notification: Notification;
@@ -137,7 +119,7 @@ export default function NotificationItem({
             )}
           </div>
           <span className="text-xs font-medium text-slate-400 group-hover:text-slate-500 transition-colors">
-            {notification.timestamp}
+            {timeAgo(notification.createdAt)}
           </span>
         </div>
 
@@ -145,22 +127,22 @@ export default function NotificationItem({
           {notification.description}
         </p>
 
-        {notification.actionLabel && (
+        {notification.actionLabel && notification.actionHref && (
           <div className="pt-3 flex justify-start">
             <Button
+              asChild
               size="sm"
               variant="link"
               className={cn(
                 "h-auto p-0 text-sm font-semibold group-hover:underline underline-offset-4 decoration-2 decoration-emerald-500/30 hover:decoration-emerald-500",
                 config.color,
               )}
-              onClick={(e) => {
-                e.stopPropagation();
-                notification.onAction?.();
-              }}
+              onClick={(e) => e.stopPropagation()}
             >
-              {notification.actionLabel}
-              <ArrowRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+              <Link href={notification.actionHref}>
+                {notification.actionLabel}
+                <ArrowRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+              </Link>
             </Button>
           </div>
         )}

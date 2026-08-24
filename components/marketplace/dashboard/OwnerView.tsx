@@ -1,45 +1,154 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { EquipmentListing, RentalRequest } from "@/types/marketplace";
+import React, { useState, useEffect, useMemo } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import {
+  EquipmentListing,
+  ListingStatus,
+  RentRequest,
+  RentRequestStatus,
+} from "@/types/marketplace";
 import { ListingCard } from "./ListingCard";
 import { ListingCardSkeleton } from "./ListingCardSkeleton";
+import { EditListingSheet } from "./EditListingSheet";
 import { CreateListingModal } from "../listing-wizard/CreateListingModal";
-import { getMyDrafts, getMyListings } from "@/lib/services/marketplace.service";
+import {
+  archiveListing,
+  getMyDrafts,
+  getMyListings,
+  unarchiveListing,
+} from "@/lib/services/marketplace.service";
+import {
+  useReceivedRentRequests,
+  useOwnerUtilization,
+  useAcceptRentRequest,
+  useRejectRentRequest,
+} from "@/lib/hooks/useRentRequests";
+import { RequestCard } from "./RequestCard";
+import { RentRequestDetailSheet } from "./RentRequestDetailSheet";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   PlusCircle,
   Inbox,
-  Calendar,
-  User,
   CreditCard,
   ChevronRight,
   AlertCircle,
+  TrendingUp,
+  TrendingDown,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
+import type { OwnerUtilization } from "@/types/marketplace";
 
 interface OwnerViewProps {
-  listings: EquipmentListing[];
-  requests: RentalRequest[];
+  listings?: EquipmentListing[];
 }
 
-export function OwnerView({ listings, requests }: OwnerViewProps) {
+// Owner inventory filter tabs. Maps a tab to the query the backend expects.
+type InventoryFilter =
+  | "all"
+  | "active"
+  | "pending_review"
+  | "rejected"
+  | "archived";
+
+const FILTERS: { key: InventoryFilter; label: string }[] = [
+  { key: "all", label: "All" },
+  { key: "active", label: "Approved" },
+  { key: "pending_review", label: "In Review" },
+  { key: "rejected", label: "Rejected" },
+  { key: "archived", label: "Archived" },
+];
+
+// Sidebar shows the most relevant few; the full queue lives on the dedicated page.
+const SIDEBAR_REQUESTS_SHOWN = 4;
+const STATUS_ORDER: Record<RentRequestStatus, number> = {
+  pending: 0,
+  accepted: 1,
+  completed: 2,
+  rejected: 3,
+  cancelled: 4,
+};
+
+export function OwnerView({ listings = [] }: OwnerViewProps) {
+  const router = useRouter();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [drafts, setDrafts] = useState<EquipmentListing[]>([]);
   const [activeListings, setActiveListings] = useState<EquipmentListing[]>(listings);
   const [isLoading, setIsLoading] = useState(false);
   const [resumeId, setResumeId] = useState<string | undefined>();
+  const [filter, setFilter] = useState<InventoryFilter>("all");
+  const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
+  const [editingListing, setEditingListing] = useState<EquipmentListing | null>(null);
+
+  const { data: requests = [] } = useReceivedRentRequests();
+  const { data: utilization } = useOwnerUtilization();
+  const acceptMutation = useAcceptRentRequest();
+  const rejectMutation = useRejectRentRequest();
+
+  const sidebarRequests = useMemo(
+    () =>
+      [...requests]
+        .sort((a, b) => {
+          const s = STATUS_ORDER[a.status] - STATUS_ORDER[b.status];
+          if (s !== 0) return s;
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        })
+        .slice(0, SIDEBAR_REQUESTS_SHOWN),
+    [requests],
+  );
+
+  const selectedRequest = requests.find((r) => r.id === selectedRequestId) ?? null;
+
+  const fetchListings = (current: InventoryFilter) => {
+    setIsLoading(true);
+    const params =
+      current === "all"
+        ? undefined
+        : current === "archived"
+          ? { archived: true }
+          : { status: current as ListingStatus };
+    getMyListings(params)
+      .then(setActiveListings)
+      .catch(() => {})
+      .finally(() => setIsLoading(false));
+  };
 
   useEffect(() => {
     getMyDrafts().then(setDrafts).catch(() => {});
-    setIsLoading(true);
-    getMyListings().then(data => {
-      // Filter out drafts since they are shown separately
-      setActiveListings(data.filter(l => l.status !== "draft"));
-    }).finally(() => setIsLoading(false));
   }, []);
+
+  // Arriving from "List your equipment" — the person has just been granted the
+  // OWNER role and came here to do one thing, so open the wizard rather than
+  // making them find the button again. The param is cleared so a refresh or a
+  // back-navigation doesn't reopen it.
+  //
+  // Read from window rather than useSearchParams(): that hook opts the whole
+  // subtree into dynamic rendering and fails the build on a statically
+  // prerendered route unless it's wrapped in Suspense. This runs in an effect,
+  // so it's client-only anyway and the hook buys nothing.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("new") !== "1") return;
+    setIsCreateModalOpen(true);
+    router.replace("/dashboard/marketplace/manage");
+  }, [router]);
+
+  useEffect(() => {
+    fetchListings(filter);
+  }, [filter]);
+
+  const handleArchive = async (id: string) => {
+    await archiveListing(id);
+    fetchListings(filter);
+  };
+
+  const handleUnarchive = async (id: string) => {
+    await unarchiveListing(id);
+    fetchListings(filter);
+  };
 
   const handleCreateNew = () => {
     setResumeId(undefined);
@@ -54,6 +163,8 @@ export function OwnerView({ listings, requests }: OwnerViewProps) {
   const handleModalClose = () => {
     setIsCreateModalOpen(false);
     getMyDrafts().then(setDrafts).catch(() => {});
+    // A just-submitted listing leaves drafts and enters the inventory.
+    fetchListings(filter);
   };
 
   return (
@@ -97,6 +208,24 @@ export function OwnerView({ listings, requests }: OwnerViewProps) {
           </Button>
         </div>
 
+        {/* Status filter tabs */}
+        <div className="flex flex-wrap items-center gap-2">
+          {FILTERS.map((f) => (
+            <button
+              key={f.key}
+              onClick={() => setFilter(f.key)}
+              className={cn(
+                "px-3.5 h-8 rounded-full text-xs font-semibold border transition-all",
+                filter === f.key
+                  ? "bg-emerald-600 border-emerald-600 text-white shadow-sm"
+                  : "bg-transparent border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-emerald-300 hover:text-emerald-700",
+              )}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+
         {isLoading ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map((i) => (
@@ -106,8 +235,27 @@ export function OwnerView({ listings, requests }: OwnerViewProps) {
         ) : activeListings.length > 0 ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {activeListings.map((listing) => (
-              <ListingCard key={listing.id} listing={listing} variant="owner" />
+              <ListingCard
+                key={listing.id}
+                listing={listing}
+                variant="owner"
+                onArchive={handleArchive}
+                onUnarchive={handleUnarchive}
+                onEdit={setEditingListing}
+              />
             ))}
+          </div>
+        ) : filter !== "all" ? (
+          <div className="flex flex-col items-center justify-center py-20 rounded-2xl border-2 border-dashed bg-slate-50/50 dark:bg-slate-900/20">
+            <div className="h-16 w-16 bg-white dark:bg-slate-800 rounded-2xl shadow-sm flex items-center justify-center mb-4">
+              <Inbox className="h-8 w-8 text-slate-400" />
+            </div>
+            <h3 className="text-lg font-semibold">Nothing here</h3>
+            <p className="text-muted-foreground max-w-xs text-center">
+              No{" "}
+              {FILTERS.find((f) => f.key === filter)?.label.toLowerCase()}{" "}
+              listings right now.
+            </p>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-20 rounded-2xl border-2 border-dashed bg-slate-50/50 dark:bg-slate-900/20">
@@ -122,6 +270,7 @@ export function OwnerView({ listings, requests }: OwnerViewProps) {
             <Button
               variant="outline"
               className="border-emerald-200 dark:border-emerald-800 hover:bg-emerald-50 dark:hover:bg-emerald-900/30"
+              onClick={handleCreateNew}
             >
               Create First Listing
             </Button>
@@ -144,17 +293,34 @@ export function OwnerView({ listings, requests }: OwnerViewProps) {
             </Badge>
           </div>
           <Button
+            asChild
             variant="ghost"
             size="sm"
             className="text-xs text-muted-foreground hover:text-emerald-600"
           >
-            View All <ChevronRight className="ml-1 h-3 w-3" />
+            <Link href="/dashboard/marketplace/rentals">
+              View All <ChevronRight className="ml-1 h-3 w-3" />
+            </Link>
           </Button>
         </div>
 
         <div className="space-y-4">
-          {requests.length > 0 ? (
-            requests.map((req) => <RequestCard key={req.id} request={req} />)
+          {sidebarRequests.length > 0 ? (
+            sidebarRequests.map((req) => (
+              <RequestCard
+                key={req.id}
+                request={req}
+                onOpen={(r) => setSelectedRequestId(r.id)}
+                onAccept={async (note) => {
+                  await acceptMutation.mutateAsync({ id: req.id, note });
+                  toast.success("Request accepted");
+                }}
+                onReject={async (note) => {
+                  await rejectMutation.mutateAsync({ id: req.id, note });
+                  toast.success("Request declined");
+                }}
+              />
+            ))
           ) : (
             <Card className="bg-slate-50 border-dashed dark:bg-slate-900/50 overflow-hidden">
               <CardContent className="flex flex-col items-center justify-center py-12 text-center">
@@ -172,102 +338,95 @@ export function OwnerView({ listings, requests }: OwnerViewProps) {
           )}
         </div>
 
-        {/* Quick Insights (Adds to Premium Feel) */}
-        <Card className="border-none bg-indigo-600 text-white shadow-lg overflow-hidden relative group">
-          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform duration-500">
-            <CreditCard className="h-20 w-20" />
-          </div>
-          <CardContent className="p-6 space-y-4 relative z-10">
-            <h4 className="text-sm font-semibold text-indigo-100 uppercase tracking-wider">
-              Utilization Insight
-            </h4>
-            <p className="text-2xl font-bold">92% Utilization</p>
-            <p className="text-xs text-indigo-100/80 leading-relaxed">
-              Your equipment is performing 15% better than last month. Consider
-              adding more listings to capture demand.
-            </p>
-            <Button
-              size="sm"
-              variant="secondary"
-              className="w-full bg-white/10 hover:bg-white/20 border-none text-white text-xs"
-            >
-              View Performance Reports
-            </Button>
-          </CardContent>
-        </Card>
+        {/* Utilization insight — real fleet occupancy this month */}
+        <UtilizationCard data={utilization ?? null} />
       </section>
+
+      <RentRequestDetailSheet
+        request={selectedRequest}
+        open={!!selectedRequest}
+        onOpenChange={(open) => !open && setSelectedRequestId(null)}
+      />
+
+      <EditListingSheet
+        listing={editingListing}
+        open={!!editingListing}
+        onOpenChange={(open) => !open && setEditingListing(null)}
+        onSaved={() => fetchListings(filter)}
+      />
     </div>
   );
 }
 
-function RequestCard({ request }: { request: RentalRequest }) {
-  const statusColors = {
-    pending:
-      "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
-    accepted:
-      "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
-    rejected:
-      "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400",
-  };
+/** Real fleet occupancy for the current month (booked ÷ available days). */
+function UtilizationCard({ data }: { data: OwnerUtilization | null }) {
+  if (!data) {
+    return (
+      <Card className="border-none bg-indigo-600 text-white shadow-lg overflow-hidden relative">
+        <CardContent className="p-6 space-y-4 relative z-10">
+          <div className="h-3 w-32 bg-white/20 rounded animate-pulse" />
+          <div className="h-8 w-40 bg-white/20 rounded animate-pulse" />
+          <div className="h-3 w-full bg-white/10 rounded animate-pulse" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const {
+    occupancyRate,
+    changePoints,
+    bookedDays,
+    availableDays,
+    activeListings,
+  } = data;
+  const up = changePoints > 0;
+  const flat = changePoints === 0;
 
   return (
-    <Card className="overflow-hidden border-slate-200 dark:border-slate-800 hover:shadow-md transition-shadow group">
-      <CardContent className="p-0">
-        <div className="p-4 space-y-4">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center border border-slate-200 dark:border-slate-700">
-                <User className="h-5 w-5 text-slate-500" />
-              </div>
-              <div className="space-y-0.5">
-                <p className="font-bold text-sm tracking-tight">
-                  {request.requesterName}
-                </p>
-                <div className="flex items-center gap-1 text-[11px] text-muted-foreground font-medium">
-                  <Badge
-                    variant="outline"
-                    className={`h-4 px-1.5 text-[9px] uppercase font-bold border-none ${statusColors[request.status as keyof typeof statusColors]}`}
-                  >
-                    {request.status}
-                  </Badge>
-                  <span>•</span>
-                  <span>{request.requestDate}</span>
-                </div>
-              </div>
-            </div>
-            <div className="text-right">
-              <p className="text-sm font-black text-emerald-600 dark:text-emerald-400 tracking-tighter">
-                ₦{request.totalPrice.toLocaleString()}
-              </p>
-              <p className="text-[10px] text-muted-foreground font-medium">
-                Potential Earn
-              </p>
-            </div>
-          </div>
+    <Card className="border-none bg-indigo-600 text-white shadow-lg overflow-hidden relative group">
+      <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform duration-500">
+        <CreditCard className="h-20 w-20" />
+      </div>
+      <CardContent className="p-6 space-y-4 relative z-10">
+        <h4 className="text-sm font-semibold text-indigo-100 uppercase tracking-wider">
+          Utilization Insight
+        </h4>
 
-          <div className="space-y-2 bg-slate-50 dark:bg-slate-900/40 p-3 rounded-xl border border-slate-100 dark:border-slate-800/60">
-            <div className="flex items-center gap-2 text-xs font-semibold">
-              <div className="h-2 w-2 rounded-full bg-indigo-500" />
-              <span className="truncate">{request.equipmentName}</span>
-            </div>
-            <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-              <Calendar className="h-3 w-3" />
+        {activeListings === 0 ? (
+          <>
+            <p className="text-2xl font-bold">No active listings</p>
+            <p className="text-xs text-indigo-100/80 leading-relaxed">
+              Publish equipment to start tracking how much of your fleet is
+              booked each month.
+            </p>
+          </>
+        ) : (
+          <>
+            <p className="text-2xl font-bold">{occupancyRate}% Utilization</p>
+            <div className="flex items-center gap-1.5 text-xs text-indigo-100">
+              {!flat &&
+                (up ? (
+                  <TrendingUp className="h-3.5 w-3.5" />
+                ) : (
+                  <TrendingDown className="h-3.5 w-3.5" />
+                ))}
               <span>
-                {request.startDate} — {request.endDate}
+                {flat
+                  ? "Flat vs last month"
+                  : `${up ? "Up" : "Down"} ${Math.abs(changePoints)} pts vs last month`}
               </span>
             </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 border-t border-slate-100 dark:border-slate-800">
-          <button className="py-2.5 text-xs font-bold text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-colors uppercase tracking-wider">
-            Reject
-          </button>
-          <button className="py-2.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50/30 dark:bg-emerald-900/10 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors border-l border-slate-100 dark:border-slate-800 uppercase tracking-wider">
-            Accept
-          </button>
-        </div>
+            <p className="text-xs text-indigo-100/80 leading-relaxed">
+              {bookedDays} of {availableDays} available equipment-days booked
+              this month
+              {occupancyRate < 50
+                ? " — accepting more requests lifts this."
+                : "."}
+            </p>
+          </>
+        )}
       </CardContent>
     </Card>
   );
 }
+

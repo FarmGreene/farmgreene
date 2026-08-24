@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   BrainCircuit,
   Store,
+  ClipboardList,
   FileText,
   Users,
   Bell,
@@ -26,6 +27,7 @@ import {
   getRoleLabel,
 } from "@/lib/utils/user-display";
 import { Logo } from "@/components/layout/Logo";
+import { useUnreadCount } from "@/lib/hooks/useNotifications";
 
 interface DashboardSidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -35,6 +37,7 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
   const fullName = getFullName(user);
   const initials = getInitials(user);
   const roleLabel = getRoleLabel(user);
+  const { data: unread } = useUnreadCount();
 
   return (
     <div
@@ -51,13 +54,9 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
           isCollapsed ? "justify-center" : "justify-between",
         )}
       >
-        {!isCollapsed && <Logo textSize="text-xl" />}
+        {!isCollapsed && <Logo textSize="text-xl" iconSize={40} />}
         {isCollapsed && (
-          <Tractor
-            size={20}
-            className={cn("text-[#049878] fill-green-100")}
-            strokeWidth={2.5}
-          />
+          <Logo textSize="text-[0px]" iconSize={30} variant="white" />
         )}{" "}
         {/* Simple logo placeholder */}
         <Button
@@ -102,6 +101,12 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
             isCollapsed={isCollapsed}
           />
           <SidebarItem
+            icon={ClipboardList}
+            label="My Rentals"
+            href="/dashboard/rentals"
+            isCollapsed={isCollapsed}
+          />
+          <SidebarItem
             icon={FileText}
             label="Reports"
             href="/dashboard/reports"
@@ -118,18 +123,18 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
 
           {/* System / Utility */}
           <div className={cn("mt-auto", isCollapsed ? "" : "pt-4")}>
-            <SidebarItem
+            {/* <SidebarItem
               icon={Users}
               label="Manage Workspace"
               href="/dashboard/workspace"
               isCollapsed={isCollapsed}
-            />
+            /> */}
             <SidebarItem
               icon={Bell}
               label="Notifications"
               href="/dashboard/notifications"
               isCollapsed={isCollapsed}
-              badge={3}
+              badge={unread?.count || undefined}
             />
             <SidebarItem
               icon={Settings}

@@ -1,30 +1,30 @@
 import { Metadata } from "next";
-import PricingHero from "@/components/pricing/PricingHero";
+import {
+  PricingHero,
+  WhatsIncluded,
+  WhatComesLater,
+} from "@/components/marketing/pricing/PricingSections";
+import { ClosingBand } from "@/components/marketing/ClosingBand";
 
 export const metadata: Metadata = {
-  title: "Pricing Plans",
+  title: "Pricing",
   description:
-    "Choose the flexible plan that fits your farm. Start for free and upgrade for advanced market intelligence and equipment listing tools.",
+    "Farmgreene is free while we're in early access — every feature, every account, no card required.",
 };
-import PricingCards from "@/components/pricing/PricingCards";
-import FeatureComparison from "@/components/pricing/FeatureComparison";
-import AIExplainer from "@/components/pricing/AIExplainer";
-import TradingViewSection from "@/components/pricing/TradingViewSection";
-import WorkspacesSection from "@/components/pricing/WorkspacesSection";
-import FAQSection from "@/components/pricing/FAQSection";
-import PricingCTA from "@/components/pricing/PricingCTA";
 
 export default function PricingPage() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="bg-field">
       <PricingHero />
-      <PricingCards />
-      <FeatureComparison />
-      <AIExplainer />
-      <TradingViewSection />
-      <WorkspacesSection />
-      <FAQSection />
-      <PricingCTA />
+      <WhatsIncluded />
+      <WhatComesLater />
+      <ClosingBand
+        title="Nothing to"
+        accent="decide yet"
+        lede="Make an account and use the whole thing. We'll talk about money when there's something worth charging for."
+        image="/images/stakeholder-farmer.jpg"
+        secondary={{ href: "/intelligence", label: "See the market" }}
+      />
     </div>
   );
 }
