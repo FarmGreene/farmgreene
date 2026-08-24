@@ -8,7 +8,7 @@ import { useLatestInsight } from "@/lib/hooks/useInsight";
 
 export default function AIInsightWidget() {
   const { data: insight, isLoading } = useLatestInsight();
-  const up = insight?.source.direction === "up";
+  const up = insight?.source?.direction === "up";
   const TrendIcon = up ? TrendingUp : TrendingDown;
 
   return (
