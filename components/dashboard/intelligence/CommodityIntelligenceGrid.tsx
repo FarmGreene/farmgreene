@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useQueryState, parseAsString } from "nuqs";
 import {
   Search,
   LayoutGrid,
@@ -79,7 +80,10 @@ type ViewMode = "grid" | "table";
 export default function CommodityIntelligenceGrid() {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [category, setCategory] = useState<string>("ALL");
+  const [category, setCategory] = useQueryState(
+    "category",
+    parseAsString.withDefault("ALL"),
+  );
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(12);
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
@@ -253,7 +257,7 @@ export default function CommodityIntelligenceGrid() {
               <SelectItem value="ALL">All Categories</SelectItem>
               {Object.values(CommodityCategory).map((cat) => (
                 <SelectItem key={cat} value={cat}>
-                  {cat.replace("_", " ")}
+                  {CATEGORY_LABELS[cat]}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -292,85 +296,87 @@ export default function CommodityIntelligenceGrid() {
       {/* ── Grid View ── */}
       {viewMode === "grid" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
-          {isLoading ? (
-            gridSkeletons
-          ) : commodities.length > 0 ? (
-            commodities.map((item) => {
-              const price = item.currentPrice || 0;
-              const change = item.sevenDayChange || 0;
-              const isPositive = change > 0;
-              const trend = trendOf(change);
-              const TrendIcon = TREND_ICON[trend];
+          {isLoading
+            ? gridSkeletons
+            : commodities.length > 0
+              ? commodities.map((item) => {
+                  const price = item.currentPrice || 0;
+                  const change = item.sevenDayChange || 0;
+                  const isPositive = change > 0;
+                  const trend = trendOf(change);
+                  const TrendIcon = TREND_ICON[trend];
 
-              const series = (item.history ?? [])
-                .map((h) => h.averagePrice)
-                .filter((n): n is number => typeof n === "number");
-              const markets = item.latestAverage?.submissionCount ?? 0;
-              const age = compactAge(item.latestAverage?.date);
+                  const series = (item.history ?? [])
+                    .map((h) => h.averagePrice)
+                    .filter((n): n is number => typeof n === "number");
+                  const markets = item.latestAverage?.submissionCount ?? 0;
+                  const age = compactAge(item.latestAverage?.date);
 
-              return (
-                <Link
-                  key={item.id}
-                  href={`/dashboard/intelligence/commodity/${item.id}?slug=${item.slug}`}
-                  className="block h-full"
-                >
-                  <Card className="group relative cursor-pointer border border-transparent hover:border-slate-200 dark:hover:border-slate-700 shadow-sm hover:shadow-md transition-all duration-300 bg-white dark:bg-slate-900 rounded-2xl h-full overflow-hidden">
-                    <CardContent className="flex flex-col h-full p-5 gap-3">
-                      {/* Header: category, name, trend pill */}
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="min-w-0">
-                          <span className="text-[10px] uppercase font-semibold text-slate-500 dark:text-slate-400 tracking-wider">
-                            {categoryLabel(item.category)}
-                          </span>
-                          <h3 className="font-bold text-base text-slate-900 dark:text-white truncate flex items-center gap-1">
-                            <span className="truncate">{item.name}</span>
-                            <ArrowUpRight className="h-3.5 w-3.5 shrink-0 text-slate-300 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" />
-                          </h3>
-                        </div>
-                        <div
-                          className={cn(
-                            "flex items-center gap-0.5 shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums",
-                            TREND_PILL[trend],
-                          )}
-                        >
-                          <TrendIcon className="h-3 w-3" />
-                          {isPositive && "+"}
-                          {change}%
-                        </div>
-                      </div>
-
-                      {/* 7-day trend */}
-                      <div className="flex-1 flex items-end min-h-[40px]">
-                        <Sparkline data={series} trend={trend} height={40} />
-                      </div>
-
-                      {/* Footer: price + market depth / freshness */}
-                      <div className="flex items-end justify-between gap-2 pt-1">
-                        <div className="flex items-baseline gap-1 min-w-0">
-                          <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white whitespace-nowrap">
-                            ₦{price.toLocaleString()}
-                          </span>
-                          <span className="text-[11px] text-slate-400 uppercase truncate">
-                            / {item.unit}
-                          </span>
-                        </div>
-                        <div className="text-[10px] text-slate-400 text-right shrink-0 leading-tight">
-                          {markets > 0 && (
-                            <div>
-                              {markets} mkt{markets === 1 ? "" : "s"}
+                  return (
+                    <Link
+                      key={item.id}
+                      href={`/dashboard/intelligence/commodity/${item.id}?slug=${item.slug}`}
+                      className="block h-full"
+                    >
+                      <Card className="group relative cursor-pointer border border-transparent hover:border-slate-200 dark:hover:border-slate-700 shadow-sm hover:shadow-md transition-all duration-300 bg-white dark:bg-slate-900 rounded-2xl h-full overflow-hidden">
+                        <CardContent className="flex flex-col h-full p-5 gap-3">
+                          {/* Header: category, name, trend pill */}
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="min-w-0">
+                              <span className="text-[10px] uppercase font-semibold text-slate-500 dark:text-slate-400 tracking-wider">
+                                {categoryLabel(item.category)}
+                              </span>
+                              <h3 className="font-bold text-base text-slate-900 dark:text-white truncate flex items-center gap-1">
+                                <span className="truncate">{item.name}</span>
+                                <ArrowUpRight className="h-3.5 w-3.5 shrink-0 text-slate-300 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" />
+                              </h3>
                             </div>
-                          )}
-                          {age && <div>{age} ago</div>}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              );
-            })
-          ) : (
-            emptyState
-          )}
+                            <div
+                              className={cn(
+                                "flex items-center gap-0.5 shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums",
+                                TREND_PILL[trend],
+                              )}
+                            >
+                              <TrendIcon className="h-3 w-3" />
+                              {isPositive && "+"}
+                              {change}%
+                            </div>
+                          </div>
+
+                          {/* 7-day trend */}
+                          <div className="flex-1 flex items-end min-h-[40px]">
+                            <Sparkline
+                              data={series}
+                              trend={trend}
+                              height={40}
+                            />
+                          </div>
+
+                          {/* Footer: price + market depth / freshness */}
+                          <div className="flex items-end justify-between gap-2 pt-1">
+                            <div className="flex items-baseline gap-1 min-w-0">
+                              <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white whitespace-nowrap">
+                                ₦{price.toLocaleString()}
+                              </span>
+                              <span className="text-[11px] text-slate-400 uppercase truncate">
+                                / {item.unit}
+                              </span>
+                            </div>
+                            <div className="text-[10px] text-slate-400 text-right shrink-0 leading-tight">
+                              {markets > 0 && (
+                                <div>
+                                  {markets} mkt{markets === 1 ? "" : "s"}
+                                </div>
+                              )}
+                              {age && <div>{age} ago</div>}
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  );
+                })
+              : emptyState}
         </div>
       )}
 
@@ -388,7 +394,7 @@ export default function CommodityIntelligenceGrid() {
       )}
 
       {/* Pagination — shown when there are multiple pages */}
-      {meta && meta.totalPages && meta.totalPages > 1 && (
+      {meta && meta.totalPages > 1 && (
         <div className="mt-6">
           <Pagination
             totalLength={meta.total}

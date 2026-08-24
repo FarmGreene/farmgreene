@@ -1,32 +1,38 @@
 import { Metadata } from "next";
-import MarketHero from "@/components/market/MarketHero";
+import { IntelligenceHero } from "@/components/marketing/intelligence/IntelligenceHero";
+import { Coverage } from "@/components/marketing/intelligence/Coverage";
+import { PriceChartSection } from "@/components/marketing/landing/PriceChartSection";
+import { SpreadBand } from "@/components/marketing/intelligence/SpreadBand";
+import {
+  AnalysisSection,
+  AlertsSection,
+} from "@/components/marketing/intelligence/AnalysisAndAlerts";
+import { NewsSection } from "@/components/marketing/intelligence/NewsSection";
+import { ClosingBand } from "@/components/marketing/ClosingBand";
 
 export const metadata: Metadata = {
   title: "Market Intelligence",
   description:
-    "Access real-time agricultural market data, crop pricing trends, and AI-driven insights to maximize your farm's profitability.",
+    "Daily commodity prices with regional breakdowns and a year of history, alerts when your target is hit, and written market analysis with its sources attached.",
 };
-import MarketProblem from "@/components/market/MarketProblem";
-import DataCoverage from "@/components/market/DataCoverage";
-import AIAnalysis from "@/components/market/AIAnalysis";
-import ChartsAnalysis from "@/components/market/ChartsAnalysis";
-import MarketNews from "@/components/market/MarketNews";
-import CollaborationSection from "@/components/market/CollaborationSection";
-import PlanTieIn from "@/components/market/PlanTieIn";
-import MarketCTA from "@/components/market/MarketCTA";
 
-export default function MarketPage() {
+export default function IntelligencePage() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <MarketHero />
-      <MarketProblem />
-      <DataCoverage />
-      <AIAnalysis />
-      <ChartsAnalysis />
-      <MarketNews />
-      <CollaborationSection />
-      <PlanTieIn />
-      <MarketCTA />
+    <div className="bg-field">
+      <IntelligenceHero />
+      <Coverage />
+      <PriceChartSection />
+      <SpreadBand />
+      <AnalysisSection />
+      <AlertsSection />
+      <NewsSection />
+      <ClosingBand
+        title="Put a price"
+        accent="on it"
+        lede="Make an account, build a watchlist, and set your first alert in a couple of minutes."
+        image="/images/stakeholder-farmer.jpg"
+        secondary={{ href: "/marketplace", label: "See the marketplace" }}
+      />
     </div>
   );
 }

@@ -18,6 +18,7 @@ const TABS = [
   { id: "alert", label: "Alerts" },
   { id: "report", label: "Reports" },
   { id: "reminder", label: "Reminders" },
+  { id: "signal", label: "Signals" },
   { id: "system", label: "System" },
 ];
 

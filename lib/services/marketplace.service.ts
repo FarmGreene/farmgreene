@@ -1,5 +1,12 @@
 import { apiClient } from "@/lib/api/axios";
-import { EquipmentListing, ListingDraftResponse, OwnerStats } from "@/types/marketplace";
+import {
+  EditListingBody,
+  EquipmentListing,
+  ListingDraftResponse,
+  ListingStatus,
+  OwnerStats,
+  PublicListing,
+} from "@/types/marketplace";
 
 // ─── Step 1: Create Draft ─────────────────────────────────────────────────────
 
@@ -150,8 +157,16 @@ export async function publishListing(id: string): Promise<ListingDraftResponse> 
 
 // ─── Read ─────────────────────────────────────────────────────────────────────
 
-export async function getMyListings(): Promise<EquipmentListing[]> {
-  const { data } = await apiClient.get("/marketplace/listings/mine");
+export async function getMyListings(params?: {
+  status?: ListingStatus;
+  archived?: boolean;
+}): Promise<EquipmentListing[]> {
+  const { data } = await apiClient.get("/marketplace/listings/mine", {
+    params: {
+      status: params?.status,
+      archived: params?.archived ? "true" : undefined,
+    },
+  });
   return data;
 }
 
@@ -169,14 +184,48 @@ export async function deleteListing(id: string): Promise<void> {
   await apiClient.delete(`/marketplace/listings/${id}`);
 }
 
+export async function archiveListing(id: string): Promise<EquipmentListing> {
+  const { data } = await apiClient.patch(`/marketplace/listings/${id}/archive`);
+  return data;
+}
+
+export async function unarchiveListing(id: string): Promise<EquipmentListing> {
+  const { data } = await apiClient.patch(
+    `/marketplace/listings/${id}/unarchive`,
+  );
+  return data;
+}
+
+// ─── Edit an existing listing ─────────────────────────────────────────────────
+
+/**
+ * Submits an edit to any field the wizard covers. For an ACTIVE listing the
+ * backend stages this until an admin approves it — the response still
+ * reflects the live (unchanged) data, not the pending edit.
+ */
+export async function submitListingEdit(
+  id: string,
+  data: Partial<EditListingBody>,
+): Promise<EquipmentListing> {
+  const { data: res } = await apiClient.patch(`/marketplace/listings/${id}/edit`, data);
+  return res;
+}
+
 export async function getOwnerStats(): Promise<OwnerStats> {
   const { data } = await apiClient.get("/marketplace/listings/owner/stats");
   return data;
 }
 
-export async function getPublicListings(limit?: number): Promise<EquipmentListing[]> {
+export async function getPublicListings(limit?: number): Promise<PublicListing[]> {
   const { data } = await apiClient.get("/public/marketplace/listings", {
     params: { limit },
   });
+  return data;
+}
+
+/** Public single-listing fetch for the buyer-facing detail page. Owner PII and
+ *  exact address are stripped server-side. */
+export async function getPublicListingById(id: string): Promise<PublicListing> {
+  const { data } = await apiClient.get(`/public/marketplace/listings/${id}`);
   return data;
 }

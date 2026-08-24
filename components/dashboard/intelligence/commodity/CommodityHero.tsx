@@ -2,11 +2,13 @@
 
 import React from "react";
 import { motion } from "motion/react";
-import { ArrowLeft, BellRing, BookmarkPlus, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { ArrowLeft, BellRing, BookmarkPlus, BookmarkCheck, Loader2, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CommodityWithLatest } from "@/types/commodity";
+import { useWatchlist, useAddToWatchlist, useRemoveFromWatchlist } from "@/lib/hooks/useCommodities";
+import { toast } from "sonner";
 
 interface CommodityHeroProps {
   commodity: CommodityWithLatest;
@@ -14,6 +16,26 @@ interface CommodityHeroProps {
 
 export function CommodityHero({ commodity }: CommodityHeroProps) {
   const router = useRouter();
+
+  const { data: watchlist = [] } = useWatchlist();
+  const isWatched = watchlist.some((item) => item.commodityId === commodity.id);
+  const addMutation = useAddToWatchlist();
+  const removeMutation = useRemoveFromWatchlist();
+  const isToggling = addMutation.isPending || removeMutation.isPending;
+
+  const handleToggleWatchlist = async () => {
+    try {
+      if (isWatched) {
+        await removeMutation.mutateAsync(commodity.id);
+        toast.success("Removed from watchlist");
+      } else {
+        await addMutation.mutateAsync(commodity.id);
+        toast.success("Added to watchlist");
+      }
+    } catch {
+      toast.error("Couldn't update your watchlist — try again");
+    }
+  };
 
   // Fallback image if none provided
   const imageUrl = commodity.imageUrl || "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&q=80&w=1200";
@@ -56,12 +78,24 @@ export function CommodityHero({ commodity }: CommodityHeroProps) {
           >
             <BellRing className="h-4 w-4" />
           </Button>
-          <Button 
-            variant="ghost" 
-            className="bg-emerald-500 hover:bg-emerald-600 text-white border-none rounded-full h-10 px-4 font-semibold text-xs tracking-wide transition-colors"
+          <Button
+            variant="ghost"
+            onClick={handleToggleWatchlist}
+            disabled={isToggling}
+            className={`border-none rounded-full h-10 px-4 font-semibold text-xs tracking-wide transition-colors ${
+              isWatched
+                ? "bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/10"
+                : "bg-emerald-500 hover:bg-emerald-600 text-white"
+            }`}
           >
-            <BookmarkPlus className="h-4 w-4 mr-2" />
-            Watchlist
+            {isToggling ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : isWatched ? (
+              <BookmarkCheck className="h-4 w-4 mr-2" />
+            ) : (
+              <BookmarkPlus className="h-4 w-4 mr-2" />
+            )}
+            {isWatched ? "Watching" : "Watchlist"}
           </Button>
         </div>
       </div>

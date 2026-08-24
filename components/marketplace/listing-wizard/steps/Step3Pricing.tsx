@@ -3,7 +3,11 @@
 import React from "react";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { step3Schema, Step3Data } from "../createListingSchema";
+import {
+  step3Schema,
+  Step3Data,
+  DEPOSIT_MAX_DAILY_RATE_MULTIPLIER,
+} from "../createListingSchema";
 import { EarningsEstimator } from "../shared/EarningsEstimator";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -24,7 +28,11 @@ interface Step3PricingProps {
   isLoading: boolean;
 }
 
-export function Step3Pricing({ onSubmit, defaultValues, isLoading }: Step3PricingProps) {
+export function Step3Pricing({
+  onSubmit,
+  defaultValues,
+  isLoading,
+}: Step3PricingProps) {
   const {
     register,
     control,
@@ -47,16 +55,29 @@ export function Step3Pricing({ onSubmit, defaultValues, isLoading }: Step3Pricin
   const includesOperator = useWatch({ control, name: "includesOperator" });
   const primaryPeriod = useWatch({ control, name: "primaryPeriod" });
 
+  // Deposit is capped at a week's worth of the daily rate. Kept in sync with the
+  // same rule enforced in step3Schema.
+  const depositCap =
+    pricePerDay > 0 ? pricePerDay * DEPOSIT_MAX_DAILY_RATE_MULTIPLIER : null;
+
   return (
-    <form id="step-form" onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form
+      id="step-form"
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-6"
+    >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-6">
           {/* Base Pricing */}
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold border-b pb-2">Base Pricing</h4>
+            <h4 className="text-sm font-semibold border-b pb-2">
+              Base Pricing
+            </h4>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-1.5">
-                <Label htmlFor="pricePerDay">Daily Rate <span className="text-red-500">*</span></Label>
+                <Label htmlFor="pricePerDay">
+                  Daily Rate <span className="text-red-500">*</span>
+                </Label>
                 <Controller
                   name="pricePerDay"
                   control={control}
@@ -71,10 +92,17 @@ export function Step3Pricing({ onSubmit, defaultValues, isLoading }: Step3Pricin
                     />
                   )}
                 />
-                {errors.pricePerDay && <p className="text-xs text-red-500">{errors.pricePerDay.message}</p>}
+                {errors.pricePerDay && (
+                  <p className="text-xs text-red-500">
+                    {errors.pricePerDay.message}
+                  </p>
+                )}
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="pricePerWeek">Weekly Rate <span className="text-xs text-muted-foreground">(opt)</span></Label>
+                <Label htmlFor="pricePerWeek">
+                  Weekly Rate{" "}
+                  <span className="text-xs text-muted-foreground">(opt)</span>
+                </Label>
                 <Controller
                   name="pricePerWeek"
                   control={control}
@@ -89,10 +117,17 @@ export function Step3Pricing({ onSubmit, defaultValues, isLoading }: Step3Pricin
                     />
                   )}
                 />
-                {errors.pricePerWeek && <p className="text-xs text-red-500">{errors.pricePerWeek.message}</p>}
+                {errors.pricePerWeek && (
+                  <p className="text-xs text-red-500">
+                    {errors.pricePerWeek.message}
+                  </p>
+                )}
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="pricePerMonth">Monthly Rate <span className="text-xs text-muted-foreground">(opt)</span></Label>
+                <Label htmlFor="pricePerMonth">
+                  Monthly Rate{" "}
+                  <span className="text-xs text-muted-foreground">(opt)</span>
+                </Label>
                 <Controller
                   name="pricePerMonth"
                   control={control}
@@ -107,17 +142,24 @@ export function Step3Pricing({ onSubmit, defaultValues, isLoading }: Step3Pricin
                     />
                   )}
                 />
-                {errors.pricePerMonth && <p className="text-xs text-red-500">{errors.pricePerMonth.message}</p>}
+                {errors.pricePerMonth && (
+                  <p className="text-xs text-red-500">
+                    {errors.pricePerMonth.message}
+                  </p>
+                )}
               </div>
             </div>
-            
+
             <div className="space-y-1.5">
               <Label>Headline Price Period</Label>
               <Controller
                 name="primaryPeriod"
                 control={control}
                 render={({ field }) => (
-                  <Select value={field.value || undefined} onValueChange={field.onChange}>
+                  <Select
+                    value={field.value || undefined}
+                    onValueChange={field.onChange}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select primary period" />
                     </SelectTrigger>
@@ -129,25 +171,38 @@ export function Step3Pricing({ onSubmit, defaultValues, isLoading }: Step3Pricin
                   </Select>
                 )}
               />
-              <p className="text-xs text-muted-foreground">This is the price that will be shown on the search results card.</p>
+              <p className="text-xs text-muted-foreground">
+                This is the price that will be shown on the search results card.
+              </p>
             </div>
           </div>
 
           {/* Rental Terms */}
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold border-b pb-2">Rental Rules</h4>
+            <h4 className="text-sm font-semibold border-b pb-2">
+              Rental Rules
+            </h4>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label htmlFor="minRentalDays">Min Days <span className="text-red-500">*</span></Label>
+                <Label htmlFor="minRentalDays">
+                  Min Days <span className="text-red-500">*</span>
+                </Label>
                 <Input
                   id="minRentalDays"
                   type="number"
                   {...register("minRentalDays", { valueAsNumber: true })}
                 />
-                {errors.minRentalDays && <p className="text-xs text-red-500">{errors.minRentalDays.message}</p>}
+                {errors.minRentalDays && (
+                  <p className="text-xs text-red-500">
+                    {errors.minRentalDays.message}
+                  </p>
+                )}
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="maxRentalDays">Max Days <span className="text-xs text-muted-foreground">(opt)</span></Label>
+                <Label htmlFor="maxRentalDays">
+                  Max Days{" "}
+                  <span className="text-xs text-muted-foreground">(opt)</span>
+                </Label>
                 <Input
                   id="maxRentalDays"
                   type="number"
@@ -161,19 +216,26 @@ export function Step3Pricing({ onSubmit, defaultValues, isLoading }: Step3Pricin
               <div className="flex items-center justify-between">
                 <div>
                   <Label className="text-sm">Require Security Deposit?</Label>
-                  <p className="text-xs text-muted-foreground">Renter pays this upfront, refunded if returned safely.</p>
+                  <p className="text-xs text-muted-foreground">
+                    Renter pays this upfront, refunded if returned safely.
+                  </p>
                 </div>
                 <Controller
                   name="depositRequired"
                   control={control}
                   render={({ field }) => (
-                    <Switch checked={field.value} onCheckedChange={field.onChange} />
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
                   )}
                 />
               </div>
               {depositRequired && (
                 <div className="pt-2">
-                  <Label htmlFor="depositAmount">Deposit Amount <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="depositAmount" className="mb-2">
+                    Deposit Amount <span className="text-red-500">*</span>
+                  </Label>
                   <Controller
                     name="depositAmount"
                     control={control}
@@ -188,7 +250,20 @@ export function Step3Pricing({ onSubmit, defaultValues, isLoading }: Step3Pricin
                       />
                     )}
                   />
-                  {errors.depositAmount && <p className="text-xs text-red-500">{errors.depositAmount.message}</p>}
+                  {errors.depositAmount ? (
+                    <p className="text-xs text-red-500">
+                      {errors.depositAmount.message}
+                    </p>
+                  ) : depositCap !== null ? (
+                    <p className="text-xs text-muted-foreground">
+                      Max allowed: ₦{depositCap.toLocaleString()} (
+                      {DEPOSIT_MAX_DAILY_RATE_MULTIPLIER}× daily rate)
+                    </p>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      Set the daily rate to see the max allowed deposit.
+                    </p>
+                  )}
                 </div>
               )}
             </div>
@@ -198,19 +273,29 @@ export function Step3Pricing({ onSubmit, defaultValues, isLoading }: Step3Pricin
               <div className="flex items-center justify-between">
                 <div>
                   <Label className="text-sm">Includes an Operator?</Label>
-                  <p className="text-xs text-muted-foreground">Does the price include someone to operate the machinery?</p>
+                  <p className="text-xs text-muted-foreground">
+                    Does the price include someone to operate the machinery?
+                  </p>
                 </div>
                 <Controller
                   name="includesOperator"
                   control={control}
                   render={({ field }) => (
-                    <Switch checked={field.value} onCheckedChange={field.onChange} />
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
                   )}
                 />
               </div>
               {includesOperator && (
                 <div className="pt-2">
-                  <Label htmlFor="operatorChargePerDay">Extra charge for operator per day? <span className="text-xs text-muted-foreground">(Leave 0 if included in base price)</span></Label>
+                  <Label htmlFor="operatorChargePerDay">
+                    Extra charge for operator per day?{" "}
+                    <span className="text-xs text-muted-foreground">
+                      (Leave 0 if included in base price)
+                    </span>
+                  </Label>
                   <Controller
                     name="operatorChargePerDay"
                     control={control}
@@ -230,19 +315,30 @@ export function Step3Pricing({ onSubmit, defaultValues, isLoading }: Step3Pricin
             </div>
 
             <div className="space-y-1.5">
-              <Label>Cancellation Policy <span className="text-red-500">*</span></Label>
+              <Label>
+                Cancellation Policy <span className="text-red-500">*</span>
+              </Label>
               <Controller
                 name="cancellationPolicy"
                 control={control}
                 render={({ field }) => (
-                  <Select value={field.value || undefined} onValueChange={field.onChange}>
+                  <Select
+                    value={field.value || undefined}
+                    onValueChange={field.onChange}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select policy" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="flexible">Flexible (Full refund up to 24h before)</SelectItem>
-                      <SelectItem value="moderate">Moderate (50% refund up to 48h before)</SelectItem>
-                      <SelectItem value="strict">Strict (No refunds after confirmation)</SelectItem>
+                      <SelectItem value="flexible">
+                        Flexible (Full refund up to 24h before)
+                      </SelectItem>
+                      <SelectItem value="moderate">
+                        Moderate (50% refund up to 48h before)
+                      </SelectItem>
+                      <SelectItem value="strict">
+                        Strict (No refunds after confirmation)
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 )}
@@ -250,7 +346,12 @@ export function Step3Pricing({ onSubmit, defaultValues, isLoading }: Step3Pricin
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="additionalRules">Additional Rules <span className="text-xs text-muted-foreground">(optional)</span></Label>
+              <Label htmlFor="additionalRules">
+                Additional Rules{" "}
+                <span className="text-xs text-muted-foreground">
+                  (optional)
+                </span>
+              </Label>
               <Textarea
                 id="additionalRules"
                 placeholder="e.g. Renter must provide their own diesel..."
@@ -263,7 +364,7 @@ export function Step3Pricing({ onSubmit, defaultValues, isLoading }: Step3Pricin
         {/* Sidebar Estimator */}
         <div className="md:col-span-1">
           <div className="sticky top-6">
-             <EarningsEstimator pricePerDay={pricePerDay} />
+            <EarningsEstimator pricePerDay={pricePerDay} />
           </div>
         </div>
       </div>

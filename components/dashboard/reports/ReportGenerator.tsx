@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Card,
   CardContent,
@@ -19,80 +19,111 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import {
-  Loader2,
-  Sparkles,
-  RefreshCw,
-  Download,
-  Save,
-  TrendingUp,
-  AlertTriangle,
-  MoveRight,
-} from "lucide-react";
+import { Loader2, Sparkles, RefreshCw, Download, Save, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-// Mock Data for Selects
-const COMMODITIES = ["Maize", "Soybeans", "Wheat", "Cocoa", "Cashew", "Rice"];
-const LOCATIONS = [
-  "Nationwide",
-  "North Central Region",
-  "South West Region",
-  "Lagos Markets",
-  "Kano Dawanau",
-];
-const PERIODS = ["Last 7 Days", "Last 30 Days", "Year to Date", "Last 1 Year"];
-const REPORT_TYPES = [
-  "Price Trend Analysis",
-  "Market Summary",
-  "Forecast Report",
-  "Volatility Report",
-  "Regional Comparison",
-];
-const DETAIL_LEVELS = ["Summary", "Standard", "Advanced"];
+import { toast } from "sonner";
+import { useCommodities } from "@/lib/hooks/useCommodities";
+import { useGenerateReport, useSaveReport } from "@/lib/hooks/useReports";
+import { exportReportToPdf } from "@/lib/utils/export-report-pdf";
+import {
+  PERIOD_OPTIONS,
+  REPORT_TYPE_OPTIONS,
+  DETAIL_LEVEL_OPTIONS,
+  LOCATION_OPTIONS,
+} from "@/lib/constants/report";
+import { ReportView } from "./ReportView";
+import type {
+  GenerateReportParams,
+  ReportDetailLevel,
+  ReportLocation,
+  ReportPeriod,
+  ReportType,
+} from "@/types/report";
 
 export default function ReportGenerator() {
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedReport, setGeneratedReport] = useState<null | any>(null);
+  const { data: commodityIndex } = useCommodities({ limit: 100, isActive: true });
+  const generateMutation = useGenerateReport();
+  const saveMutation = useSaveReport();
+  const reportRef = useRef<HTMLDivElement>(null);
+  const [isExporting, setIsExporting] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
 
-  // Form State
   const [config, setConfig] = useState({
-    commodity: "",
-    location: "",
-    period: "Last 30 Days",
-    type: "Market Summary",
-    detail: "Standard",
+    commodityId: "",
+    commodityName: "",
+    location: "NATIONAL" as ReportLocation,
+    period: "30d" as ReportPeriod,
+    reportType: "market-summary" as ReportType,
+    detailLevel: "standard" as ReportDetailLevel,
     includeCharts: true,
     includeComparisons: false,
     includeAI: true,
   });
 
+  const generatedReport = generateMutation.data ?? null;
+  const isGenerating = generateMutation.isPending;
+
   const handleGenerate = () => {
-    if (!config.commodity || !config.location) return;
+    if (!config.commodityId) return;
 
-    setIsGenerating(true);
-    setGeneratedReport(null);
+    const params: GenerateReportParams = {
+      commodityId: config.commodityId,
+      location: config.location,
+      period: config.period,
+      reportType: config.reportType,
+      detailLevel: config.detailLevel,
+      includeCharts: config.includeCharts,
+      includeComparisons: config.includeComparisons,
+      includeAI: config.includeAI,
+    };
 
-    // Simulate AI generation delay
-    setTimeout(() => {
-      setGeneratedReport({
-        title: `${config.commodity} ${config.type}`,
-        subtitle: `Analysis for ${config.location} • ${config.period}`,
-        score: 7.8,
-        trend: "up",
-        summary: `Market intelligence indicates a bullish trend for ${config.commodity} in the ${config.location}. Supply constraints from recent logistics challenges are driving prices upward, while demand remains steady.`,
-        insights: [
-          `Wholesale prices have increased by 12% over the selected period.`,
-          `Major aggregators are holding stock in anticipation of further hikes.`,
-          `Cross-border trade volume has dropped slightly due to currency fluctuations.`,
-        ],
-        forecast: `Expect continued price firmness over the next 14 days. Recommend holding inventory if storage costs are managed below 2%.`,
-      });
-      setIsGenerating(false);
-    }, 2500);
+    setIsSaved(false);
+    generateMutation.mutate(params, {
+      onError: (error: any) => {
+        toast.error(
+          error?.response?.data?.message || "Failed to generate report.",
+        );
+      },
+    });
   };
 
-  const isFormValid = config.commodity && config.location;
+  const handleSave = () => {
+    if (!generatedReport) return;
+    const params: GenerateReportParams = {
+      commodityId: config.commodityId,
+      location: config.location,
+      period: config.period,
+      reportType: config.reportType,
+      detailLevel: config.detailLevel,
+      includeCharts: config.includeCharts,
+      includeComparisons: config.includeComparisons,
+      includeAI: config.includeAI,
+    };
+    saveMutation.mutate(
+      { config: params, commodityName: config.commodityName, result: generatedReport },
+      {
+        onSuccess: () => {
+          setIsSaved(true);
+          toast.success("Report saved.");
+        },
+        onError: () => toast.error("Failed to save report."),
+      },
+    );
+  };
+
+  const handleDownload = async () => {
+    if (!reportRef.current || !generatedReport) return;
+    setIsExporting(true);
+    try {
+      await exportReportToPdf(reportRef.current, generatedReport.title);
+    } catch {
+      toast.error("Failed to export PDF.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const isFormValid = !!config.commodityId;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -114,16 +145,23 @@ export default function ReportGenerator() {
               <div className="space-y-2">
                 <Label>Commodity</Label>
                 <Select
-                  value={config.commodity}
-                  onValueChange={(v) => setConfig({ ...config, commodity: v })}
+                  value={config.commodityId}
+                  onValueChange={(v) => {
+                    const commodity = commodityIndex?.data.find((c) => c.id === v);
+                    setConfig({
+                      ...config,
+                      commodityId: v,
+                      commodityName: commodity?.name ?? "",
+                    });
+                  }}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {COMMODITIES.map((c) => (
-                      <SelectItem key={c} value={c}>
-                        {c}
+                    {commodityIndex?.data.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -133,15 +171,17 @@ export default function ReportGenerator() {
                 <Label>Location</Label>
                 <Select
                   value={config.location}
-                  onValueChange={(v) => setConfig({ ...config, location: v })}
+                  onValueChange={(v) =>
+                    setConfig({ ...config, location: v as ReportLocation })
+                  }
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {LOCATIONS.map((l) => (
-                      <SelectItem key={l} value={l}>
-                        {l}
+                    {LOCATION_OPTIONS.map((l) => (
+                      <SelectItem key={l.value} value={l.value}>
+                        {l.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -154,15 +194,15 @@ export default function ReportGenerator() {
               <Label>Time Range</Label>
               <Select
                 value={config.period}
-                onValueChange={(v) => setConfig({ ...config, period: v })}
+                onValueChange={(v) => setConfig({ ...config, period: v as ReportPeriod })}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {PERIODS.map((p) => (
-                    <SelectItem key={p} value={p}>
-                      {p}
+                  {PERIOD_OPTIONS.map((p) => (
+                    <SelectItem key={p.value} value={p.value}>
+                      {p.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -172,16 +212,16 @@ export default function ReportGenerator() {
             <div className="space-y-2">
               <Label>Report Type</Label>
               <Select
-                value={config.type}
-                onValueChange={(v) => setConfig({ ...config, type: v })}
+                value={config.reportType}
+                onValueChange={(v) => setConfig({ ...config, reportType: v as ReportType })}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {REPORT_TYPES.map((t) => (
-                    <SelectItem key={t} value={t}>
-                      {t}
+                  {REPORT_TYPE_OPTIONS.map((t) => (
+                    <SelectItem key={t.value} value={t.value}>
+                      {t.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -191,16 +231,18 @@ export default function ReportGenerator() {
             <div className="space-y-2">
               <Label>Detail Level</Label>
               <Select
-                value={config.detail}
-                onValueChange={(v) => setConfig({ ...config, detail: v })}
+                value={config.detailLevel}
+                onValueChange={(v) =>
+                  setConfig({ ...config, detailLevel: v as ReportDetailLevel })
+                }
               >
                 <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {DETAIL_LEVELS.map((d) => (
-                    <SelectItem key={d} value={d}>
-                      {d}
+                  {DETAIL_LEVEL_OPTIONS.map((d) => (
+                    <SelectItem key={d.value} value={d.value}>
+                      {d.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -216,7 +258,7 @@ export default function ReportGenerator() {
               </Label>
               <div className="space-y-3">
                 <ToggleRow
-                  label="Price Trend Charts"
+                  label="Price Trend Chart"
                   checked={config.includeCharts}
                   onChange={(checked) =>
                     setConfig({ ...config, includeCharts: checked })
@@ -287,128 +329,48 @@ export default function ReportGenerator() {
                   Analyzing Market Signals...
                 </h3>
                 <p className="text-sm text-slate-500">
-                  Scanning {config.period} of data for {config.commodity} in{" "}
-                  {config.location}
+                  Scanning {PERIOD_OPTIONS.find((p) => p.value === config.period)?.label} of
+                  data for {config.commodityName}
                 </p>
               </div>
             </div>
           )}
 
           {generatedReport && !isGenerating && (
-            <div className="flex-1 flex flex-col">
-              {/* Report Header */}
-              <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-emerald-50/30 dark:bg-emerald-950/10">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <Badge
-                      variant="outline"
-                      className="mb-2 border-emerald-200 text-emerald-700 bg-emerald-50"
-                    >
-                      AI Generated
-                    </Badge>
-                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
-                      {generatedReport.title}
-                    </h2>
-                    <p className="text-slate-500 mt-1">
-                      {generatedReport.subtitle}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="gap-2">
-                      <Save className="h-4 w-4" /> Save
-                    </Button>
-                    <Button variant="outline" size="sm" className="gap-2">
-                      <Download className="h-4 w-4" /> Export
-                    </Button>
-                  </div>
-                </div>
-              </div>
+            <div ref={reportRef} className="flex-1 flex flex-col bg-white dark:bg-slate-950">
+              <ReportView report={generatedReport} showChart={config.includeCharts} />
 
-              {/* Report Body */}
-              <div className="p-6 space-y-8 flex-1 overflow-y-auto">
-                {/* Insight Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <InsightCard
-                    icon={<TrendingUp className="h-4 w-4 text-emerald-600" />}
-                    label="Price Trend"
-                    value="Bullish"
-                    sub="+12.4%"
-                    trend="up"
-                  />
-                  <InsightCard
-                    icon={<AlertTriangle className="h-4 w-4 text-amber-600" />}
-                    label="Volatility"
-                    value="Medium"
-                    sub="Stable outlook"
-                    trend="neutral"
-                  />
-                  <InsightCard
-                    icon={<Sparkles className="h-4 w-4 text-purple-600" />}
-                    label="Forecast"
-                    value="Buy"
-                    sub="High Confidence"
-                    trend="up"
-                  />
-                </div>
-
-                {/* Executive Summary */}
-                <div className="space-y-3">
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-500">
-                    Executive Summary
-                  </h3>
-                  <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
-                    {generatedReport.summary}
-                  </p>
-                </div>
-
-                {/* Key Insights */}
-                <div className="space-y-4">
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-500">
-                    Key Intelligence
-                  </h3>
-                  <div className="bg-slate-50 dark:bg-slate-900 rounded-lg p-5 border border-slate-100 dark:border-slate-800">
-                    <ul className="space-y-3">
-                      {generatedReport.insights.map(
-                        (insight: string, idx: number) => (
-                          <li
-                            key={idx}
-                            className="flex gap-3 text-sm text-slate-700 dark:text-slate-300"
-                          >
-                            <MoveRight className="h-5 w-5 text-emerald-500 shrink-0" />
-                            {insight}
-                          </li>
-                        ),
-                      )}
-                    </ul>
-                  </div>
-                </div>
-
-                {/* Forecast Section */}
-                <div className="space-y-3">
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-500">
-                    AI Forecast
-                  </h3>
-                  <div className="p-4 rounded-lg bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/50 text-sm text-emerald-900 dark:text-emerald-100">
-                    <p className="font-medium">
-                      Recommendation: {generatedReport.forecast}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Placeholder Chart */}
-                {config.includeCharts && (
-                  <div className="space-y-3">
-                    <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-500">
-                      Price Movement
-                    </h3>
-                    <div className="h-48 w-full bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800 flex items-center justify-center text-slate-400 text-xs">
-                      [ Interactive Price Chart Visualization ]
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <CardFooter className="border-t border-slate-100 dark:border-slate-800 p-4 bg-slate-50/30 dark:bg-slate-900/30">
+              <CardFooter className="border-t border-slate-100 dark:border-slate-800 p-4 bg-slate-50/30 dark:bg-slate-900/30 flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                  onClick={handleSave}
+                  disabled={saveMutation.isPending || isSaved}
+                >
+                  {isSaved ? (
+                    <Check className="h-4 w-4" />
+                  ) : saveMutation.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Save className="h-4 w-4" />
+                  )}
+                  {isSaved ? "Saved" : "Save"}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                  onClick={handleDownload}
+                  disabled={isExporting}
+                >
+                  {isExporting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Download className="h-4 w-4" />
+                  )}
+                  Download PDF
+                </Button>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -458,40 +420,6 @@ function ToggleRow({
           )}
         />
       </div>
-    </div>
-  );
-}
-
-function InsightCard({
-  icon,
-  label,
-  value,
-  sub,
-  trend,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  sub: string;
-  trend: "up" | "down" | "neutral";
-}) {
-  const trendColor =
-    trend === "up"
-      ? "text-emerald-600"
-      : trend === "down"
-        ? "text-rose-600"
-        : "text-amber-600";
-
-  return (
-    <div className="p-4 rounded-lg border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-sm">
-      <div className="flex items-center gap-2 mb-2 text-slate-500 text-xs font-medium uppercase tracking-wider">
-        {icon}
-        {label}
-      </div>
-      <div className="text-lg font-bold text-slate-900 dark:text-white">
-        {value}
-      </div>
-      <div className={cn("text-xs font-medium", trendColor)}>{sub}</div>
     </div>
   );
 }

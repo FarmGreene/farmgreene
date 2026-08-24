@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
+import { AUTH_PRIMARY_BUTTON } from "./auth-styles";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
@@ -96,7 +97,7 @@ export function LoginForm() {
         </div>
 
         <Button
-          className="w-full h-11 font-semibold"
+          className={AUTH_PRIMARY_BUTTON}
           type="submit"
           disabled={isPending}
         >

@@ -7,6 +7,9 @@ export enum CommodityCategory {
   CASH_CROPS = "CASH_CROPS",
   VEGETABLES = "VEGETABLES",
   LIVESTOCK = "LIVESTOCK",
+  // Present in the backend enum and in live data; was missing here, so fruit
+  // commodities looked up `undefined` in CATEGORY_LABELS.
+  FRUITS = "FRUITS",
   OTHERS = "OTHERS",
 }
 
@@ -80,6 +83,7 @@ export const CATEGORY_LABELS: Record<CommodityCategory, string> = {
   CASH_CROPS: "Cash Crops",
   VEGETABLES: "Vegetables",
   LIVESTOCK: "Livestock",
+  FRUITS: "Fruits",
   OTHERS: "Others",
 };
 
@@ -273,6 +277,30 @@ export interface TopMovers {
   decliners: CommodityMover[];
 }
 
+// ─── Recently Added ───────────────────────────────────────────────────────────
+
+export interface RecentlyAddedCommodity {
+  id: string;
+  name: string;
+  slug: string;
+  category: string;
+  createdAt: string;
+}
+
+// ─── Price Spikes ───────────────────────────────────────────────────────────────
+
+export interface PriceSpike {
+  id: string;
+  name: string;
+  slug: string;
+  category: string;
+  unit: string;
+  currentPrice: number;
+  baselineAvg: number;
+  spikePercent: number;
+  sampleCount: number;
+}
+
 // ─── API Shapes ───────────────────────────────────────────────────────────────
 
 export interface PaginatedResponse<T> {
@@ -295,6 +323,20 @@ export interface CommodityIndexItem extends CommodityWithLatest {
   history: CommodityDailyAverage[];
 }
 
+/** A commodity a user is tracking, with its real 7-day trend and sparkline series. */
+export interface WatchlistItem {
+  id: string;
+  commodityId: string;
+  commodity: CommodityWithLatest;
+  latestPrice: number | null;
+  /** Percent change over the last 7 days of daily averages. */
+  changePct: number;
+  submissionCount: number;
+  /** Ascending daily-average prices over the last 7 days, for the sparkline. */
+  history: number[];
+  addedAt: string;
+}
+
 export interface RegionalPrices {
   commodity: Pick<Commodity, "id" | "name" | "unit">;
   date: string | null;
@@ -305,6 +347,31 @@ export interface RegionalPrices {
 export interface PriceHistory {
   commodity: Pick<Commodity, "id" | "name" | "unit">;
   history: CommodityDailyAverage[];
+}
+
+// ─── Weekly Average ───────────────────────────────────────────────────────────
+
+export interface CommodityWeeklyAverage {
+  id: string;
+  commodityId: string;
+  isoYear: number;
+  isoWeek: number;
+  weekStartDate: string;
+  weekEndDate: string;
+  averagePrice: number;
+  minPrice: number;
+  maxPrice: number;
+  submissionCount: number;
+  regionalBreakdown: Record<string, number>;
+  priceChange: number | null;
+  source: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface WeeklyPriceHistory {
+  commodity: Pick<Commodity, "id" | "name" | "unit">;
+  history: CommodityWeeklyAverage[];
 }
 
 // ─── Query Params ─────────────────────────────────────────────────────────────

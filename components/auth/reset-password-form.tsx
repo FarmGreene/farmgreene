@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
+import { AUTH_PRIMARY_BUTTON } from "./auth-styles";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
@@ -64,7 +65,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
         </div>
 
         <Link href="/login">
-          <Button className="w-full h-11 font-semibold">Sign In</Button>
+          <Button className={AUTH_PRIMARY_BUTTON}>Sign In</Button>
         </Link>
       </div>
     );
@@ -122,7 +123,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
         </div>
 
         <Button
-          className="w-full h-11 font-semibold"
+          className={AUTH_PRIMARY_BUTTON}
           type="submit"
           disabled={isPending}
         >

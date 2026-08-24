@@ -58,7 +58,7 @@ export default function CommodityIntelligenceHub() {
       <VariantSwitcher variants={commodity.variants} />
 
       {/* 2. AI Market Summary */}
-      <CommodityAIAssistant commodity={commodity} history={history} />
+      <CommodityAIAssistant commodity={commodity} />
 
       {/* 3. Fundamentals Grid */}
       <CommodityFundamentals commodity={commodity} history={history} />
@@ -69,7 +69,7 @@ export default function CommodityIntelligenceHub() {
           {isHistLoading ? (
             <Skeleton className="w-full h-[400px] rounded-2xl" />
           ) : (
-            <CommodityPriceChart history={history} />
+            <CommodityPriceChart commodityId={commodity.id} history={history} />
           )}
         </div>
         <div className="xl:col-span-1">

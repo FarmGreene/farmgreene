@@ -1,32 +1,30 @@
 import { Metadata } from "next";
-import AboutHero from "@/components/about/AboutHero";
+import { AboutHero } from "@/components/marketing/about/AboutHero";
+import { TheProblem } from "@/components/marketing/about/TheProblem";
+import { HowWeBuildIt } from "@/components/marketing/about/HowWeBuildIt";
+import { Team } from "@/components/marketing/about/Team";
+import { ClosingBand } from "@/components/marketing/ClosingBand";
 
 export const metadata: Metadata = {
   title: "About Us",
   description:
-    "Learn about Farmgreene's mission to revolutionize Australian agriculture through equipment sharing, transparency, and data-driven insights.",
+    "Why Farmgreene exists: closing the price-information gap between the people who grow food and the people who buy it, one recorded market price at a time.",
 };
-import ProblemSection from "@/components/about/ProblemSection";
-import MissionVision from "@/components/about/MissionVision";
-import WhoWeServe from "@/components/about/WhoWeServe";
-import Differentiators from "@/components/about/Differentiators";
-import Approach from "@/components/about/Approach";
-import TeamSection from "@/components/about/TeamSection";
-import FutureRoadmap from "@/components/about/FutureRoadmap";
-import AboutCTA from "@/components/about/AboutCTA";
 
 export default function AboutPage() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="bg-field">
       <AboutHero />
-      <ProblemSection />
-      <MissionVision />
-      <WhoWeServe />
-      <Differentiators />
-      <Approach />
-      <TeamSection />
-      <FutureRoadmap />
-      <AboutCTA />
+      <TheProblem />
+      <HowWeBuildIt />
+      <Team />
+      <ClosingBand
+        title="Come and"
+        accent="use it"
+        lede="It's free while we're in early access, and the feedback shapes what gets built next."
+        image="/images/hero-farm.png"
+        secondary={{ href: "/contact", label: "Talk to us" }}
+      />
     </div>
   );
 }
